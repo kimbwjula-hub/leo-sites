@@ -6,3 +6,4 @@ Um site por pasta. Cada pasta é publicada em `/<nome-da-pasta>/`.
 - `limpteck/` — Limpteck (limpteck.pages.dev)
 - `hospedagem/` — Hospedagem (hospedagemdesites.pages.dev)
 - `hfprime/` — HF Prime Higienização (hfprime.pages.dev)
+- `sosestofados/` — SOS Estofados VCA (sosestofados.pages.dev)
