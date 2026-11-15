@@ -40,6 +40,9 @@ main{max-width:560px;margin:-66px auto 0;padding:0 16px 40px}
 .val span{font-size:13px;color:var(--muted);font-weight:600}
 .val input{font:700 16px Inter,sans-serif;font-variant-numeric:tabular-nums;color:var(--ink);border:0;background:none;outline:none;width:7ch;text-align:right;padding:2px 0;border-bottom:1px dashed transparent}
 .val input:focus{border-bottom-color:var(--blue)}
+.seg{display:inline-flex;background:#f0f3f9;border-radius:999px;padding:3px;margin-top:8px}
+.seg button{border:0;background:none;font:600 12.5px Inter,sans-serif;color:var(--muted);padding:6px 13px;border-radius:999px;cursor:pointer}
+.seg button.on{background:#fff;color:var(--blue);box-shadow:0 1px 3px rgba(11,18,32,.15)}
 .inc{list-style:none;padding:14px 20px 4px;display:grid;grid-template-columns:1fr 1fr;gap:8px 12px;border-bottom:1px solid var(--line)}
 .inc li{font-size:13px;color:var(--muted);display:flex;gap:7px;align-items:center;padding-bottom:10px}
 .inc svg{width:15px;height:15px;color:var(--ok);flex:none}
@@ -81,8 +84,8 @@ footer{text-align:center;color:#98a2b3;font-size:12px;padding:10px 0 30px}
 
     <div class="row">
       <div class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><rect x="3" y="4" width="18" height="7" rx="2"/><rect x="3" y="13" width="18" height="7" rx="2"/><path d="M7 7.5h.01M7 16.5h.01"/></svg></div>
-      <div class="info"><div class="t">Hospedagem do site</div><div class="s">Plano anual · 12 meses</div></div>
-      <div class="val"><span>R$</span><input id="v2" inputmode="decimal" value="360,00"></div>
+      <div class="info"><div class="t">Hospedagem do site</div><div class="s" id="hs">Plano anual · 12 meses</div><div class="seg" id="seg"><button type="button" data-p="mensal">Mensal</button><button type="button" data-p="anual" class="on">Anual</button></div></div>
+      <div class="val"><span>R$</span><input id="v2" inputmode="decimal" value="360,00"><span id="pm"></span></div>
     </div>
 
     <ul class="inc">
@@ -93,9 +96,9 @@ footer{text-align:center;color:#98a2b3;font-size:12px;padding:10px 0 30px}
     </ul>
 
     <div class="sub"><span>Domínio</span><span id="s1"></span></div>
-    <div class="sub"><span>Hospedagem</span><span id="s2"></span></div>
+    <div class="sub"><span id="hl">Hospedagem (anual)</span><span id="s2"></span></div>
 
-    <div class="total"><div class="l">Total<small>Pagamento anual</small></div><div class="v" id="tot"></div></div>
+    <div class="total"><div class="l">Total<small id="pg">Pagamento anual</small></div><div class="v" id="tot"></div></div>
   </div>
 
   <button class="btn" type="button">Continuar</button>
@@ -119,6 +122,13 @@ if(q.get('dominio'))$('dom').value=q.get('dominio');
 if(q.get('d'))$('v1').value=q.get('d');
 if(q.get('h'))$('v2').value=q.get('h');
 ['v1','v2'].forEach(function(k){var e=$(k);fmt(e);e.addEventListener('input',function(){fit(e);calc()});e.addEventListener('blur',function(){fmt(e);calc()});e.addEventListener('focus',function(){e.select()})});
+var per='anual';
+function setP(v){per=v;[].forEach.call(document.querySelectorAll('#seg button'),function(b){b.classList.toggle('on',b.dataset.p===v)});
+$('hs').textContent=v==='mensal'?'Plano mensal · 1 mês':'Plano anual · 12 meses';
+$('hl').textContent='Hospedagem ('+v+')';$('pm').textContent=v==='mensal'?'/mês':'/ano';
+$('pg').textContent=v==='mensal'?'Domínio anual + 1º mês de hospedagem':'Pagamento anual';}
+[].forEach.call(document.querySelectorAll('#seg button'),function(b){b.onclick=function(){setP(b.dataset.p)}});
+setP(q.get('p')==='mensal'?'mensal':'anual');
 calc();
 $('data').textContent=new Date().toLocaleDateString('pt-BR');
 $('y').textContent=new Date().getFullYear();
