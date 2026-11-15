@@ -41,12 +41,17 @@ main{max-width:560px;margin:-66px auto 0;padding:0 16px 40px}
 .val input{font:700 16px Inter,sans-serif;font-variant-numeric:tabular-nums;color:var(--ink);border:0;background:none;outline:none;width:7ch;text-align:right;padding:2px 0;border-bottom:1px dashed transparent}
 .val input:focus{border-bottom-color:var(--blue)}
 .seg{display:inline-flex;background:#f0f3f9;border-radius:999px;padding:3px;margin-top:8px}
-.seg button{border:0;background:none;font:600 12.5px Inter,sans-serif;color:var(--muted);padding:6px 13px;border-radius:999px;cursor:pointer}
+.seg button{white-space:nowrap;border:0;background:none;font:600 12.5px Inter,sans-serif;color:var(--muted);padding:6px 13px;border-radius:999px;cursor:pointer}
 .seg button.on{background:#fff;color:var(--blue);box-shadow:0 1px 3px rgba(11,18,32,.15)}
 .rm{color:#d92d20;text-decoration:none;font-weight:500}
 .add{display:none;padding:14px 20px;border-bottom:1px solid var(--line);color:var(--blue);font-weight:600;font-size:14px;text-decoration:none}
 .nodom #rowDom,.nodom #subDom{display:none}
 .nodom .add{display:block}
+.seg em{font-style:normal;background:var(--ok);color:#fff;font-size:10.5px;font-weight:700;padding:2px 6px;border-radius:999px;margin-left:3px}
+.total .v{text-align:right;line-height:1.1}
+.total s{display:block;font-size:14px;font-weight:600;color:#98a2b3;letter-spacing:0}
+.save{display:none;background:#ecfdf3;color:#067647;font-size:13.5px;font-weight:600;padding:11px 20px;border-top:1px solid #d1fadf;text-align:center}
+.anual .save{display:block}
 .inc{list-style:none;padding:14px 20px 4px;display:grid;grid-template-columns:1fr 1fr;gap:8px 12px;border-bottom:1px solid var(--line)}
 .inc li{font-size:13px;color:var(--muted);display:flex;gap:7px;align-items:center;padding-bottom:10px}
 .inc svg{width:15px;height:15px;color:var(--ok);flex:none}
@@ -88,7 +93,7 @@ footer{text-align:center;color:#98a2b3;font-size:12px;padding:10px 0 30px}
 
     <div class="row">
       <div class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><rect x="3" y="4" width="18" height="7" rx="2"/><rect x="3" y="13" width="18" height="7" rx="2"/><path d="M7 7.5h.01M7 16.5h.01"/></svg></div>
-      <div class="info"><div class="t">Hospedagem do site</div><div class="s" id="hs">Plano anual · 12 meses</div><div class="seg" id="seg"><button type="button" data-p="mensal">Mensal</button><button type="button" data-p="anual" class="on">Anual</button></div></div>
+      <div class="info"><div class="t">Hospedagem do site</div><div class="s" id="hs">Plano anual · 12 meses</div><div class="seg" id="seg"><button type="button" data-p="mensal" class="on">Mensal</button><button type="button" data-p="anual">Anual <em id="badge">-50%</em></button></div></div>
       <div class="val"><span>R$</span><input id="v2" inputmode="decimal" value="360,00"><span id="pm"></span></div>
     </div>
 
@@ -104,7 +109,8 @@ footer{text-align:center;color:#98a2b3;font-size:12px;padding:10px 0 30px}
     <div class="sub" id="subDom"><span id="dl">Domínio (anual)</span><span id="s1"></span></div>
     <div class="sub"><span id="hl">Hospedagem (anual)</span><span id="s2"></span></div>
 
-    <div class="total"><div class="l">Total<small id="pg">Pagamento anual</small></div><div class="v" id="tot"></div></div>
+    <div class="total"><div class="l">Total<small id="pg">Pagamento anual</small></div><div class="v"><s id="old"></s><span id="tot"></span></div></div>
+    <div class="save" id="save"></div>
   </div>
 
   <button class="btn" type="button">Continuar</button>
@@ -121,27 +127,43 @@ function num(s){s=String(s).replace(/[^\d,.-]/g,'');if(s.indexOf(',')>-1)s=s.rep
 function brl(n){return n.toLocaleString('pt-BR',{style:'currency',currency:'BRL'})}
 function fit(el){el.style.width=(Math.max(el.value.length,3)+0.6)+'ch'}
 function fmt(el){el.value=num(el.value).toLocaleString('pt-BR',{minimumFractionDigits:2,maximumFractionDigits:2});fit(el)}
-var semDom=false;
-function calc(){var a=semDom?0:num($('v1').value),b=num($('v2').value);$('s1').textContent=brl(a);$('s2').textContent=brl(b);$('tot').textContent=brl(a+b)}
-// valores pelo link: ?dominio=seusite.com.br&d=40&h=360
+var semDom=false,per='mensal';
 var q=new URLSearchParams(location.search);
+var desc=q.get('desc')?num(q.get('desc')):50;
+function r90(n){if(n<=0)return 0;var v=Math.round(n)-0.1;return v<0.9?0.9:Math.round(v*100)/100}
+var V={mensal:{d:q.get('d')?num(q.get('d')):9.9,h:q.get('h')?num(q.get('h')):39.9},anual:{d:null,h:null}};
+if(q.get('da'))V.anual.d=num(q.get('da'));if(q.get('ha'))V.anual.h=num(q.get('ha'));
+function anualDe(k){return V.anual[k]!=null?V.anual[k]:r90(V.mensal[k]*12*(1-desc/100))}
+function cur(k){return per==='mensal'?V.mensal[k]:anualDe(k)}
+function show(){[['v1','d'],['v2','h']].forEach(function(x){var e=$(x[0]);e.value=cur(x[1]).toLocaleString('pt-BR',{minimumFractionDigits:2,maximumFractionDigits:2});fit(e)})}
+function calc(){
+  var a=semDom?0:cur('d'),b=cur('h'),t=a+b;
+  $('s1').textContent=brl(a);$('s2').textContent=brl(b);$('tot').textContent=brl(t);
+  var full=((semDom?0:V.mensal.d)+V.mensal.h)*12, eco=full-t;
+  var an=per==='anual'&&eco>0.5;
+  $('old').textContent=an?brl(full):'';
+  $('save').textContent=an?'Você economiza '+brl(eco)+' no plano anual':'';
+  var pct=Math.round(100-(((semDom?0:anualDe('d'))+anualDe('h'))/(full||1))*100);
+  $('badge').textContent='-'+(pct>0?pct:0)+'%';$('badge').style.display=pct>0?'':'none';
+  $('hs').textContent=per==='mensal'?'Plano mensal · 1 mês':'Plano anual · 12 meses · equivale a '+brl(b/12)+'/mês';
+}
+['v1','v2'].forEach(function(k){var e=$(k),key=k==='v1'?'d':'h';
+  e.addEventListener('input',function(){fit(e);V[per][key]=num(e.value);calc()});
+  e.addEventListener('blur',function(){V[per][key]=num(e.value);show();calc()});
+  e.addEventListener('focus',function(){e.select()})});
 if(q.get('dominio'))$('dom').value=q.get('dominio');
-if(q.get('d'))$('v1').value=q.get('d');
-if(q.get('h'))$('v2').value=q.get('h');
-['v1','v2'].forEach(function(k){var e=$(k);fmt(e);e.addEventListener('input',function(){fit(e);calc()});e.addEventListener('blur',function(){fmt(e);calc()});e.addEventListener('focus',function(){e.select()})});
-var per='anual';
-function setP(v){per=v;[].forEach.call(document.querySelectorAll('#seg button'),function(b){b.classList.toggle('on',b.dataset.p===v)});
-$('hs').textContent=v==='mensal'?'Plano mensal · 1 mês':'Plano anual · 12 meses';
-$('hl').textContent='Hospedagem ('+v+')';$('dl').textContent='Domínio ('+v+')';$('pm').textContent=$('dm').textContent=v==='mensal'?'/mês':'/ano';$('ds').textContent=v==='mensal'?'Período de 1 mês':'Período de 1 ano';
-pgTxt();}
+function setP(v){per=v;document.body.classList.toggle('anual',v==='anual');
+  [].forEach.call(document.querySelectorAll('#seg button'),function(b){b.classList.toggle('on',b.dataset.p===v)});
+  $('hl').textContent='Hospedagem ('+v+')';$('dl').textContent='Domínio ('+v+')';
+  $('pm').textContent=$('dm').textContent=v==='mensal'?'/mês':'/ano';$('ds').textContent=v==='mensal'?'Período de 1 mês':'Período de 1 ano';
+  pgTxt();show();calc()}
 function pgTxt(){$('pg').textContent=per==='mensal'?'Pagamento mensal':'Pagamento anual';}
-function setDom(on){semDom=!on;document.body.classList.toggle('nodom',semDom);$('h1').textContent=semDom?'Seu site no ar, rápido e seguro':'Seu site no ar, com domínio próprio';$('hp').textContent=semDom?'Resumo do seu plano de hospedagem.':'Resumo do seu plano de domínio e hospedagem.';pgTxt();calc()}
+function setDom(on){semDom=!on;document.body.classList.toggle('nodom',semDom);$('h1').textContent=semDom?'Seu site no ar, rápido e seguro':'Seu site no ar, com domínio próprio';$('hp').textContent=semDom?'Resumo do seu plano de hospedagem.':'Resumo do seu plano de domínio e hospedagem.';calc()}
 $('rmDom').onclick=function(e){e.preventDefault();setDom(false)};
 $('addDom').onclick=function(e){e.preventDefault();setDom(true)};
 [].forEach.call(document.querySelectorAll('#seg button'),function(b){b.onclick=function(){setP(b.dataset.p)}});
-setP(q.get('p')==='mensal'?'mensal':'anual');
-if(q.get('dominio')==='0'||q.get('d')==='0'){$('dom').value='';setDom(false)}
-calc();
+setP(q.get('p')==='anual'?'anual':'mensal');
+if(q.get('d')==='0'||q.get('dominio')==='0'){$('dom').value='';setDom(false)}
 $('data').textContent=new Date().toLocaleDateString('pt-BR');
 $('y').textContent=new Date().getFullYear();
 </script>
