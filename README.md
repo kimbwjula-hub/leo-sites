@@ -9,3 +9,4 @@ Um site por pasta. Cada pasta é publicada em `/<nome-da-pasta>/`.
 - `sosestofados/` — SOS Estofados VCA (sosestofados.pages.dev)
 - `speedclean/` — Speed Clean, Valença-BA (speedclean.pages.dev)
 - `reallimpeza/` — Real Limpeza, Condeúba-BA (reallimpeza.pages.dev)
+- `coffeeclean/` — Coffee Clean, Teixeira de Freitas-BA (coffeeclean.pages.dev)
