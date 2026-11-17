@@ -3,7 +3,8 @@ export async function onRequestGet({ request, env, params }) {
   const id = String(params.id || "").replace(/[^a-z0-9p]/g, "");
   const c = await env.CAT.get("catalog", "json");
   const baseId = id.replace(/p$/, "");
-  const it = c && c.items.find((x) => x.id === baseId);
+  let it = null;
+  if (c && c.items) for (const p of c.items) { const f = (p.media || []).find((x) => x.id === baseId); if (f) { it = f; break; } }
   if (!it) return new Response("Não encontrado", { status: 404 });
   const isPoster = id.endsWith("p");
   const mime = isPoster ? "image/jpeg" : (it.mime || (it.type === "video" ? "video/mp4" : "image/jpeg"));
