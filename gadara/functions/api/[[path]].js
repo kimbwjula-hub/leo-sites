@@ -1,16 +1,9 @@
 // API da loja Gadara Móveis (Cloudflare Pages Functions + KV "CAT", senha em ADMIN_PASS)
 // produto: { id, cat, name, desc, media:[{id,type,mime,size,chunks,chunkSize,poster,w,h}], ts }
 const SEED = {
-  v: 2,
+  v: 3,
   settings: { whatsapp: "", instagram: "gadara_moveis" },
-  cats: [
-    { id: "estofados", name: "Sofás e estofados" },
-    { id: "jantar", name: "Salas de jantar" },
-    { id: "quartos", name: "Quartos" },
-    { id: "guarda-roupas", name: "Guarda-roupas" },
-    { id: "racks", name: "Racks e painéis" },
-    { id: "poltronas", name: "Poltronas" }
-  ],
+  cats: [{ id: "produtos", name: "Produtos" }],
   items: []
 };
 const CHUNK_MAX = 24 * 1024 * 1024;
@@ -20,7 +13,7 @@ const slug = (t) => t.normalize("NFD").replace(/[̀-ͯ]/g, "").toLowerCase().rep
 
 async function load(env) {
   const c = await env.CAT.get("catalog", "json");
-  if (!c || c.v !== 2) return JSON.parse(JSON.stringify(SEED));
+  if (!c || c.v !== 3) return JSON.parse(JSON.stringify(SEED));
   return c;
 }
 const save = (env, c) => env.CAT.put("catalog", JSON.stringify(c));
