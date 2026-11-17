@@ -127,6 +127,16 @@ footer img{height:26px;width:auto;margin:0 auto 8px}
 .sm{border:1.5px solid var(--line);background:#fff;border-radius:9px;padding:6px 10px;font-size:13px;font-weight:700;color:var(--ink2)}
 .sm.red{color:#b42318;border-color:#f3c9c4}
 .sm.dark{background:var(--ink);color:#fff;border-color:var(--ink)}
+.acts{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.box .big{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:8px;min-height:92px;padding:14px 10px;border-radius:14px;background:var(--ink);color:#fff;font-size:15px;font-weight:700;cursor:pointer;margin:0}
+.box .big.alt{background:#fff;color:var(--ink);border:1.5px solid var(--ink)}
+.big svg{width:28px;height:28px}
+.ag{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.ag .ar{grid-template-columns:1fr;gap:8px;padding:8px}
+.ag .ar .t{width:100%;height:auto;aspect-ratio:1/1}
+.ag .a{flex-wrap:wrap}
+.ag .a .sm{flex:1;text-align:center}
+@media(min-width:560px){.ag{grid-template-columns:repeat(3,1fr)}}
 .toast{position:fixed;left:50%;bottom:24px;transform:translateX(-50%) translateY(20px);opacity:0;pointer-events:none;background:var(--ink);color:#fff;padding:12px 18px;border-radius:12px;font-size:14px;z-index:120;transition:.3s;max-width:90vw}
 .toast.on{transform:translateX(-50%);opacity:1}
 
@@ -646,20 +656,24 @@ function loginView(){
 function refresh(){return load().then(admRender)}
 function admRender(){
   $("#admOut").hidden=false;
-  var h='<div class="box"><h3>Adicionar produtos</h3><p class="h">Escolha fotos ou vídeos do celular. Cada arquivo vira um produto no site. O nome é opcional.</p>'+
-    '<label>Nome (opcional, vale para os arquivos deste envio)<input id="aName" placeholder="Ex.: Sofá retrátil 3 lugares" maxlength="90"></label>'+
-    '<label class="drop" for="aFile"><b>+ Escolher fotos e vídeos</b><span>Pode escolher vários. Vídeos até 150 MB.</span></label><input type="file" id="aFile" accept="image/*,video/*" multiple hidden><div class="prog" id="prog"></div></div>'+
-    '<div class="box"><h3>Produtos no site ('+S.items.length+')</h3><p class="h">Os mais novos aparecem primeiro.</p><div class="al" id="al">'+
-    (S.items.length?S.items.map(function(it){var m=it.media[0];return '<div class="ar" data-id="'+it.id+'">'+(m.type==="video"?(m.poster?'<img class="t" src="'+mUrl(m,1)+'" alt="">':'<video class="t" src="'+mUrl(m)+'#t=0.5" muted preload="metadata"></video>'):'<img class="t" src="'+mUrl(m)+'" alt="" loading="lazy">')+'<div class="f"><input value="'+esc(it.name)+'" placeholder="Nome (opcional)" maxlength="90"><div class="a"><button class="sm dark" data-a="save" type="button">Salvar nome</button><button class="sm" data-a="top" type="button">Pôr primeiro</button><button class="sm red" data-a="del" type="button">Apagar</button></div></div></div>'}).join(""):'<p class="h">Nenhum produto ainda.</p>')+'</div></div>'+
-    '<form class="box" id="sf"><h3>WhatsApp da loja</h3><p class="h">Número que recebe as mensagens dos botões do site (com DDD).</p><label>WhatsApp<input id="sw" inputmode="tel" placeholder="(77) 99999-9999" value="'+esc(S.settings&&S.settings.whatsapp?fmtWa(S.settings.whatsapp):"")+'"></label><button class="btn b-dark" type="submit">Salvar</button></form>';
+  var n=S.items.length,cam='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 8h3l2-3h6l2 3h3v11H4z"/><circle cx="12" cy="13" r="3.5"/></svg>',gal='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="5" width="18" height="14" rx="2"/><circle cx="9" cy="10" r="1.6"/><path d="M21 16l-5-5-8 8"/></svg>';
+  var h='<div class="box"><h3>Adicionar produto</h3>'+
+    '<div class="acts"><label class="big" for="aCam">'+cam+'Tirar foto</label><label class="big alt" for="aFile">'+gal+'Galeria ou vídeo</label></div>'+
+    '<input type="file" id="aCam" accept="image/*" capture="environment" hidden><input type="file" id="aFile" accept="image/*,video/*" multiple hidden>'+
+    '<label>Nome do produto (opcional)<input id="aName" placeholder="Ex.: Sofá retrátil 3 lugares" maxlength="90"></label>'+
+    '<p class="h">Pode enviar várias fotos ou vídeos de uma vez. Vídeos até 150 MB.</p><div class="prog" id="prog"></div></div>'+
+    '<div class="box"><h3>Produtos no site ('+n+')</h3>'+
+    (n?'<div class="ag" id="al">'+S.items.map(function(it){var m=it.media[0];
+      return '<div class="ar" data-id="'+it.id+'">'+(m.type==="video"?(m.poster?'<img class="t" src="'+mUrl(m,1)+'" alt="">':'<video class="t" src="'+mUrl(m)+'#t=0.5" muted preload="metadata"></video>'):'<img class="t" src="'+mUrl(m)+'" alt="" loading="lazy">')+
+      '<div class="f"><input value="'+esc(it.name)+'" placeholder="Nome (opcional)" maxlength="90"><div class="a"><button class="sm dark" data-a="save" type="button">Salvar</button><button class="sm" data-a="top" type="button">Topo</button><button class="sm red" data-a="del" type="button">Apagar</button></div></div></div>'}).join("")+'</div>':'<p class="h">Nenhum produto ainda.</p>')+'</div>';
   $("#admIn").innerHTML=h;
+  $("#aCam").onchange=function(){var fs=[].slice.call(this.files);this.value="";if(fs.length)upAll(fs)};
   $("#aFile").onchange=function(){var fs=[].slice.call(this.files);this.value="";if(fs.length)upAll(fs)};
-  $("#al").onclick=function(e){var b=e.target.closest("[data-a]");if(!b)return;var r=b.closest(".ar"),id=r.dataset.id,a=b.dataset.a,p;
+  if($("#al"))$("#al").onclick=function(e){var b=e.target.closest("[data-a]");if(!b)return;var r=b.closest(".ar"),id=r.dataset.id,a=b.dataset.a,p;
     if(a==="del"){if(!confirm("Apagar este produto do site?"))return;p=api("item/"+id,{method:"DELETE"})}
     else if(a==="top")p=api("item/"+id,{method:"PATCH",json:{top:true}});
     else p=api("item/"+id,{method:"PATCH",json:{name:$("input",r).value}});
     b.disabled=true;p.then(function(){toast(a==="del"?"Produto apagado":"Pronto");return refresh()}).catch(function(e){toast(e.message);b.disabled=false})};
-  $("#sf").onsubmit=function(e){e.preventDefault();var w=$("#sw").value.replace(/\D/g,"");if(w&&w.length<=11)w="55"+w;api("settings",{method:"POST",json:{whatsapp:w}}).then(function(){toast("WhatsApp salvo");return refresh()}).catch(function(e){toast(e.message)})};
 }
 function isVideo(f){return /^video\//.test(f.type)||/\.(mp4|mov|m4v|webm|3gp)$/i.test(f.name)}
 function upAll(fs){
