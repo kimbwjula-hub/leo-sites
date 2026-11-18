@@ -1,0 +1,383 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>Solvanta Energia Solar · Vitória da Conquista - BA</title>
+<meta name="description" content="Solvanta Energia Solar: projetos e instalação de energia solar para casas, comércios e propriedades rurais em Vitória da Conquista e região. Financiamento, manutenção e monitoramento.">
+<meta name="theme-color" content="#15171c">
+<link rel="icon" href="favicon.svg" type="image/svg+xml">
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Archivo:wght@700;800;900&family=Space+Grotesk:wght@600;700&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#f4f1ea;--paper:#fff;--ink:#14161b;--ink2:#1e2128;--mut:#646973;--line:#e4ded1;--sun:#ff7a1a;--sun2:#ffb52e;--eco:#0f9f73;--wa:#1faa59}
+*{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth;overflow-x:clip}
+body{font-family:Inter,system-ui,sans-serif;background:var(--bg);color:var(--ink);font-size:16px;line-height:1.55;-webkit-font-smoothing:antialiased}
+img{display:block;max-width:100%}
+a{color:inherit;text-decoration:none}
+h1,h2,h3{font-family:Archivo,Inter,sans-serif;font-weight:800;letter-spacing:-.025em;line-height:1.04}
+.num{font-family:"Space Grotesk",Inter,sans-serif;font-weight:700;letter-spacing:-.02em}
+.wrap{width:100%;max-width:1200px;margin:0 auto;padding:0 18px}
+section{padding:72px 0}
+.kick{display:inline-flex;align-items:center;gap:10px;font:700 12px/1 Inter,sans-serif;letter-spacing:.18em;text-transform:uppercase;color:var(--sun)}
+.kick:before{content:"";width:22px;height:4px;background:var(--sun);transform:skewX(-30deg)}
+h2{font-size:clamp(34px,9vw,58px);margin:14px 0 14px;text-transform:uppercase}
+h2 em{font-style:normal;color:var(--sun)}
+.lead{color:var(--mut);font-size:17px;max-width:640px}
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:10px;font:700 16px/1 Inter,sans-serif;padding:18px 22px;border-radius:12px;transition:transform .2s;cursor:pointer;border:0}
+.btn:active{transform:scale(.98)}
+.btn svg{width:21px;height:21px;flex:none}
+.b-sun{background:linear-gradient(135deg,var(--sun2),var(--sun));color:#1a1206;box-shadow:0 14px 30px -12px rgba(255,122,26,.65)}
+.b-ink{background:var(--ink);color:#fff}
+.b-wa{background:var(--wa);color:#fff;box-shadow:0 14px 30px -14px rgba(31,170,89,.75)}
+.b-gl{background:rgba(255,255,255,.1);color:#fff;border:1.5px solid rgba(255,255,255,.35);backdrop-filter:blur(6px)}
+.top{background:var(--ink);color:rgba(255,255,255,.78);font-size:13px}
+.top .wrap{display:flex;justify-content:space-between;gap:14px;height:38px;align-items:center;overflow:hidden;white-space:nowrap}
+.top a{display:inline-flex;align-items:center;gap:6px}
+.top svg{width:14px;height:14px;color:var(--sun2)}
+.top .r{display:none;gap:20px}
+.hd{position:sticky;top:0;z-index:50;background:rgba(244,241,234,.92);backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px);border-bottom:1px solid var(--line)}
+.hd .wrap{display:flex;align-items:center;justify-content:space-between;height:66px;gap:16px}
+.hd .lg{width:156px;flex:none}
+.hd nav{display:none;gap:26px;font-weight:600;font-size:14.5px}
+.hd nav a:hover{color:var(--sun)}
+.hd .btn{padding:12px 15px;font-size:14px;border-radius:10px}
+.hero{position:relative;color:#fff;padding:0;background:var(--ink);overflow:hidden}
+.hero .bgi{position:absolute;inset:0}
+.hero .bgi img{width:100%;height:100%;object-fit:cover;object-position:62% center}
+.hero .bgi:after{content:"";position:absolute;inset:0;background:linear-gradient(180deg,rgba(20,22,27,.55) 0%,rgba(20,22,27,.78) 55%,rgba(20,22,27,.97) 100%)}
+.hero .wrap{position:relative;padding-top:64px;padding-bottom:30px}
+.badge{display:inline-flex;align-items:center;gap:8px;background:rgba(255,255,255,.12);border:1px solid rgba(255,255,255,.22);border-radius:999px;padding:8px 14px 8px 10px;font-size:13px;font-weight:600;backdrop-filter:blur(6px)}
+.badge i{width:8px;height:8px;border-radius:50%;background:var(--sun2);box-shadow:0 0 0 4px rgba(255,181,46,.25)}
+.hero h1{font-size:clamp(44px,12.6vw,92px);font-weight:900;text-transform:uppercase;margin:20px 0 16px;line-height:.98}
+.hero h1 em{font-style:normal;color:var(--sun2)}
+.hero p{font-size:18px;color:rgba(255,255,255,.84);max-width:560px}
+.hero .cta{display:grid;gap:10px;margin-top:26px;max-width:520px}
+.qk{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-top:34px;max-width:640px}
+.qk a{background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.16);border-radius:14px;padding:14px 10px;display:flex;flex-direction:column;align-items:center;gap:8px;text-align:center;font-size:13px;font-weight:600;backdrop-filter:blur(6px)}
+.qk a i{width:40px;height:40px;border-radius:11px;background:var(--sun);color:#1a1206;display:grid;place-items:center}
+.qk a:first-child i{background:var(--wa);color:#fff}
+.qk a i svg{width:21px;height:21px}
+.tkr{background:var(--sun);color:#1a1206;overflow:hidden;transform:rotate(-2deg);margin:-14px -12px 0;position:relative;z-index:3;box-shadow:0 16px 30px -16px rgba(255,122,26,.7)}
+.tkr div{display:flex;gap:30px;white-space:nowrap;padding:16px 0;font:900 17px/1 Archivo,Inter,sans-serif;text-transform:uppercase;letter-spacing:.03em;animation:tk 30s linear infinite;width:max-content}
+.tkr span:after{content:"✦";margin-left:30px;color:#fff}
+.tkr2{background:var(--ink);transform:rotate(1.4deg);margin:-6px -12px 0;position:relative;z-index:2;overflow:hidden}
+.tkr2 div{display:flex;gap:30px;white-space:nowrap;padding:13px 0;font:700 13.5px/1 Inter,sans-serif;text-transform:uppercase;letter-spacing:.14em;color:rgba(255,255,255,.75);animation:tk 38s linear infinite reverse;width:max-content}
+.tkr2 span:after{content:"/";margin-left:30px;color:var(--sun2)}
+@keyframes tk{to{transform:translateX(-50%)}}
+.stats{padding:44px 0 0}
+.stats .g{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.stats .s{background:var(--paper);border:1px solid var(--line);border-radius:18px;padding:18px 16px}
+.stats .s:nth-child(2),.stats .s:nth-child(3){background:var(--ink);border-color:var(--ink);color:#fff}
+.stats b{font-size:32px;line-height:1;display:block;color:var(--sun)}
+.stats span{font-size:13.5px;color:var(--mut);display:block;margin-top:8px;font-weight:500}
+.stats .s:nth-child(2) span,.stats .s:nth-child(3) span{color:rgba(255,255,255,.66)}
+.about .grid{display:grid;gap:30px}
+.about .pic{position:relative}
+.about .pic img{width:100%;aspect-ratio:4/4.6;object-fit:cover;border-radius:22px}
+.about .tag{position:absolute;right:-6px;bottom:22px;background:var(--ink);color:#fff;border-radius:16px;padding:14px 16px;display:flex;gap:12px;align-items:center;box-shadow:0 20px 40px -18px rgba(0,0,0,.5)}
+.about .tag b{font-size:34px;line-height:1;color:var(--sun2)}
+.about .tag span{font-size:13px;line-height:1.3;color:rgba(255,255,255,.75)}
+.about .txt p+p{margin-top:12px}
+.chk{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:24px}
+.chk div{display:flex;gap:10px;align-items:flex-start;background:var(--paper);border:1px solid var(--line);border-radius:14px;padding:13px;font-size:14px;font-weight:600;line-height:1.3}
+.chk svg{width:20px;height:20px;flex:none;color:var(--eco)}
+.about .btn{margin-top:22px}
+.svc{background:var(--ink);color:#fff}
+.svc .lead{color:rgba(255,255,255,.66)}
+.sv-main{display:grid;gap:14px;margin-top:32px}
+.sm{position:relative;border-radius:22px;overflow:hidden;min-height:330px;display:flex;align-items:flex-end;isolation:isolate}
+.sm img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;z-index:-2}
+.sm:after{content:"";position:absolute;inset:0;background:linear-gradient(180deg,rgba(20,22,27,.05) 25%,rgba(20,22,27,.92) 82%);z-index:-1}
+.sm .c{padding:22px}
+.sm .n{font:700 13px Inter;letter-spacing:.14em;color:var(--sun2)}
+.sm h3{font-size:27px;text-transform:uppercase;margin:8px 0 8px}
+.sm p{font-size:15px;color:rgba(255,255,255,.8)}
+.sm .go{display:inline-flex;align-items:center;gap:8px;margin-top:14px;font-weight:700;font-size:14.5px;background:#fff;color:var(--ink);padding:11px 15px;border-radius:10px}
+.sm .go svg{width:16px;height:16px}
+.sv-sub{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:14px}
+.ss{background:#1f222a;border:1px solid rgba(255,255,255,.08);border-radius:18px;padding:18px 15px;display:flex;flex-direction:column;gap:10px;min-width:0}
+.ss i{width:44px;height:44px;border-radius:12px;background:var(--sun);color:#1a1206;display:grid;place-items:center}
+.ss i svg{width:22px;height:22px}
+.ss h3{font-size:15px;overflow-wrap:anywhere;text-transform:uppercase;line-height:1.1}
+.ss p{font-size:13.5px;color:rgba(255,255,255,.62);line-height:1.45}
+.ss a{margin-top:auto;font-size:13.5px;font-weight:700;color:var(--sun2)}
+.steps{display:grid;gap:10px;margin-top:30px}
+.st{display:grid;grid-template-columns:56px 1fr;gap:14px;align-items:center;background:var(--paper);border:1px solid var(--line);border-radius:18px;padding:14px}
+.st .n{width:56px;height:56px;border-radius:14px;background:var(--ink);color:var(--sun2);display:grid;place-items:center;font-size:22px}
+.st h3{font-size:17.5px;text-transform:uppercase}
+.st p{font-size:14px;color:var(--mut);margin-top:2px}
+.st:last-child{background:var(--sun);border-color:var(--sun)}.st:last-child .n{background:#1a1206;color:var(--sun2)}.st:last-child p{color:#3a2508}
+.works{display:grid;gap:12px;margin-top:30px}
+.wk{position:relative;border-radius:20px;overflow:hidden;background:#ddd}
+.wk img{width:100%;aspect-ratio:4/3.6;object-fit:cover}
+.wk .cap{position:absolute;left:10px;right:10px;bottom:10px;background:rgba(20,22,27,.86);backdrop-filter:blur(8px);-webkit-backdrop-filter:blur(8px);color:#fff;border-radius:14px;padding:12px 14px;display:flex;justify-content:space-between;align-items:center;gap:10px}
+.wk .cap b{font:800 15px Archivo,Inter,sans-serif;text-transform:uppercase;display:block}
+.wk .cap small{font-size:12.5px;color:rgba(255,255,255,.65)}
+.wk .cap span{font-size:16px;color:#4fe0ad;white-space:nowrap;text-align:right}
+.wk .cap span small{display:block;font:500 11px Inter;color:rgba(255,255,255,.55)}
+.gar{background:linear-gradient(135deg,var(--sun2),var(--sun));color:#1a1206;position:relative;overflow:hidden}
+.gar:after{content:"";position:absolute;right:-60px;top:-30px;width:300px;height:220px;background:repeating-linear-gradient(90deg,rgba(20,22,27,.12) 0 2px,transparent 2px 40px),repeating-linear-gradient(0deg,rgba(20,22,27,.12) 0 2px,transparent 2px 40px);transform:skewX(-24deg)}
+.gar .wrap{position:relative;z-index:1}
+.gar .kick{color:#1a1206}.gar .kick:before{background:#1a1206}
+.gar h2 em{color:#fff}
+.gg{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:26px}
+.gi{background:var(--ink);color:#fff;border-radius:18px;padding:18px 15px}
+.gi b{font-size:40px;line-height:1;color:var(--sun2)}
+.gi b small{font-size:15px;margin-left:3px;color:rgba(255,255,255,.6)}
+.gi h3{font-size:15.5px;text-transform:uppercase;margin:10px 0 3px}
+.gi p{font-size:13px;color:rgba(255,255,255,.6);line-height:1.45}
+.ofl{display:grid;gap:12px;margin-top:28px}
+.ofr{background:var(--paper);border:1px solid var(--line);border-radius:18px;padding:16px;display:grid;grid-template-columns:1fr auto;gap:12px 14px;align-items:center}
+.ofr .t{display:flex;gap:12px;align-items:center;min-width:0}
+.ofr .ic{width:48px;height:48px;border-radius:13px;background:var(--bg);display:grid;place-items:center;flex:none;color:var(--ink)}
+.ofr .ic svg{width:24px;height:24px}
+.ofr h3{font-size:18px;text-transform:uppercase}
+.ofr .sp{font-size:13px;color:var(--mut);margin-top:2px}
+.ofr .pr{text-align:right}
+.ofr .pr small{font-size:11.5px;color:var(--mut);display:block}
+.ofr .pr b{font-size:22px;line-height:1.1;display:block}
+.ofr .pr em{font-style:normal;font-size:12.5px;color:var(--eco);font-weight:700}
+.ofr .btn{grid-column:1/-1;padding:14px;font-size:15px}
+.ofr.hot{border:2px solid var(--sun);position:relative}
+.ofr.hot:before{content:"Oferta do mês";position:absolute;top:-11px;left:16px;background:var(--sun);color:#1a1206;font:800 11px Inter;text-transform:uppercase;letter-spacing:.08em;padding:5px 9px;border-radius:7px}
+.ofr.hot .ic{background:var(--sun);color:#1a1206}
+.note{font-size:12.5px;color:var(--mut);margin-top:16px}
+.loc{background:var(--ink);color:#fff}
+.loc .lead{color:rgba(255,255,255,.66)}
+.lg2{display:grid;gap:12px;margin-top:28px}
+.map{border-radius:22px;overflow:hidden;background:#222;aspect-ratio:4/3.2;border:1px solid rgba(255,255,255,.08)}
+.map iframe{width:100%;height:100%;border:0;display:block}
+.cts{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.cto{background:#1f222a;border:1px solid rgba(255,255,255,.08);border-radius:18px;padding:16px 14px;display:flex;flex-direction:column;gap:10px;min-width:0}
+.cto i{width:44px;height:44px;border-radius:12px;background:rgba(255,255,255,.08);color:var(--sun2);display:grid;place-items:center;flex:none}
+.cto i svg{width:21px;height:21px}
+.cto small{display:block;font-size:12px;color:rgba(255,255,255,.55);font-weight:600;text-transform:uppercase;letter-spacing:.08em}
+.cto b{font:700 15.5px "Space Grotesk",Inter,sans-serif;word-break:break-word}
+.cto.wa{background:var(--wa);border-color:var(--wa)}.cto.wa i{background:rgba(255,255,255,.2);color:#fff}.cto.wa small{color:rgba(255,255,255,.85)}
+.cto.big{grid-column:1/-1;flex-direction:row;align-items:center}
+.faq{margin-top:28px;display:grid;gap:10px}
+.fq{background:var(--paper);border:1px solid var(--line);border-radius:16px;overflow:hidden}
+.fq button{width:100%;text-align:left;background:none;border:0;padding:18px;font:700 16px Inter;color:var(--ink);display:flex;justify-content:space-between;gap:14px;align-items:center;cursor:pointer}
+.fq button i{width:30px;height:30px;border-radius:9px;background:var(--bg);display:grid;place-items:center;flex:none;font-style:normal;transition:transform .25s}
+.fq.op button i{transform:rotate(45deg);background:var(--sun);color:#1a1206}
+.fq .a{max-height:0;overflow:hidden;transition:max-height .3s}
+.fq .a p{padding:0 18px 18px;color:var(--mut);font-size:15px}
+.fin{padding:0 0 72px}
+.fbox{background:var(--ink);color:#fff;border-radius:26px;padding:34px 22px;text-align:center;position:relative;overflow:hidden}
+.fbox:before{content:"";position:absolute;left:50%;top:-140px;width:320px;height:320px;margin-left:-160px;border-radius:50%;background:radial-gradient(circle,rgba(255,150,40,.45),transparent 65%)}
+.fbox>*{position:relative}
+.fbox h2{color:#fff}
+.fbox p{color:rgba(255,255,255,.72);max-width:520px;margin:0 auto}
+.fbox .btn{margin-top:22px}
+footer{background:#0e0f13;color:rgba(255,255,255,.66);padding:44px 0 34px;text-align:center;font-size:14px}
+footer .lg{width:190px;margin:0 auto 16px}
+footer nav{display:flex;flex-wrap:wrap;justify-content:center;gap:8px 18px;margin:16px 0;font-weight:600;color:#fff}
+footer p+p{margin-top:6px}
+.fwa{position:fixed;right:16px;bottom:16px;z-index:60;width:60px;height:60px;border-radius:50%;background:var(--wa);display:grid;place-items:center;box-shadow:0 14px 30px -8px rgba(31,170,89,.75)}
+.fwa svg{width:32px;height:32px;color:#fff}
+.rv{opacity:0;transform:translateY(20px);transition:opacity .7s,transform .7s}
+.rv.in{opacity:1;transform:none}
+@media(min-width:720px){
+ .top .r{display:flex}
+ .hero .cta{grid-template-columns:auto auto;justify-content:start}
+ .stats .g{grid-template-columns:repeat(4,1fr)}
+ .sv-main{grid-template-columns:repeat(3,1fr)}.sm{min-height:440px}
+ .sv-sub{grid-template-columns:repeat(3,1fr)}
+ .works{grid-template-columns:repeat(3,1fr)}.wk img{aspect-ratio:4/5}
+ .gg{grid-template-columns:repeat(4,1fr)}
+ .ofl{grid-template-columns:1fr 1fr}
+}
+@media(min-width:980px){
+ section{padding:100px 0}
+ .hd nav{display:flex}
+ .hero .wrap{padding-top:120px;padding-bottom:70px}
+ .hero .bgi:after{background:linear-gradient(90deg,rgba(20,22,27,.94) 0%,rgba(20,22,27,.7) 50%,rgba(20,22,27,.25) 100%)}
+ .about .grid{grid-template-columns:.9fr 1.1fr;gap:60px;align-items:center}
+ .steps{grid-template-columns:repeat(5,1fr)}
+ .st{grid-template-columns:1fr;align-items:start;padding:20px}
+ .lg2{grid-template-columns:1.1fr .9fr;gap:16px}.map{aspect-ratio:auto;min-height:420px}
+ .fbox{padding:64px}
+}
+@media(prefers-reduced-motion:reduce){.rv{opacity:1;transform:none}.tkr div,.tkr2 div{animation:none}}
+</style>
+</head>
+<body>
+<svg width="0" height="0" style="position:absolute"><symbol id="wa" viewBox="0 0 24 24"><path fill="currentColor" d="M17.47 14.38c-.3-.15-1.76-.87-2.03-.97-.27-.1-.47-.15-.67.15-.2.3-.77.97-.94 1.17-.17.2-.35.22-.65.07-.3-.15-1.26-.46-2.4-1.480-.89-.79-1.49-1.77-1.66-2.07-.17-.3-.02-.46.13-.61.13-.13.3-.35.45-.52.15-.17.2-.3.3-.5.1-.2.05-.37-.02-.52-.08-.15-.67-1.62-.92-2.22-.24-.58-.49-.5-.67-.51h-.57c-.2 0-.52.07-.79.37-.27.3-1.04 1.02-1.04 2.48s1.06 2.88 1.21 3.08c.15.2 2.1 3.2 5.08 4.48.71.31 1.26.49 1.69.63.71.23 1.360.2 1.87.12.57-.08 1.76-.72 2.01-1.41.25-.7.25-1.29.17-1.41-.07-.13-.27-.2-.57-.35zM12.05 21.5h-.01a9.4 9.4 0 0 1-4.8-1.31l-.34-.2-3.56.93.95-3.47-.22-.36a9.4 9.4 0 0 1-1.44-5.01c0-5.2 4.23-9.43 9.43-9.43 2.52 0 4.89.98 6.670 2.77a9.37 9.37 0 0 1 2.76 6.67c0 5.2-4.23 9.42-9.44 9.42zm8.03-17.45A11.27 11.27 0 0 0 12.05.72C5.8.72.7 5.8.7 12.06c0 2 .52 3.95 1.52 5.67L.6 23.6l6.02-1.58a11.3 11.3 0 0 0 5.42 1.38h.01c6.25 0 11.34-5.09 11.35-11.34 0-3.03-1.18-5.88-3.32-8.01z"/></symbol>
+<symbol id="pin" viewBox="0 0 24 24"><path fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" d="M12 22s7-6.2 7-12a7 7 0 1 0-14 0c0 5.8 7 12 7 12z"/><circle cx="12" cy="10" r="2.5" fill="none" stroke="currentColor" stroke-width="2"/></symbol>
+<symbol id="ig" viewBox="0 0 24 24"><rect x="3" y="3" width="18" height="18" rx="5" fill="none" stroke="currentColor" stroke-width="2"/><circle cx="12" cy="12" r="4" fill="none" stroke="currentColor" stroke-width="2"/><circle cx="17.5" cy="6.5" r="1.2" fill="currentColor"/></symbol>
+<symbol id="tel" viewBox="0 0 24 24"><path fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" d="M22 16.9v3a2 2 0 0 1-2.2 2 19.8 19.8 0 0 1-8.6-3.1 19.5 19.5 0 0 1-6-6A19.8 19.8 0 0 1 2.1 4.2 2 2 0 0 1 4.1 2h3a2 2 0 0 1 2 1.7c.1.9.4 1.8.7 2.7a2 2 0 0 1-.5 2.1L8 9.8a16 16 0 0 0 6 6l1.3-1.3a2 2 0 0 1 2.1-.4c.9.3 1.8.6 2.7.7a2 2 0 0 1 1.7 2z"/></symbol>
+<symbol id="clk" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9" fill="none" stroke="currentColor" stroke-width="2"/><path d="M12 7v5l3 2" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></symbol>
+<symbol id="arr" viewBox="0 0 24 24"><path d="M5 12h14M13 6l6 6-6 6" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/></symbol>
+<symbol id="ok" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10" fill="currentColor" opacity=".15"/><path d="M7.5 12.5l3 3 6-6.5" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/></symbol></svg>
+
+<div class="top"><div class="wrap">
+  <a href="https://www.google.com/maps/search/?api=1&query=Vit%C3%B3ria+da+Conquista+-+BA" target="_blank" rel="noopener"><svg><use href="#pin"/></svg>Av. Integração, 1450 · Vitória da Conquista - BA</a>
+  <div class="r"><a data-wa="Olá, Solvanta!" href="#"><svg><use href="#wa"/></svg>(77) 99999-0000</a><a href="#"><svg><use href="#ig"/></svg>@solvantaenergia</a><span><svg style="width:14px;height:14px;color:var(--sun2);vertical-align:-2px"><use href="#clk"/></svg> Seg a sex 8h–18h · Sáb 8h–12h</span></div>
+</div></div>
+
+<header class="hd"><div class="wrap">
+  <a href="#topo" class="lg" aria-label="Solvanta Energia Solar"><svg viewBox="0 0 236 52" xmlns="http://www.w3.org/2000/svg"><g transform="translate(0,2)"><defs><linearGradient id="sg" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#ffc23d"/><stop offset="1" stop-color="#ff6b1a"/></linearGradient></defs><circle cx="30" cy="18" r="10" fill="url(#sg)"/><path d="M5 41 13.5 23H45L36.5 41Z" fill="#15171c"/><path d="M24 23 15.5 41M34.5 23 26 41M9.2 32H40.8" stroke="#f6f3ec" stroke-width="1.7" fill="none"/></g><text x="56" y="30" font-family="Space Grotesk,Inter,sans-serif" font-weight="700" font-size="25" letter-spacing="1.5" fill="#15171c">SOLVANTA</text><text x="57" y="45" font-family="Inter,sans-serif" font-weight="600" font-size="9.6" letter-spacing="3.6" fill="#ff7a1a">ENERGIA SOLAR</text></svg></a>
+  <nav><a href="#empresa">A empresa</a><a href="#servicos">Serviços</a><a href="#obras">Obras</a><a href="#ofertas">Ofertas</a><a href="#contato">Contato</a></nav>
+  <a class="btn b-wa" data-wa="Olá, Solvanta! Quero um orçamento de energia solar." href="#"><svg><use href="#wa"/></svg>WhatsApp</a>
+</div></header>
+
+<main id="topo">
+<section class="hero">
+  <div class="bgi"><img src="img/hero.jpg" alt="Casa com energia solar instalada" fetchpriority="high"></div>
+  <div class="wrap">
+    <span class="badge"><i></i>Energia solar em Vitória da Conquista e região</span>
+    <h1>Energia solar com <em>quem entende</em> do sol da Bahia.</h1>
+    <p>Projeto, instalação, financiamento e manutenção de sistemas solares para casas, comércios e propriedades rurais. Equipe própria e economia de até 95% na conta de luz.</p>
+    <div class="cta">
+      <a class="btn b-wa" data-wa="Olá, Solvanta! Quero um orçamento de energia solar." href="#"><svg><use href="#wa"/></svg>Pedir orçamento no WhatsApp</a>
+      <a class="btn b-gl" href="#servicos">Ver serviços<svg><use href="#arr"/></svg></a>
+    </div>
+    <div class="qk">
+      <a data-wa="Olá, Solvanta!" href="#"><i><svg><use href="#wa"/></svg></i>WhatsApp</a>
+      <a href="https://www.google.com/maps/search/?api=1&query=Vit%C3%B3ria+da+Conquista+-+BA" target="_blank" rel="noopener"><i><svg><use href="#pin"/></svg></i>Como chegar</a>
+      <a href="tel:+5577999990000"><i><svg><use href="#tel"/></svg></i>Ligar agora</a>
+    </div>
+  </div>
+</section>
+<div class="tkr" aria-hidden="true"><div><span>Energia solar residencial</span><span>Comercial e industrial</span><span>Rural e agro</span><span>Financiamento em até 72x</span><span>Limpeza de placas</span><span>Manutenção</span><span>Monitoramento</span><span>Energia solar residencial</span><span>Comercial e industrial</span><span>Rural e agro</span><span>Financiamento em até 72x</span><span>Limpeza de placas</span><span>Manutenção</span><span>Monitoramento</span><span>Energia solar residencial</span><span>Comercial e industrial</span><span>Rural e agro</span><span>Financiamento em até 72x</span><span>Limpeza de placas</span><span>Manutenção</span><span>Monitoramento</span><span>Energia solar residencial</span><span>Comercial e industrial</span><span>Rural e agro</span><span>Financiamento em até 72x</span><span>Limpeza de placas</span><span>Manutenção</span><span>Monitoramento</span></div></div>
+<div class="tkr2" aria-hidden="true"><div><span>Vitória da Conquista</span><span>Barra do Choça</span><span>Planalto</span><span>Poções</span><span>Anagé</span><span>Itambé</span><span>Cândido Sales</span><span>Belo Campo</span><span>e todo o sudoeste baiano</span><span>Vitória da Conquista</span><span>Barra do Choça</span><span>Planalto</span><span>Poções</span><span>Anagé</span><span>Itambé</span><span>Cândido Sales</span><span>Belo Campo</span><span>e todo o sudoeste baiano</span><span>Vitória da Conquista</span><span>Barra do Choça</span><span>Planalto</span><span>Poções</span><span>Anagé</span><span>Itambé</span><span>Cândido Sales</span><span>Belo Campo</span><span>e todo o sudoeste baiano</span></div></div>
+
+<section class="stats"><div class="wrap g">
+  <div class="s rv"><b class="num">+620</b><span>sistemas instalados</span></div>
+  <div class="s rv"><b class="num">9 anos</b><span>de mercado na Bahia</span></div>
+  <div class="s rv"><b class="num">4,8 MWp</b><span>de potência entregue</span></div>
+  <div class="s rv"><b class="num">até 95%</b><span>de economia na conta</span></div>
+</div></section>
+
+<section class="about" id="empresa"><div class="wrap grid">
+  <div class="pic rv"><img src="img/sobre.jpg" alt="Equipe Solvanta instalando painéis solares" loading="lazy"><div class="tag"><b class="num">100%</b><span>equipe própria,<br>sem terceirizar</span></div></div>
+  <div class="txt rv">
+    <span class="kick">A empresa</span>
+    <h2>Somos a <em>Solvanta.</em></h2>
+    <p class="lead">Nascemos em Vitória da Conquista para fazer o sol trabalhar a favor de quem paga a conta de luz. Há 9 anos projetamos e instalamos sistemas de energia solar em todo o sudoeste baiano.</p>
+    <p class="lead">Do primeiro orçamento à homologação na distribuidora, cuidamos de tudo com engenheiros e técnicos da casa, equipamentos de primeira linha e acompanhamento depois de ligado.</p>
+    <div class="chk">
+      <div><svg><use href="#ok"/></svg>Engenheiro responsável e ART</div>
+      <div><svg><use href="#ok"/></svg>Instalação com equipe própria</div>
+      <div><svg><use href="#ok"/></svg>Homologação na distribuidora</div>
+      <div><svg><use href="#ok"/></svg>Monitoramento pelo celular</div>
+    </div>
+    <a class="btn b-ink" data-wa="Olá, Solvanta! Quero conhecer melhor a empresa e fazer um orçamento." href="#"><svg><use href="#wa"/></svg>Falar com a Solvanta</a>
+  </div>
+</div></section>
+
+<section class="svc" id="servicos"><div class="wrap">
+  <div class="rv">
+    <span class="kick">Serviços</span>
+    <h2 style="color:#fff">O que a gente <em>faz.</em></h2>
+    <p class="lead">Soluções completas em energia solar, do projeto à manutenção, para cada tipo de cliente.</p>
+  </div>
+  <div class="sv-main">
+    <a class="sm rv" data-wa="Olá, Solvanta! Quero energia solar para minha casa." href="#"><img src="img/s1.jpg" alt="Energia solar residencial" loading="lazy"><div class="c"><span class="n">01 · RESIDENCIAL</span><h3>Energia solar para casas</h3><p>Ar-condicionado, chuveiro e geladeira ligados sem medo da conta no fim do mês.</p><span class="go">Pedir orçamento<svg><use href="#arr"/></svg></span></div></a>
+    <a class="sm rv" data-wa="Olá, Solvanta! Quero energia solar para minha empresa." href="#"><img src="img/s2.jpg" alt="Energia solar comercial" loading="lazy"><div class="c"><span class="n">02 · COMERCIAL</span><h3>Comércios e empresas</h3><p>Menos custo fixo e mais margem. Projetos para lojas, mercados, galpões e indústrias.</p><span class="go">Pedir orçamento<svg><use href="#arr"/></svg></span></div></a>
+    <a class="sm rv" data-wa="Olá, Solvanta! Quero energia solar para minha propriedade rural." href="#"><img src="img/s3.jpg" alt="Energia solar rural" loading="lazy"><div class="c"><span class="n">03 · RURAL E AGRO</span><h3>Fazendas e irrigação</h3><p>Usinas no solo para irrigação, bombeamento, ordenha e toda a propriedade.</p><span class="go">Pedir orçamento<svg><use href="#arr"/></svg></span></div></a>
+  </div>
+  <div class="sv-sub">
+    <div class="ss rv"><i><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="5" width="20" height="14" rx="2"/><path d="M2 10h20M6 15h4"/></svg></i><h3>Financiamento solar</h3><p>Até 72x, sem entrada e com até 120 dias para a 1ª parcela.</p><a data-wa="Olá, Solvanta! Quero simular um financiamento solar." href="#">Simular →</a></div>
+    <div class="ss rv"><i><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3v4M12 17v4M3 12h4M17 12h4"/><circle cx="12" cy="12" r="4"/></svg></i><h3>Limpeza de placas</h3><p>Placas sujas geram menos. Limpeza técnica e segura.</p><a data-wa="Olá, Solvanta! Quero agendar a limpeza das minhas placas." href="#">Agendar →</a></div>
+    <div class="ss rv"><i><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14.7 6.3a1 1 0 0 0 0 1.4l1.6 1.6a1 1 0 0 0 1.4 0l3.8-3.8a6 6 0 0 1-7.9 7.9l-6.9 6.9a2.1 2.1 0 0 1-3-3l6.9-6.9a6 6 0 0 1 7.9-7.9z"/></svg></i><h3>Manutenção</h3><p>Revisão preventiva, inversor e correção de falhas.</p><a data-wa="Olá, Solvanta! Preciso de manutenção no meu sistema solar." href="#">Chamar →</a></div>
+    <div class="ss rv"><i><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="5" y="2" width="14" height="20" rx="3"/><path d="M9 14l2-3 2 2 2-4M11 18h2"/></svg></i><h3>Monitoramento</h3><p>Acompanhe a geração do seu sistema pelo celular, todo dia.</p><a data-wa="Olá, Solvanta! Quero saber sobre o monitoramento." href="#">Saber mais →</a></div>
+    <div class="ss rv"><i><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 5v14M5 12h14"/></svg></i><h3>Ampliação</h3><p>Seu consumo aumentou? Ampliamos o sistema que você já tem.</p><a data-wa="Olá, Solvanta! Quero ampliar meu sistema solar." href="#">Ampliar →</a></div>
+    <div class="ss rv"><i><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M13 2L4 14h7l-1 8 9-12h-7z"/></svg></i><h3>Homologação</h3><p>Cuidamos de toda a papelada com a distribuidora.</p><a data-wa="Olá, Solvanta! Quero ajuda com homologação." href="#">Falar →</a></div>
+  </div>
+</div></section>
+
+<section id="processo"><div class="wrap">
+  <div class="rv"><span class="kick">Como funciona</span><h2>Do orçamento ao <em>sol na tomada.</em></h2></div>
+  <div class="steps">
+    <div class="st rv"><div class="n num">1</div><div><h3>Visita técnica</h3><p>Analisamos sua conta, telhado e rede, sem custo.</p></div></div>
+    <div class="st rv"><div class="n num">2</div><div><h3>Projeto</h3><p>O engenheiro dimensiona e você aprova a proposta.</p></div></div>
+    <div class="st rv"><div class="n num">3</div><div><h3>Homologação</h3><p>Damos entrada e acompanhamos na distribuidora.</p></div></div>
+    <div class="st rv"><div class="n num">4</div><div><h3>Instalação</h3><p>Equipe própria instala em 1 a 3 dias.</p></div></div>
+    <div class="st rv"><div class="n num">5</div><div><h3>Economia</h3><p>Sistema ligado e conta de luz lá embaixo.</p></div></div>
+  </div>
+</div></section>
+
+<section id="obras" style="padding-top:0"><div class="wrap">
+  <div class="rv"><span class="kick">Obras entregues</span><h2>Telhados que já <em>geram economia.</em></h2></div>
+  <div class="works">
+    <div class="wk rv"><img src="img/obra1.jpg" alt="Residência com energia solar" loading="lazy"><div class="cap"><div><b>Residência</b><small>Vitória da Conquista · 6,1 kWp</small></div><span class="num">-R$ 540<small>por mês</small></span></div></div>
+    <div class="wk rv"><img src="img/obra2.jpg" alt="Galpão comercial com energia solar" loading="lazy"><div class="cap"><div><b>Galpão comercial</b><small>Barra do Choça · 42,7 kWp</small></div><span class="num">-R$ 3.900<small>por mês</small></span></div></div>
+    <div class="wk rv"><img src="img/obra3.jpg" alt="Fazenda com energia solar" loading="lazy"><div class="cap"><div><b>Fazenda · irrigação</b><small>Planalto · 75 kWp</small></div><span class="num">-R$ 7.200<small>por mês</small></span></div></div>
+  </div>
+</div></section>
+
+<section class="gar"><div class="wrap">
+  <div class="rv"><span class="kick">Garantias</span><h2>Investimento seguro <em>por décadas.</em></h2></div>
+  <div class="gg">
+    <div class="gi rv"><b class="num">25<small>anos</small></b><h3>Performance</h3><p>Geração das placas garantida pelo fabricante.</p></div>
+    <div class="gi rv"><b class="num">12<small>anos</small></b><h3>Placas</h3><p>Contra defeitos de fabricação.</p></div>
+    <div class="gi rv"><b class="num">10<small>anos</small></b><h3>Inversor</h3><p>Garantia estendida do equipamento.</p></div>
+    <div class="gi rv"><b class="num">2<small>anos</small></b><h3>Instalação</h3><p>Nossa garantia sobre o serviço.</p></div>
+  </div>
+</div></section>
+
+<section id="ofertas"><div class="wrap">
+  <div class="rv"><span class="kick">Ofertas do mês</span><h2>Kits completos <em>instalados.</em></h2><p class="lead">Equipamentos, estrutura, instalação e homologação inclusos. Escolha pelo valor da sua conta de luz.</p></div>
+  <div class="ofl"><div class="ofr rv"><div class="t"><span class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 11l9-7 9 7"/><path d="M5 10v10h14V10"/></svg></span><div><h3>Kit Casa</h3><p class="sp">4 placas · 2,44 kWp · conta até R$ 350</p></div></div><div class="pr"><small>à vista</small><b class="num">R$ 9.890</b><em>ou 72x R$ 239</em></div><a class="btn b-ink" data-wa="Olá, Solvanta! Tenho interesse no Kit Casa (4 placas · 2,44 kWp)." href="#"><svg><use href="#wa"/></svg>Quero este kit</a></div>
+    <div class="ofr rv hot"><div class="t"><span class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 11l9-7 9 7"/><path d="M5 10v10h14V10"/></svg></span><div><h3>Kit Família</h3><p class="sp">8 placas · 4,88 kWp · conta até R$ 700</p></div></div><div class="pr"><small>à vista</small><b class="num">R$ 16.900</b><em>ou 72x R$ 408</em></div><a class="btn b-sun" data-wa="Olá, Solvanta! Tenho interesse no Kit Família (8 placas · 4,88 kWp)." href="#"><svg><use href="#wa"/></svg>Quero este kit</a></div>
+    <div class="ofr rv"><div class="t"><span class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 9l1.5-5h15L21 9"/><path d="M3 9h18v11H3z"/><path d="M9 20v-6h6v6"/></svg></span><div><h3>Kit Negócio</h3><p class="sp">16 placas · 9,76 kWp · conta até R$ 1.500</p></div></div><div class="pr"><small>à vista</small><b class="num">R$ 30.900</b><em>ou 72x R$ 745</em></div><a class="btn b-ink" data-wa="Olá, Solvanta! Tenho interesse no Kit Negócio (16 placas · 9,76 kWp)." href="#"><svg><use href="#wa"/></svg>Quero este kit</a></div>
+    <div class="ofr rv"><div class="t"><span class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22V12"/><path d="M12 12c0-4 3-7 8-7 0 5-3 7-8 7z"/><path d="M12 15c0-3-2.5-5.5-7-5.5 0 4 2.5 5.5 7 5.5z"/></svg></span><div><h3>Kit Campo</h3><p class="sp">34 placas · 20,74 kWp · conta até R$ 3.000</p></div></div><div class="pr"><small>à vista</small><b class="num">R$ 58.900</b><em>ou 72x R$ 1.420</em></div><a class="btn b-ink" data-wa="Olá, Solvanta! Tenho interesse no Kit Campo (34 placas · 20,74 kWp)." href="#"><svg><use href="#wa"/></svg>Quero este kit</a></div></div>
+  <p class="note">Valores de referência, sujeitos à visita técnica e à análise de crédito. Placas de 610 W e inversor de primeira linha.</p>
+</div></section>
+
+<section class="loc" id="contato"><div class="wrap">
+  <div class="rv"><span class="kick">Onde estamos</span><h2 style="color:#fff">Visite a <em>Solvanta.</em></h2><p class="lead">Atendemos Vitória da Conquista e todo o sudoeste baiano. Fale com a gente pelo canal que preferir.</p></div>
+  <div class="lg2">
+    <div class="map rv"><iframe loading="lazy" title="Mapa" src="https://www.google.com/maps?q=Vit%C3%B3ria+da+Conquista+-+BA&output=embed" referrerpolicy="no-referrer-when-downgrade"></iframe></div>
+    <div class="cts rv">
+      <a class="cto wa big" data-wa="Olá, Solvanta! Quero um orçamento de energia solar." href="#"><i><svg><use href="#wa"/></svg></i><div><small>WhatsApp</small><b>(77) 99999-0000</b></div></a>
+      <a class="cto" href="https://www.google.com/maps/search/?api=1&query=Vit%C3%B3ria+da+Conquista+-+BA" target="_blank" rel="noopener"><i><svg><use href="#pin"/></svg></i><div><small>Endereço</small><b>Av. Integração, 1450</b></div></a>
+      <a class="cto" href="tel:+557730000000"><i><svg><use href="#tel"/></svg></i><div><small>Telefone</small><b>(77) 3000-0000</b></div></a>
+      <a class="cto" href="#"><i><svg><use href="#ig"/></svg></i><div><small>Instagram</small><b>@solvantaenergia</b></div></a>
+      <div class="cto"><i><svg><use href="#clk"/></svg></i><div><small>Horário</small><b>Seg–Sex 8h–18h<br>Sáb 8h–12h</b></div></div>
+    </div>
+  </div>
+</div></section>
+
+<section id="duvidas"><div class="wrap">
+  <div class="rv"><span class="kick">Dúvidas</span><h2>Perguntas <em>frequentes.</em></h2></div>
+  <div class="faq rv">
+    <div class="fq"><button type="button">Funciona em dia nublado?<i>+</i></button><div class="a"><p>Sim. A geração diminui, mas não para. O sistema é dimensionado pela média do ano e o excedente dos dias de sol vira crédito.</p></div></div>
+    <div class="fq"><button type="button">Vou zerar a conta de luz?<i>+</i></button><div class="a"><p>A conta cai muito, mas sempre fica a taxa mínima da distribuidora e a parte da Lei 14.300. Na prática, a economia fica entre 85% e 95%.</p></div></div>
+    <div class="fq"><button type="button">Em quanto tempo o sistema se paga?<i>+</i></button><div class="a"><p>Em média de 3 a 5 anos, dependendo do consumo e da forma de pagamento. Depois disso, a economia segue por mais de 20 anos.</p></div></div>
+    <div class="fq"><button type="button">Quanto tempo leva para instalar?<i>+</i></button><div class="a"><p>A instalação leva de 1 a 3 dias. Somando projeto e aprovação da distribuidora, o sistema costuma ser ligado de 30 a 45 dias após o contrato.</p></div></div>
+  </div>
+</div></section>
+
+<section class="fin"><div class="wrap">
+  <div class="fbox rv">
+    <span class="kick">Orçamento sem custo</span>
+    <h2>Mande a foto da sua <em>conta de luz.</em></h2>
+    <p>Em poucos minutos você recebe a proposta com a economia exata e as condições de pagamento.</p>
+    <a class="btn b-wa" data-wa="Olá, Solvanta! Vou mandar a foto da minha conta de luz para um orçamento." href="#"><svg><use href="#wa"/></svg>Enviar pelo WhatsApp</a>
+  </div>
+</div></section>
+</main>
+
+<footer><div class="wrap">
+  <div class="lg"><svg viewBox="0 0 236 52" xmlns="http://www.w3.org/2000/svg"><g transform="translate(0,2)"><defs><linearGradient id="sg" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#ffc23d"/><stop offset="1" stop-color="#ff6b1a"/></linearGradient></defs><circle cx="30" cy="18" r="10" fill="url(#sg)"/><path d="M5 41 13.5 23H45L36.5 41Z" fill="#ffffff"/><path d="M24 23 15.5 41M34.5 23 26 41M9.2 32H40.8" stroke="#15171c" stroke-width="1.7" fill="none"/></g><text x="56" y="30" font-family="Space Grotesk,Inter,sans-serif" font-weight="700" font-size="25" letter-spacing="1.5" fill="#ffffff">SOLVANTA</text><text x="57" y="45" font-family="Inter,sans-serif" font-weight="600" font-size="9.6" letter-spacing="3.6" fill="#ff7a1a">ENERGIA SOLAR</text></svg></div>
+  <p>Energia solar para casas, comércios e propriedades rurais.</p>
+  <nav><a href="#empresa">A empresa</a><a href="#servicos">Serviços</a><a href="#obras">Obras</a><a href="#ofertas">Ofertas</a><a href="#contato">Contato</a></nav>
+  <p>Av. Integração, 1450 · Vitória da Conquista - BA</p>
+  <p>© <span id="yr">2026</span> Solvanta Energia Solar. Todos os direitos reservados.</p>
+  <div class="nitro-credit" style="margin:22px auto 0;max-width:360px;display:flex;align-items:center;justify-content:space-between;gap:12px;padding:10px 10px 10px 12px;border-radius:16px;background:rgba(128,128,128,.10);border:1px solid rgba(128,128,128,.22);text-align:left;font-family:inherit"><a href="https://www.instagram.com/agencia.nitro/" target="_blank" rel="noopener" style="display:flex;align-items:center;gap:10px;color:inherit;text-decoration:none;min-width:0"><img src="data:image/png;base64,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" alt="Agência Nitro" width="36" height="36" style="width:36px;height:36px;border-radius:50%;flex:none;margin:0;box-shadow:0 4px 12px rgba(225,0,20,.35)"><span style="display:block;line-height:1.2"><span style="display:block;font-size:10.5px;opacity:.7;letter-spacing:.04em">Site desenvolvido por</span><b style="display:block;font-size:14px">Agência Nitro</b></span></a><a href="https://www.instagram.com/agencia.nitro/" target="_blank" rel="noopener" aria-label="Instagram da Agência Nitro" style="display:inline-flex;align-items:center;gap:6px;flex:none;padding:9px 12px;border-radius:12px;background:linear-gradient(45deg,#f9a03f,#e1306c 50%,#833ab4);color:#fff;font-size:12.5px;font-weight:700;text-decoration:none;white-space:nowrap"><svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="2.2" style="flex:none"><rect x="3" y="3" width="18" height="18" rx="5"/><circle cx="12" cy="12" r="4"/><circle cx="17.5" cy="6.5" r="1.2" fill="currentColor" stroke="none"/></svg>@agencia.nitro</a></div>
+</div></footer>
+
+<a class="fwa" data-wa="Olá, Solvanta! Quero saber mais sobre energia solar." href="#" aria-label="WhatsApp"><svg><use href="#wa"/></svg></a>
+<script>
+var WA="5577999990000";
+document.querySelectorAll("[data-wa]").forEach(function(a){a.href="https://wa.me/"+WA+"?text="+encodeURIComponent(a.dataset.wa);a.target="_blank";a.rel="noopener"});
+document.getElementById("yr").textContent=new Date().getFullYear();
+document.querySelectorAll(".fq button").forEach(function(b){b.onclick=function(){var f=b.parentNode,a=f.querySelector(".a"),o=f.classList.toggle("op");a.style.maxHeight=o?a.scrollHeight+"px":0}});
+if("IntersectionObserver" in window){var io=new IntersectionObserver(function(es){es.forEach(function(e){if(e.isIntersecting){e.target.classList.add("in");io.unobserve(e.target)}})},{threshold:.1});document.querySelectorAll(".rv").forEach(function(el){io.observe(el)})}else document.querySelectorAll(".rv").forEach(function(el){el.classList.add("in")});
+</script>
+</body>
+</html>
