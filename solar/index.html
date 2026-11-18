@@ -163,8 +163,10 @@ footer p+p{margin-top:4px}
 }
 
 /* v7: uma tela por seção, imagens menores */
-main>section{min-height:calc(100svh - 102px);display:flex;flex-direction:column;justify-content:center;padding:64px 0}
-main>section.hero{padding:0}
+main>section{padding:72px 0}
+main>section.hero{padding:0;min-height:calc(100svh - 102px);display:flex;flex-direction:column;justify-content:center}
+#duvidas{padding-bottom:56px}
+.fin{padding:64px 0!important}
 main>section>.wrap{width:100%}
 .hero .wrap{padding-top:40px;padding-bottom:70px}
 .obt{background:var(--ink);color:#fff;border-radius:18px;padding:20px;margin-bottom:14px}
@@ -200,7 +202,7 @@ main>section>.wrap{width:100%}
 .emp .pic img{aspect-ratio:16/10}
 .tl{gap:22px}
 .total{margin-top:28px;padding-top:20px}
-@media(min-width:760px){main>section{padding:90px 0}.obl{grid-template-columns:repeat(3,1fr)}.obt{text-align:center}.ob{grid-template-columns:72px 1fr}.oe{grid-column:1/-1;text-align:left;border-top:1px solid var(--line);padding-top:10px}.sv img{height:200px}.map{aspect-ratio:auto}}
+@media(min-width:760px){main>section{padding:100px 0}.obl{grid-template-columns:repeat(3,1fr)}.obt{text-align:center}.ob{grid-template-columns:72px 1fr}.oe{grid-column:1/-1;text-align:left;border-top:1px solid var(--line);padding-top:10px}.sv img{height:200px}.map{aspect-ratio:auto}}
 @media(prefers-reduced-motion:reduce){.rv{opacity:1;transform:none}.tkr div{animation:none}}
 </style>
 </head>
