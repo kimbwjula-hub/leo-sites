@@ -161,6 +161,46 @@ footer p+p{margin-top:4px}
  .hero:after{background:linear-gradient(90deg,rgba(20,22,27,.92),rgba(20,22,27,.55) 60%,rgba(20,22,27,.2))}
  .map{aspect-ratio:auto;min-height:100%}
 }
+
+/* v7: uma tela por seção, imagens menores */
+main>section{min-height:calc(100svh - 102px);display:flex;flex-direction:column;justify-content:center;padding:64px 0}
+main>section.hero{padding:0}
+main>section>.wrap{width:100%}
+.hero .wrap{padding-top:40px;padding-bottom:70px}
+.obt{background:var(--ink);color:#fff;border-radius:18px;padding:20px;margin-bottom:14px}
+.obt b{font-size:38px;font-weight:800;color:#5ee6b4;display:block;line-height:1}
+.obt span{font-size:14.5px;color:rgba(255,255,255,.72);display:block;margin-top:8px}
+.obl{display:grid;gap:10px}
+.ob{display:grid;grid-template-columns:72px 1fr auto;gap:14px;align-items:center;background:var(--paper);border-radius:16px;padding:10px 14px 10px 10px}
+.ob img{width:72px;height:72px;border-radius:12px;object-fit:cover}
+.ob b{font-size:15.5px;font-weight:700;display:block;line-height:1.25}
+.ob small{font-size:13px;color:var(--mut)}
+.oi{min-width:0}
+.oe{text-align:right}
+.oe b{font-size:19px;font-weight:800;color:#0f9f73;white-space:nowrap}
+.oe small{display:block;font-size:11.5px;color:var(--mut)}
+.sv{min-height:0;display:block;background:var(--ink2);border:1px solid rgba(255,255,255,.08)}
+.sv:after{display:none}
+.sv img{position:static;width:100%;height:150px;z-index:auto}
+.sv .c{padding:18px}
+.sv h3{font-size:20px}
+.sv p{font-size:14.5px;margin:4px 0 10px}
+.also{margin-top:28px}
+.also li a{padding:13px 0;font-size:14.5px}
+.kit .ki{aspect-ratio:16/9}
+.kit .kb{padding:16px 18px 18px}
+.kit h3{font-size:21px}
+.kit .pv{margin-top:12px;font-size:26px}
+.kit .btn{margin-top:14px;padding:13px}
+.gar{margin-top:24px;padding-top:18px}
+.gar b{font-size:22px}
+.head{margin-bottom:24px}
+.map{aspect-ratio:16/8}
+.cl li>a,.cl li>div{padding:12px 0}
+.emp .pic img{aspect-ratio:16/10}
+.tl{gap:22px}
+.total{margin-top:28px;padding-top:20px}
+@media(min-width:760px){main>section{padding:90px 0}.obl{grid-template-columns:repeat(3,1fr)}.obt{text-align:center}.ob{grid-template-columns:72px 1fr}.oe{grid-column:1/-1;text-align:left;border-top:1px solid var(--line);padding-top:10px}.sv img{height:200px}.map{aspect-ratio:auto}}
 @media(prefers-reduced-motion:reduce){.rv{opacity:1;transform:none}.tkr div{animation:none}}
 </style>
 </head>
@@ -239,12 +279,8 @@ footer p+p{margin-top:4px}
 
 <section id="obras"><div class="wrap">
   <div class="head rv"><span class="kick">Obras entregues</span><h2>Quem já <em>economiza.</em></h2></div>
-  <div class="car">
-    <div class="wk"><img src="img/obra1.jpg" alt="Residência com energia solar" loading="lazy"><div class="cap"><div><b>Residência</b><small>Vitória da Conquista</small></div><span>-R$ 540<small>por mês</small></span></div></div>
-    <div class="wk"><img src="img/obra2.jpg" alt="Galpão com energia solar" loading="lazy"><div class="cap"><div><b>Galpão comercial</b><small>Barra do Choça</small></div><span>-R$ 3.900<small>por mês</small></span></div></div>
-    <div class="wk"><img src="img/obra3.jpg" alt="Fazenda com energia solar" loading="lazy"><div class="cap"><div><b>Fazenda</b><small>Planalto</small></div><span>-R$ 7.200<small>por mês</small></span></div></div>
-  </div>
-  <p class="hint">Arraste para o lado →</p>
+  <div class="obt rv"><b class="n">R$ 11.640</b><span>economizados todo mês só nesses 3 clientes</span></div>
+  <div class="obl"><div class="ob rv"><img src="img/obra1.jpg" alt="Residência" loading="lazy"><div class="oi"><b>Residência</b><small>Vitória da Conquista</small></div><div class="oe"><b class="n">-R$ 540</b><small>por mês</small></div></div><div class="ob rv"><img src="img/obra2.jpg" alt="Galpão comercial" loading="lazy"><div class="oi"><b>Galpão comercial</b><small>Barra do Choça</small></div><div class="oe"><b class="n">-R$ 3.900</b><small>por mês</small></div></div><div class="ob rv"><img src="img/obra3.jpg" alt="Fazenda com irrigação" loading="lazy"><div class="oi"><b>Fazenda</b><small>Planalto</small></div><div class="oe"><b class="n">-R$ 7.200</b><small>por mês</small></div></div></div>
 </div></section>
 
 <section class="dk ct" id="contato"><div class="wrap g">
