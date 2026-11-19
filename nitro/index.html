@@ -77,16 +77,11 @@ svg.i{width:21px;height:21px;flex:none}
 .toast{position:fixed;left:50%;bottom:24px;transform:translate(-50%,20px);background:#fff;color:var(--ink);padding:11px 15px;border-radius:12px;font-size:14px;font-weight:500;opacity:0;pointer-events:none;transition:.25s;width:max-content;max-width:calc(100% - 32px);text-align:center;z-index:9}
 .toast.show{opacity:1;transform:translate(-50%,0)}
 .top h1{margin:6px 0 16px}
-.cost{margin-top:16px;background:#fff;color:var(--ink);border-radius:20px;padding:18px 18px 16px;box-shadow:0 18px 40px -18px rgba(0,0,0,.6)}
-.cost .tag{display:inline-flex;align-items:center;gap:6px;font:700 12.5px Inter,system-ui,sans-serif;letter-spacing:.04em;text-transform:uppercase;color:#55555c;background:#f1efea;border-radius:99px;padding:6px 11px}
-.cost .tag s{color:#9a9aa2;font-weight:600}
-.cost .tag b{color:var(--red);font-weight:800}
-.cost .big{font:900 clamp(24px,7vw,32px)/1.12 Archivo,Inter,system-ui,sans-serif;letter-spacing:-.025em;margin-top:12px;color:var(--ink)}
-.cost mark{background:linear-gradient(transparent 52%,var(--yel) 52%,var(--yel) 92%,transparent 92%);color:inherit;padding:0 .04em}
-.cost .val{display:flex;align-items:center;justify-content:space-between;gap:10px;margin-top:14px;padding-top:12px;border-top:1px dashed #dcd8cf}
-.cost .val span{font-size:13.5px;color:#6b6b73}
-.cost .val b{font:900 22px Archivo,Inter,system-ui,sans-serif;letter-spacing:-.02em;white-space:nowrap}
-.cost .val small{font:600 13px Inter,system-ui,sans-serif;color:#6b6b73}
+.cost{margin-top:12px;display:flex;align-items:center;justify-content:space-between;gap:12px;background:#fff;color:var(--ink);border-radius:14px;padding:11px 14px}
+.cost p{font-size:13.5px;line-height:1.3;color:#3a3a40}
+.cost p b{color:var(--ink);font-weight:700}
+.cost span{flex:none;font:800 16px Inter,system-ui,sans-serif;color:var(--ink);white-space:nowrap;border-left:1px solid #e2ded5;padding-left:12px}
+.cost small{font-size:12px;font-weight:600;color:#76767e}
 .sheet{position:fixed;inset:0;z-index:20;display:flex;align-items:flex-end;justify-content:center;background:rgba(0,0,0,.6);opacity:0;pointer-events:none;transition:opacity .25s}
 .sheet.on{opacity:1;pointer-events:auto}
 .sheet form{width:min(560px,100%);background:#fff;color:var(--ink);border-radius:24px 24px 0 0;padding:10px 18px calc(20px + env(safe-area-inset-bottom));transform:translateY(100%);transition:transform .3s cubic-bezier(.2,.8,.2,1)}
@@ -115,11 +110,7 @@ svg.i{width:21px;height:21px;flex:none}
       <video id="vsl" playsinline preload="metadata" poster="img/poster.jpg"><source src="video.mp4" type="video/mp4"></video>
       <button class="play" id="play" aria-label="Assistir vídeo"><span><svg viewBox="0 0 24 24"><path d="M7 4.5v15l12.5-7.5z"/></svg></span><em>▶ Assista · 1 minuto</em></button>
     </div>
-    <div class="cost">
-      <span class="tag">Criação: <s>R$ 500</s> <b>R$ 0</b></span>
-      <p class="big">Você só paga o custo do <mark>domínio</mark> e da <mark>hospedagem</mark>.</p>
-      <div class="val"><span>Para manter o site no ar</span><b>R$ 47,90<small>/mês</small></b></div>
-    </div>
+    <div class="cost"><p>Você só paga o custo de <b>domínio e hospedagem</b></p><span>R$ 47,90<small>/mês</small></span></div>
     <a class="btn b-red js-wa" href="#"><svg class="i"><use href="#wa"/></svg>Quero meu site grátis</a>
     <p class="sm">Você fala direto com a Nitro pelo WhatsApp.</p>
   </section>
