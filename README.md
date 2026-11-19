@@ -11,4 +11,4 @@ Um site por pasta. Cada pasta é publicada em `/<nome-da-pasta>/`.
 - `reallimpeza/` — Real Limpeza, Condeúba-BA (reallimpeza.pages.dev)
 - `coffeeclean/` — Coffee Clean, Teixeira de Freitas-BA (coffeeclean.pages.dev)
 - `gadara/` — Gadara Móveis, Vitória da Conquista-BA (gadaramoveis.pages.dev) · loja com catálogo editável (KV gadara-catalogo + ADMIN_PASS)
-- `nitro/` — Nitro · página do site grátis (seusitegratuito.pages.dev)
+- `nitro/` — Nitro · página do site grátis (sitegratis.agencianitro.com.br · seusitegratuito.pages.dev)

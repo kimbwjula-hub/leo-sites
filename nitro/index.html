@@ -169,7 +169,7 @@ var MSG_PARA_NITRO = "Oi, quero meu site grátis. Como faço?";
 (function(){
   var link = NITRO_WHATSAPP ? "https://wa.me/" + NITRO_WHATSAPP + "?text=" + encodeURIComponent(MSG_PARA_NITRO) : "https://ig.me/m/agencia.nitro";
   document.querySelectorAll(".js-wa").forEach(function(a){ a.href = link; a.removeAttribute("target"); });
-  function pagina(){ return location.protocol === "file:" ? "https://seusitegratuito.pages.dev" : location.origin + "/"; }
+  function pagina(){ return "https://sitegratis.agencianitro.com.br"; }
   function g(k,v){ try{ localStorage.setItem(k,v); }catch(e){} }
   function l(k){ try{ return localStorage.getItem(k) || ""; }catch(e){ return ""; } }
   var nome = document.getElementById("nome"), emp = document.getElementById("emp"), msg = document.getElementById("msg"), share = document.querySelector(".js-share");
