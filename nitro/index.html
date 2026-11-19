@@ -87,6 +87,20 @@ svg.i{width:21px;height:21px;flex:none}
 .cost .val span{font-size:13.5px;color:#6b6b73}
 .cost .val b{font:900 22px Archivo,Inter,system-ui,sans-serif;letter-spacing:-.02em;white-space:nowrap}
 .cost .val small{font:600 13px Inter,system-ui,sans-serif;color:#6b6b73}
+.sheet{position:fixed;inset:0;z-index:20;display:flex;align-items:flex-end;justify-content:center;background:rgba(0,0,0,.6);opacity:0;pointer-events:none;transition:opacity .25s}
+.sheet.on{opacity:1;pointer-events:auto}
+.sheet form{width:min(560px,100%);background:#fff;color:var(--ink);border-radius:24px 24px 0 0;padding:10px 18px calc(20px + env(safe-area-inset-bottom));transform:translateY(100%);transition:transform .3s cubic-bezier(.2,.8,.2,1)}
+.sheet.on form{transform:none}
+.sheet .bar{width:40px;height:5px;border-radius:9px;background:#dcd8cf;margin:0 auto 14px}
+.sheet h3{font:900 23px/1.1 Archivo,Inter,system-ui,sans-serif;letter-spacing:-.02em}
+.sheet p{font-size:14px;color:#6b6b73;margin-top:4px}
+.sheet label{display:block;font:600 13px Inter,system-ui,sans-serif;margin:14px 0 6px}
+.sheet input{width:100%;height:52px;border-radius:14px;border:1.5px solid #e2ded5;background:#f6f4f0;padding:0 14px;font-size:16px;color:var(--ink);outline:0}
+.sheet input:focus{border-color:var(--ink);background:#fff}
+.sheet .x{position:absolute;right:14px;top:12px;width:36px;height:36px;border-radius:50%;border:0;background:#f1efea;font-size:20px;line-height:1;cursor:pointer;color:var(--ink)}
+.sheet form{position:relative}
+.sheet .btn{margin-top:18px}
+@media(min-width:600px){.sheet{align-items:center}.sheet form{border-radius:24px}}
 </style>
 </head>
 <body>
@@ -149,11 +163,19 @@ svg.i{width:21px;height:21px;flex:none}
   <footer class="ft">Nitro · Sites e vídeos para empresas<br>Instagram <a href="https://www.instagram.com/agencia.nitro/" target="_blank" rel="noopener">@agencia.nitro</a></footer>
 </div>
 <div class="toast" id="toast"></div>
+<div class="sheet" id="sheet" aria-hidden="true"><form id="fcont" autocomplete="on">
+  <div class="bar"></div><button class="x" type="button" id="fechar" aria-label="Fechar">×</button>
+  <h3>Falta pouco!</h3><p>Preencha e fale com a Nitro no WhatsApp.</p>
+  <label for="cnome">Seu nome</label><input id="cnome" required autocomplete="given-name" placeholder="Ex.: Daniel">
+  <label for="cnicho">Nicho do seu negócio</label><input id="cnicho" required placeholder="Ex.: energia solar, salão, oficina">
+  <button class="btn b-wa" type="submit"><svg class="i"><use href="#wa"/></svg>Entrar em contato</button>
+</form></div>
+
 
 <script>
 /* WhatsApp da Nitro: 55 + DDD + número, só números. Vazio = abre o Direct do Instagram. */
 var NITRO_WHATSAPP = "";
-var MSG_PARA_NITRO = "Olá! Vi a página do site grátis da Nitro e quero o meu site.";
+var MSG_PARA_NITRO = "Oi, quero meu site grátis. Como faço?";
 (function(){
   var link = NITRO_WHATSAPP ? "https://wa.me/" + NITRO_WHATSAPP + "?text=" + encodeURIComponent(MSG_PARA_NITRO) : "https://ig.me/m/agencia.nitro";
   document.querySelectorAll(".js-wa").forEach(function(a){ a.href = link; a.target = "_blank"; a.rel = "noopener"; });
@@ -175,6 +197,24 @@ var MSG_PARA_NITRO = "Olá! Vi a página do site grátis da Nitro e quero o meu 
   document.getElementById("copiar").addEventListener("click", function(){ var m = texto(); function ok(){ aviso("Mensagem copiada. É só colar na conversa."); soma(); } if (navigator.clipboard && window.isSecureContext) navigator.clipboard.writeText(m).then(ok, function(){ fb(m); ok(); }); else { fb(m); ok(); } });
   var v = document.getElementById("vsl"), box = document.getElementById("vbox");
   document.getElementById("play").addEventListener("click", function(){ box.classList.add("on"); v.controls = true; v.play(); });
+
+  var sheet = document.getElementById("sheet"), cn = document.getElementById("cnome"), ci = document.getElementById("cnicho");
+  cn.value = l("nitro-cnome"); ci.value = l("nitro-cnicho");
+  function abrir(e){ e.preventDefault(); sheet.classList.add("on"); sheet.setAttribute("aria-hidden","false"); setTimeout(function(){ (cn.value ? ci : cn).focus(); }, 300); }
+  function fechar(){ sheet.classList.remove("on"); sheet.setAttribute("aria-hidden","true"); }
+  document.querySelectorAll(".js-wa").forEach(function(a){ a.addEventListener("click", abrir); });
+  document.getElementById("fechar").addEventListener("click", fechar);
+  sheet.addEventListener("click", function(e){ if (e.target === sheet) fechar(); });
+  document.addEventListener("keydown", function(e){ if (e.key === "Escape") fechar(); });
+  document.getElementById("fcont").addEventListener("submit", function(e){
+    e.preventDefault();
+    var nm = cn.value.trim(), ni = ci.value.trim(); g("nitro-cnome", nm); g("nitro-cnicho", ni);
+    var m = MSG_PARA_NITRO + " Meu nome é " + nm + " e meu negócio é de " + ni + ".";
+    var url = NITRO_WHATSAPP ? "https://wa.me/" + NITRO_WHATSAPP + "?text=" + encodeURIComponent(m) : "https://ig.me/m/agencia.nitro";
+    if (!NITRO_WHATSAPP) fb(m);
+    window.open(url, "_blank") || (location.href = url);
+    fechar();
+  });
 })();
 </script>
 </body>
