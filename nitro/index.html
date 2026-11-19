@@ -102,9 +102,10 @@ svg.i{width:21px;height:21px;flex:none}
 .pf b{display:block;font-size:14.5px;font-weight:700;margin-top:8px}
 .pf span{display:block;font-size:12.5px;color:var(--mut)}
 .sec{scroll-margin-top:50px}
+body{padding-top:44px}
 .more{margin-top:16px;text-align:center;font-size:15.5px;color:var(--mut)}
 .more b{color:#fff}
-.vg{position:sticky;top:0;z-index:15;background:#fff;color:var(--ink);padding:8px 0 9px;box-shadow:0 4px 16px rgba(0,0,0,.35)}
+.vg{position:fixed;top:0;left:0;right:0;z-index:15;background:#fff;color:var(--ink);padding:8px 0 9px;box-shadow:0 4px 16px rgba(0,0,0,.35)}
 .vt{display:flex;justify-content:space-between;align-items:center;gap:10px;font-size:12.5px;line-height:1.2}
 .vt span{display:flex;align-items:center;gap:6px;font-weight:600;color:#3a3a40}
 .vt span i{width:7px;height:7px;border-radius:50%;background:#e30212;animation:bk 1.2s infinite}
@@ -236,7 +237,9 @@ var MSG_PARA_NITRO = "Oi, quero meu site grátis. Como faço?";
   var vn = document.getElementById("vn"), vf = document.getElementById("vf"), vagas = 89;
   function mostra(){ vn.textContent = vagas; vf.style.width = vagas + "%"; }
   mostra();
-  var tv = setInterval(function(){ if (vagas >= 96) { clearInterval(tv); return; } vagas++; mostra(); }, 30000);
+  var passos = [5000, 7000, 8000];
+  function proximo(){ if (vagas >= 96) return; setTimeout(function(){ vagas++; mostra(); proximo(); }, passos.length ? passos.shift() : 30000); }
+  proximo();
 })();
 </script>
 </body>
