@@ -164,11 +164,11 @@ svg.i{width:21px;height:21px;flex:none}
 
 <script>
 /* WhatsApp da Nitro: 55 + DDD + número, só números. Vazio = abre o Direct do Instagram. */
-var NITRO_WHATSAPP = "";
+var NITRO_WHATSAPP = "557798080031";
 var MSG_PARA_NITRO = "Oi, quero meu site grátis. Como faço?";
 (function(){
   var link = NITRO_WHATSAPP ? "https://wa.me/" + NITRO_WHATSAPP + "?text=" + encodeURIComponent(MSG_PARA_NITRO) : "https://ig.me/m/agencia.nitro";
-  document.querySelectorAll(".js-wa").forEach(function(a){ a.href = link; a.target = "_blank"; a.rel = "noopener"; });
+  document.querySelectorAll(".js-wa").forEach(function(a){ a.href = link; a.removeAttribute("target"); });
   function pagina(){ return location.protocol === "file:" ? "https://seusitegratuito.pages.dev" : location.origin + "/"; }
   function g(k,v){ try{ localStorage.setItem(k,v); }catch(e){} }
   function l(k){ try{ return localStorage.getItem(k) || ""; }catch(e){ return ""; } }
@@ -203,8 +203,8 @@ var MSG_PARA_NITRO = "Oi, quero meu site grátis. Como faço?";
     var m = MSG_PARA_NITRO + " Meu nome é " + nm + " e meu negócio é de " + ni + ".";
     var url = NITRO_WHATSAPP ? "https://wa.me/" + NITRO_WHATSAPP + "?text=" + encodeURIComponent(m) : "https://ig.me/m/agencia.nitro";
     if (!NITRO_WHATSAPP) fb(m);
-    window.open(url, "_blank") || (location.href = url);
     fechar();
+    location.href = url;
   });
 })();
 </script>
