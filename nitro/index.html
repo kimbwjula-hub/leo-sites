@@ -240,6 +240,25 @@ var MSG_PARA_NITRO = "Oi, quero meu site grátis. Como faço?";
   var passos = [5000, 7000, 8000];
   function proximo(){ if (vagas >= 96) return; setTimeout(function(){ vagas++; mostra(); proximo(); }, passos.length ? passos.shift() : 30000); }
   proximo();
+
+  /* rastreio */
+  var did = l("nitro-id"); if (!did) { did = (Date.now().toString(36) + Math.random().toString(36).slice(2, 10)); g("nitro-id", did); }
+  var feito = {};
+  function track(e, extra, once){
+    if (location.protocol === "file:") return;
+    if (once && feito[e]) return; feito[e] = 1;
+    var b = JSON.stringify(Object.assign({ id: did, e: e }, extra || {}));
+    try { if (navigator.sendBeacon && navigator.sendBeacon("/api/t", new Blob([b], { type: "application/json" }))) return; } catch(x){}
+    try { fetch("/api/t", { method: "POST", body: b, headers: { "content-type": "application/json" }, keepalive: true }); } catch(x){}
+  }
+  track("visit");
+  v.addEventListener("play", function(){ track("play", null, true); });
+  v.addEventListener("timeupdate", function(){ if (v.duration && v.currentTime / v.duration >= .5) track("meio", null, true); });
+  v.addEventListener("ended", function(){ track("fim", null, true); });
+  document.querySelectorAll(".js-wa").forEach(function(a){ a.addEventListener("click", function(){ track("click", null, true); }); });
+  share.addEventListener("click", function(){ track("share"); });
+  document.getElementById("copiar").addEventListener("click", function(){ track("share"); });
+  document.getElementById("fcont").addEventListener("submit", function(){ track("form", { nome: cn.value, nicho: ci.value }); }, true);
 })();
 </script>
 </body>

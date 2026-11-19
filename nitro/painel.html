@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="pt-BR"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="robots" content="noindex,nofollow"><title>Painel · Site grátis Nitro</title><link rel="icon" href="img/nitro.png">
+<style>
+*{box-sizing:border-box;margin:0;padding:0}body{font:15px/1.45 system-ui,-apple-system,Segoe UI,Roboto,sans-serif;background:#f4f2ee;color:#111}
+.w{width:min(900px,100% - 24px);margin:0 auto;padding:18px 0 40px}
+h1{font-size:20px;display:flex;align-items:center;gap:8px}h1 img{width:28px;border-radius:50%}
+h2{font-size:15px;margin:22px 0 8px;color:#555;text-transform:uppercase;letter-spacing:.06em}
+.lg{max-width:340px;margin:18vh auto 0;background:#fff;border-radius:16px;padding:22px;box-shadow:0 10px 30px rgba(0,0,0,.08)}
+input{width:100%;height:48px;border:1.5px solid #ddd;border-radius:12px;padding:0 12px;font-size:16px;margin:12px 0}
+button{width:100%;height:48px;border:0;border-radius:12px;background:#e30212;color:#fff;font-weight:700;font-size:16px;cursor:pointer}
+.err{color:#e30212;font-size:13px;min-height:18px}
+.g{display:grid;grid-template-columns:repeat(2,1fr);gap:8px}@media(min-width:640px){.g{grid-template-columns:repeat(4,1fr)}}
+.k{background:#fff;border-radius:14px;padding:12px 14px}.k b{display:block;font-size:26px;line-height:1.1}.k span{font-size:12.5px;color:#666}.k em{font-style:normal;font-size:12px;color:#16a34a}
+.f{background:#fff;border-radius:14px;padding:12px 14px}.fr{display:flex;align-items:center;gap:10px;margin:6px 0;font-size:13.5px}.fr span{width:120px;flex:none}.fr i{height:10px;border-radius:9px;background:#e30212;display:block}.fr b{margin-left:auto}
+.t{background:#fff;border-radius:14px;overflow:auto}table{width:100%;border-collapse:collapse;font-size:13px;white-space:nowrap}th,td{padding:8px 10px;text-align:left;border-bottom:1px solid #eee}th{font-size:11.5px;color:#777;text-transform:uppercase}
+.ok{color:#16a34a;font-weight:700}.no{color:#ccc}.top{display:flex;justify-content:space-between;align-items:center}.top a{font-size:13px;color:#e30212;cursor:pointer}
+</style></head><body>
+<div id="login" class="lg"><h1><img src="img/nitro.png" alt="">Painel</h1><input id="pw" type="password" placeholder="Senha" autocomplete="current-password"><div class="err" id="err"></div><button id="ent">Entrar</button></div>
+<div id="app" class="w" hidden>
+ <div class="top"><h1><img src="img/nitro.png" alt="">Site grátis · Painel</h1><a id="att">Atualizar</a></div>
+ <h2>Total</h2><div class="g" id="kp"></div>
+ <h2>Funil</h2><div class="f" id="fn"></div>
+ <h2>Cidades</h2><div class="t"><table id="cd"></table></div>
+ <h2>Últimos 100 aparelhos</h2><div class="t"><table id="ul"></table></div>
+</div>
+<script>
+var pw = sessionStorage.getItem("nitro-pw") || "";
+function $(i){ return document.getElementById(i); }
+function esc(s){ return String(s == null ? "" : s).replace(/[&<>"]/g, function(c){ return {"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]; }); }
+function n(x){ return x || 0; }
+function dt(t){ var d = new Date(t); return d.toLocaleDateString("pt-BR",{day:"2-digit",month:"2-digit"}) + " " + d.toLocaleTimeString("pt-BR",{hour:"2-digit",minute:"2-digit"}); }
+function load(){
+  fetch("/api/stats", { headers: { "x-admin-pass": pw }, cache: "no-store" }).then(function(r){ if (r.status === 401) throw 0; return r.json(); }).then(function(d){
+    sessionStorage.setItem("nitro-pw", pw); $("login").hidden = true; $("app").hidden = false;
+    var t = d.tot, h = d.hoje;
+    var k = [["Aparelhos únicos", t.devices, h.devices], ["Deram play", t.play, h.play], ["Clicaram no botão", t.click, h.click], ["Mandaram formulário", t.form, h.form]];
+    $("kp").innerHTML = k.map(function(x){ return '<div class="k"><b>' + n(x[1]) + '</b><span>' + x[0] + '</span><br><em>+' + n(x[2]) + ' nas últimas 24h</em></div>'; }).join("");
+    var f = [["Entraram", t.devices], ["Deram play", t.play], ["Viram metade", t.meio], ["Viram até o fim", t.fim], ["Clicaram", t.click], ["Formulário", t.form], ["Compartilharam", t.share]], mx = Math.max(1, n(t.devices));
+    $("fn").innerHTML = f.map(function(x){ var p = Math.round(n(x[1]) / mx * 100); return '<div class="fr"><span>' + x[0] + '</span><i style="width:' + Math.max(p, 1) + '%"></i><b>' + n(x[1]) + ' · ' + p + '%</b></div>'; }).join("");
+    $("cd").innerHTML = "<tr><th>Cidade</th><th>Estado</th><th>Aparelhos</th></tr>" + d.cidades.map(function(c){ return "<tr><td>" + esc(c.city) + "</td><td>" + esc(c.region) + "</td><td>" + c.n + "</td></tr>"; }).join("");
+    function m(v){ return v > 0 ? '<span class="ok">✓</span>' : '<span class="no">–</span>'; }
+    $("ul").innerHTML = "<tr><th>Última vez</th><th>Cidade</th><th>Aparelho</th><th>Visitas</th><th>Play</th><th>½ vídeo</th><th>Fim</th><th>Clique</th><th>Form</th><th>Nome</th><th>Nicho</th><th>Compart.</th></tr>" +
+      d.ultimos.map(function(u){ return "<tr><td>" + dt(u.last) + "</td><td>" + esc(u.city) + (u.region ? " · " + esc(u.region) : "") + "</td><td>" + esc(u.device) + "</td><td>" + u.visits + "</td><td>" + m(u.play) + "</td><td>" + m(u.meio) + "</td><td>" + m(u.fim) + "</td><td>" + m(u.click) + "</td><td>" + m(u.form) + "</td><td>" + esc(u.nome) + "</td><td>" + esc(u.nicho) + "</td><td>" + (u.share || "–") + "</td></tr>"; }).join("");
+  }).catch(function(){ $("login").hidden = false; $("app").hidden = true; $("err").textContent = pw ? "Senha incorreta." : ""; sessionStorage.removeItem("nitro-pw"); });
+}
+$("ent").onclick = function(){ pw = $("pw").value; load(); };
+$("pw").onkeydown = function(e){ if (e.key === "Enter") $("ent").click(); };
+$("att").onclick = load;
+if (pw) load();
+</script></body></html>
