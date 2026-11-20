@@ -114,6 +114,12 @@ body{padding-top:44px}
 .vt b span{display:inline;color:#16a34a}
 .vb{height:5px;border-radius:9px;background:#e9e6df;margin-top:6px;overflow:hidden}
 .vb div{height:100%;border-radius:9px;background:linear-gradient(90deg,#22c55e,#16a34a);transition:width 1.2s ease}
+.sv{background:#f6f4f0;border-radius:12px;padding:10px 12px;margin:2px 44px 14px 0}
+.svt{display:flex;justify-content:space-between;align-items:center;font-size:12.5px}
+.svt span{display:flex;align-items:center;gap:6px;font-weight:600;color:#3a3a40}
+.svt span i{width:7px;height:7px;border-radius:50%;background:#e30212;animation:bk 1.2s infinite}
+.svt b{font-weight:800}.svt b span{display:inline;color:#16a34a}
+.sheet .sn{text-align:center;font-size:12.5px;margin-top:8px}
 </style>
 </head>
 <body>
@@ -182,17 +188,19 @@ body{padding-top:44px}
 <div class="toast" id="toast"></div>
 <div class="sheet" id="sheet" aria-hidden="true"><form id="fcont" autocomplete="on">
   <div class="bar"></div><button class="x" type="button" id="fechar" aria-label="Fechar">×</button>
-  <h3>Falta pouco!</h3><p>Preencha e fale com a Nitro no WhatsApp.</p>
+  <div class="sv"><div class="svt"><span><i></i>Vagas preenchidas</span><b><span id="sn">89</span>/100</b></div><div class="vb"><div id="sf" style="width:89%"></div></div></div>
+  <h3>Garanta sua vaga</h3><p>Preencha e envie. Sua vaga fica reservada e a Nitro te chama no WhatsApp para começar o seu site.</p>
   <label for="cnome">Seu nome</label><input id="cnome" required autocomplete="given-name" placeholder="Ex.: Daniel">
   <label for="cnicho">Nicho do seu negócio</label><input id="cnicho" required placeholder="Ex.: energia solar, salão, oficina">
-  <button class="btn b-wa" type="submit"><svg class="i"><use href="#wa"/></svg>Entrar em contato</button>
+  <button class="btn b-wa" type="submit"><svg class="i"><use href="#wa"/></svg>Garantir minha vaga</button>
+  <p class="sn">Leva 10 segundos. Sem compromisso.</p>
 </form></div>
 
 
 <script>
 /* WhatsApp da Nitro: 55 + DDD + número, só números. Vazio = abre o Direct do Instagram. */
 var NITRO_WHATSAPP = "557798080031";
-var MSG_PARA_NITRO = "Oi, quero meu site grátis. Como faço?";
+var MSG_PARA_NITRO = "Oi! Quero garantir minha vaga do site grátis.";
 (function(){
   var link = NITRO_WHATSAPP ? "https://wa.me/" + NITRO_WHATSAPP + "?text=" + encodeURIComponent(MSG_PARA_NITRO) : "https://ig.me/m/agencia.nitro";
   document.querySelectorAll(".js-wa").forEach(function(a){ a.href = link; a.removeAttribute("target"); });
@@ -235,7 +243,7 @@ var MSG_PARA_NITRO = "Oi, quero meu site grátis. Como faço?";
   });
 
   var vn = document.getElementById("vn"), vf = document.getElementById("vf"), vagas = 89;
-  function mostra(){ vn.textContent = vagas; vf.style.width = vagas + "%"; }
+  function mostra(){ vn.textContent = vagas; vf.style.width = vagas + "%"; var a = document.getElementById("sn"), b = document.getElementById("sf"); if (a) { a.textContent = vagas; b.style.width = vagas + "%"; } }
   mostra();
   var passos = [5000, 7000, 8000];
   function proximo(){ if (vagas >= 96) return; setTimeout(function(){ vagas++; mostra(); proximo(); }, passos.length ? passos.shift() : 30000); }
