@@ -25,14 +25,14 @@ button{width:100%;height:48px;border:0;border-radius:12px;background:#e30212;col
  <h2>Últimos 100 aparelhos</h2><div class="t"><table id="ul"></table></div>
 </div>
 <script>
-var pw = sessionStorage.getItem("nitro-pw") || "";
+var pw = (function(){try{return localStorage.getItem("nitro-pw")}catch(e){return ""}})() || "";
 function $(i){ return document.getElementById(i); }
 function esc(s){ return String(s == null ? "" : s).replace(/[&<>"]/g, function(c){ return {"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]; }); }
 function n(x){ return x || 0; }
 function dt(t){ var d = new Date(t); return d.toLocaleDateString("pt-BR",{day:"2-digit",month:"2-digit"}) + " " + d.toLocaleTimeString("pt-BR",{hour:"2-digit",minute:"2-digit"}); }
 function load(){
   fetch("/api/stats", { headers: { "x-admin-pass": pw }, cache: "no-store" }).then(function(r){ if (r.status === 401) throw 0; return r.json(); }).then(function(d){
-    sessionStorage.setItem("nitro-pw", pw); $("login").hidden = true; $("app").hidden = false;
+    try{localStorage.setItem("nitro-pw", pw)}catch(e){}; $("login").hidden = true; $("app").hidden = false;
     var t = d.tot, h = d.hoje;
     var k = [["Aparelhos únicos", t.devices, h.devices], ["Deram play", t.play, h.play], ["Clicaram no botão", t.click, h.click], ["Mandaram formulário", t.form, h.form]];
     $("kp").innerHTML = k.map(function(x){ return '<div class="k"><b>' + n(x[1]) + '</b><span>' + x[0] + '</span><br><em>+' + n(x[2]) + ' nas últimas 24h</em></div>'; }).join("");
@@ -42,7 +42,7 @@ function load(){
     function m(v){ return v > 0 ? '<span class="ok">✓</span>' : '<span class="no">–</span>'; }
     $("ul").innerHTML = "<tr><th>Última vez</th><th>Cidade</th><th>Aparelho</th><th>Visitas</th><th>Play</th><th>½ vídeo</th><th>Fim</th><th>Clique</th><th>Form</th><th>Nome</th><th>Nicho</th><th>Compart.</th></tr>" +
       d.ultimos.map(function(u){ return "<tr><td>" + dt(u.last) + "</td><td>" + esc(u.city) + (u.region ? " · " + esc(u.region) : "") + "</td><td>" + esc(u.device) + "</td><td>" + u.visits + "</td><td>" + m(u.play) + "</td><td>" + m(u.meio) + "</td><td>" + m(u.fim) + "</td><td>" + m(u.click) + "</td><td>" + m(u.form) + "</td><td>" + esc(u.nome) + "</td><td>" + esc(u.nicho) + "</td><td>" + (u.share || "–") + "</td></tr>"; }).join("");
-  }).catch(function(){ $("login").hidden = false; $("app").hidden = true; $("err").textContent = pw ? "Senha incorreta." : ""; sessionStorage.removeItem("nitro-pw"); });
+  }).catch(function(){ $("login").hidden = false; $("app").hidden = true; $("err").textContent = pw ? "Senha incorreta." : ""; try{localStorage.removeItem("nitro-pw")}catch(e){}; });
 }
 $("ent").onclick = function(){ pw = $("pw").value; load(); };
 $("pw").onkeydown = function(e){ if (e.key === "Enter") $("ent").click(); };
