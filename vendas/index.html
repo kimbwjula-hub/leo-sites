@@ -1,0 +1,877 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Vendas de Sites</title>
+<meta name="robots" content="noindex">
+<meta name="theme-color" content="#ffffff">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='7' fill='%232456c8'/%3E%3Cpath d='M9 11h14M9 16h14M9 21h9' stroke='white' stroke-width='2.6' stroke-linecap='round'/%3E%3C/svg%3E">
+<style>
+:root{--bg:#fff;--soft:#f6f7f9;--line:#e3e6eb;--line2:#d3d8e0;--ink:#16191f;--txt:#3b4250;--mut:#6b7280;--blue:#2456c8;--blue2:#1d47a8;--bluebg:#eef3fc;--green:#16794a;--greenbg:#eaf6ef;--red:#b42318;--redbg:#fdf0ef;--wa:#1c8a4c;--r:8px}
+*{box-sizing:border-box;margin:0;padding:0}
+html{-webkit-text-size-adjust:100%}
+body{font:15px/1.5 -apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Inter,"Helvetica Neue",Arial,sans-serif;color:var(--ink);background:var(--bg)}
+button,input,select,textarea{font:inherit;color:inherit}
+[hidden]{display:none!important}
+h1{font-size:20px;font-weight:650;letter-spacing:-.01em}
+h2{font-size:18px;font-weight:650;letter-spacing:-.01em}
+h3{font-size:15px;font-weight:650}
+.mut{color:var(--mut)}
+.small{font-size:13px}
+a{color:var(--blue)}
+
+/* botões e campos */
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:6px;min-height:36px;padding:7px 13px;border:1px solid var(--line2);border-radius:var(--r);background:#fff;color:var(--ink);font-size:14px;font-weight:550;cursor:pointer;white-space:nowrap;text-decoration:none}
+.btn:hover{background:var(--soft)}
+.btn:disabled{opacity:.5;cursor:default}
+.btn.primary{background:var(--blue);border-color:var(--blue);color:#fff}
+.btn.primary:hover{background:var(--blue2)}
+.btn.wa{background:var(--wa);border-color:var(--wa);color:#fff}
+.btn.wa:hover{filter:brightness(.95)}
+.btn.ghost{border-color:transparent;color:var(--mut);background:none;padding:7px 8px}
+.btn.ghost:hover{background:var(--soft);color:var(--ink)}
+.btn.danger{color:var(--red)}
+.btn.danger.solid{background:var(--red);border-color:var(--red);color:#fff}
+.btn svg{width:16px;height:16px;flex:none}
+label{display:block;font-size:13px;font-weight:600;color:var(--txt);margin-bottom:5px}
+.in,select.in,textarea.in{width:100%;min-height:40px;padding:8px 11px;border:1px solid var(--line2);border-radius:var(--r);background:#fff;font-size:15px}
+.in:focus,textarea.in:focus,select.in:focus{outline:2px solid #b9cdf3;border-color:var(--blue)}
+textarea.in{resize:vertical;line-height:1.45}
+textarea.mono{font:13px/1.5 ui-monospace,SFMono-Regular,Menlo,Consolas,monospace}
+.field{margin-bottom:14px}
+.row{display:flex;gap:10px;align-items:center;flex-wrap:wrap}
+.between{justify-content:space-between}
+.grow{flex:1;min-width:0}
+.card{border:1px solid var(--line);border-radius:10px;background:#fff;padding:18px}
+.msg{padding:10px 12px;border-radius:var(--r);font-size:14px;margin-bottom:12px}
+.msg.err{background:var(--redbg);color:var(--red)}
+.msg.ok{background:var(--greenbg);color:var(--green)}
+.msg.info{background:var(--bluebg);color:#1f3f86}
+.msg.warn{background:#fff7e6;color:#8a5300}
+
+/* login */
+.auth{min-height:100vh;display:grid;place-items:center;padding:24px 16px;background:var(--soft)}
+.auth .card{width:100%;max-width:400px;padding:26px}
+.brand{display:flex;align-items:center;gap:10px}
+.brand i{width:30px;height:30px;border-radius:7px;background:var(--blue);display:grid;place-items:center;flex:none}
+.brand i svg{width:18px;height:18px}
+.auth h1{margin:18px 0 4px}
+.auth .sub{color:var(--mut);font-size:14px;margin-bottom:20px}
+.auth .btn.primary{width:100%;min-height:42px;margin-top:4px}
+.auth .links{margin-top:16px;font-size:14px;display:flex;justify-content:space-between;gap:10px;flex-wrap:wrap}
+.linkbtn{background:none;border:0;color:var(--blue);cursor:pointer;padding:0;font-size:14px}
+
+/* app */
+.top{border-bottom:1px solid var(--line);background:#fff;position:sticky;top:0;z-index:20}
+.top .bar{max-width:1180px;margin:0 auto;padding:12px 16px 0;display:flex;align-items:center;justify-content:space-between;gap:12px}
+.top .who{font-size:13px;color:var(--mut);overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.tabs{max-width:1180px;margin:0 auto;padding:0 10px;display:flex;gap:2px;overflow-x:auto;scrollbar-width:none}
+.tabs::-webkit-scrollbar{display:none}
+.tabs button{border:0;background:none;padding:12px 12px 11px;font-size:14px;font-weight:550;color:var(--mut);border-bottom:2px solid transparent;cursor:pointer;white-space:nowrap}
+.tabs button.on{color:var(--blue);border-bottom-color:var(--blue)}
+main{max-width:1180px;margin:0 auto;padding:20px 16px 60px}
+
+.stats{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-bottom:16px}
+.stat{border:1px solid var(--line);border-radius:10px;padding:12px 14px}
+.stat small{display:block;font-size:12.5px;color:var(--mut);font-weight:550}
+.stat b{display:block;font-size:22px;font-weight:650;letter-spacing:-.01em;margin-top:2px}
+.stat:first-child b{color:var(--green)}
+
+details.import{border:1px solid var(--line);border-radius:10px;margin-bottom:18px;background:#fff}
+details.import summary{list-style:none;cursor:pointer;padding:13px 16px;font-weight:600;display:flex;justify-content:space-between;align-items:center}
+details.import summary::-webkit-details-marker{display:none}
+details.import summary::after{content:"+";font-size:20px;color:var(--mut);line-height:1}
+details.import[open] summary::after{content:"–"}
+details.import .body{padding:0 16px 16px}
+#pasteBox{min-height:170px}
+
+.stages{display:flex;gap:6px;overflow-x:auto;padding-bottom:2px;margin-bottom:12px;scrollbar-width:none}
+.stages::-webkit-scrollbar{display:none}
+.stages button{display:inline-flex;align-items:center;gap:7px;border:1px solid var(--line2);background:#fff;border-radius:999px;padding:6px 12px;font-size:14px;font-weight:550;color:var(--txt);cursor:pointer;white-space:nowrap}
+.stages button span{font-size:12px;background:var(--soft);border-radius:999px;padding:1px 7px;color:var(--mut)}
+.stages button.on{background:var(--blue);border-color:var(--blue);color:#fff}
+.stages button.on span{background:rgba(255,255,255,.2);color:#fff}
+
+table{width:100%;border-collapse:collapse;font-size:14px}
+th{text-align:left;font-size:12.5px;color:var(--mut);font-weight:600;padding:9px 10px;border-bottom:1px solid var(--line);background:var(--soft)}
+td{padding:11px 10px;border-bottom:1px solid var(--line);vertical-align:middle}
+.tbl{border:1px solid var(--line);border-radius:10px;overflow:hidden}
+.cname b{font-weight:600;display:block}
+.cname small{color:var(--mut);font-size:12.5px}
+.nophone{color:var(--mut);font-style:italic}
+.acts{display:flex;gap:6px;align-items:center;flex-wrap:wrap;justify-content:flex-end}
+.acts .link{min-height:36px;width:220px;max-width:100%;padding:6px 10px;font-size:14px}
+.acts .note{font-size:12.5px;color:var(--mut);max-width:200px;line-height:1.35}
+.money{color:var(--green);font-weight:650}
+.empty{padding:36px 16px;text-align:center;color:var(--mut)}
+.more{text-align:center;padding:12px}
+
+/* fazer site */
+.chips{display:flex;flex-wrap:wrap;gap:6px;margin:6px 0 8px}
+.chips button{border:1px solid var(--line2);background:var(--soft);border-radius:6px;padding:3px 8px;font:12.5px ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;color:var(--txt);cursor:pointer}
+.chips button:hover{border-color:var(--blue);color:var(--blue)}
+#sText{min-height:380px}
+.nlayout{display:grid;gap:16px}
+.nlist{list-style:none}
+.nlist li button{width:100%;text-align:left;border:0;background:none;padding:9px 10px;border-radius:7px;cursor:pointer;display:flex;justify-content:space-between;gap:8px;font-size:14px}
+.nlist li button:hover{background:var(--soft)}
+.nlist li button.on{background:var(--bluebg);color:var(--blue);font-weight:600}
+.nlist li button small{color:var(--mut);font-weight:400}
+#nPrompt{min-height:320px}
+.sep{height:1px;background:var(--line);margin:18px 0}
+.conta{display:grid;gap:16px;max-width:620px}
+
+/* modal e aviso */
+.modal{position:fixed;inset:0;background:rgba(17,24,39,.42);display:grid;place-items:center;padding:16px;z-index:100}
+.modal .card{width:100%;max-width:430px;box-shadow:0 20px 50px -20px rgba(0,0,0,.35)}
+.modal h3{font-size:17px;margin-bottom:8px}
+.modal p{color:var(--txt);font-size:14px;margin-bottom:12px}
+.modal .row{justify-content:flex-end;margin-top:6px}
+.code{font:600 20px/1.3 ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;letter-spacing:.06em;background:var(--soft);border:1px dashed var(--line2);border-radius:8px;padding:12px;text-align:center;margin:6px 0 12px;user-select:all}
+.toast{position:fixed;left:50%;bottom:20px;transform:translateX(-50%);background:#1f2937;color:#fff;padding:10px 16px;border-radius:8px;font-size:14px;z-index:200;max-width:calc(100% - 32px);text-align:center}
+
+@media (max-width:760px){
+  .stats{gap:8px}
+  .stat{padding:10px}
+  .stat b{font-size:17px}
+  .stat small{font-size:11.5px}
+  .tbl{border:0;border-radius:0}
+  table,tbody,tr,td{display:block;width:100%}
+  thead{display:none}
+  tr{border:1px solid var(--line);border-radius:10px;padding:12px;margin-bottom:10px}
+  td{border:0;padding:2px 0}
+  td.tphone,td.tcity{display:inline;font-size:13.5px;color:var(--txt)}
+  td.tphone::after{content:" · ";color:var(--mut)}
+  td.tcity:empty{display:none}
+  td.tacts{padding-top:10px}
+  .acts{justify-content:flex-start}
+  .acts .link{width:100%}
+  .acts .note{max-width:none}
+}
+@media (min-width:860px){
+  .nlayout{grid-template-columns:260px 1fr;align-items:start}
+}
+</style>
+</head>
+<body>
+
+<!-- ============ LOGIN ============ -->
+<div id="auth" class="auth" hidden>
+  <div class="card">
+    <div class="brand"><i><svg viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2.6" stroke-linecap="round"><path d="M5 7h14M5 12h14M5 17h9"/></svg></i><b>Vendas de Sites</b></div>
+
+    <form id="fLogin">
+      <h1>Entrar</h1>
+      <p class="sub">Acesse sua lista de empresas e suas vendas.</p>
+      <div id="mLogin"></div>
+      <div class="field"><label for="lEmail">E-mail</label><input class="in" id="lEmail" type="email" autocomplete="email" required></div>
+      <div class="field"><label for="lPass">Senha</label><input class="in" id="lPass" type="password" autocomplete="current-password" required></div>
+      <button class="btn primary" type="submit">Entrar</button>
+      <div class="links"><button class="linkbtn" type="button" data-go="fSignup">Criar conta</button><button class="linkbtn" type="button" data-go="fRecover">Esqueci minha senha</button></div>
+    </form>
+
+    <form id="fSignup" hidden>
+      <h1>Criar conta</h1>
+      <p class="sub">Cada conta vê só as suas empresas, nichos e vendas.</p>
+      <div id="mSignup"></div>
+      <div class="field"><label for="sName">Seu nome</label><input class="in" id="sName" autocomplete="name" required></div>
+      <div class="field"><label for="sEmail">E-mail</label><input class="in" id="sEmail" type="email" autocomplete="email" required></div>
+      <div class="field"><label for="sPass">Senha (mínimo 8 caracteres)</label><input class="in" id="sPass" type="password" autocomplete="new-password" minlength="8" required></div>
+      <button class="btn primary" type="submit">Criar conta</button>
+      <div class="links"><button class="linkbtn" type="button" data-go="fLogin">Já tenho conta</button></div>
+    </form>
+
+    <form id="fRecover" hidden>
+      <h1>Esqueci minha senha</h1>
+      <p class="sub">Use o código de recuperação que apareceu quando você criou a conta.</p>
+      <div id="mRecover"></div>
+      <div class="field"><label for="rEmail">E-mail</label><input class="in" id="rEmail" type="email" autocomplete="email" required></div>
+      <div class="field"><label for="rCode">Código de recuperação</label><input class="in" id="rCode" placeholder="XXXX-XXXX-XXXX" autocomplete="off" required></div>
+      <div class="field"><label for="rPass">Nova senha (mínimo 8 caracteres)</label><input class="in" id="rPass" type="password" autocomplete="new-password" minlength="8" required></div>
+      <button class="btn primary" type="submit">Trocar senha e entrar</button>
+      <div class="links"><button class="linkbtn" type="button" data-go="fLogin">Voltar para entrar</button></div>
+    </form>
+  </div>
+</div>
+
+<!-- ============ APP ============ -->
+<div id="app" hidden>
+  <header class="top">
+    <div class="bar">
+      <div class="brand"><i><svg viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2.6" stroke-linecap="round"><path d="M5 7h14M5 12h14M5 17h9"/></svg></i><b>Vendas de Sites</b></div>
+      <div class="who" id="who"></div>
+    </div>
+    <nav class="tabs" id="tabs">
+      <button data-tab="lista" class="on">Lista</button>
+      <button data-tab="site">Fazer site</button>
+      <button data-tab="nichos">Nichos e prompts</button>
+      <button data-tab="conta">Conta</button>
+    </nav>
+  </header>
+
+  <main>
+    <!-- LISTA -->
+    <section id="t-lista">
+      <div class="stats">
+        <div class="stat"><small>Total vendido</small><b id="stTotal">R$ 0,00</b></div>
+        <div class="stat"><small>Vendas</small><b id="stSales">0</b></div>
+        <div class="stat"><small>Em andamento</small><b id="stOpen">0</b></div>
+      </div>
+
+      <details class="import" id="importBox">
+        <summary>Colar lista de empresas</summary>
+        <div class="body">
+          <p class="mut small" style="margin-bottom:10px">Cole da planilha, do Excel ou texto solto, uma empresa por linha. Se a primeira linha tiver os nomes das colunas (empresa, telefone, cidade…), eles são usados. O que faltar fica em branco. Empresas repetidas não entram de novo.</p>
+          <div id="mImport"></div>
+          <div class="field"><textarea class="in" id="pasteBox" placeholder="Empresa&#9;Telefone&#9;Cidade&#10;Padaria Pão Quente&#9;(77) 98888-1234&#9;Vitória da Conquista&#10;Clínica Sorriso - (71) 3333-4444 - Salvador"></textarea></div>
+          <div class="row">
+            <div class="grow" style="min-width:200px"><label for="importNiche">Nicho desta lista (opcional)</label><select class="in" id="importNiche"></select></div>
+            <button class="btn primary" id="btnImport" style="align-self:flex-end;min-height:40px">Importar</button>
+          </div>
+        </div>
+      </details>
+
+      <div class="stages" id="stages"></div>
+      <div class="row" style="margin-bottom:12px"><input class="in grow" id="search" type="search" placeholder="Buscar por empresa, telefone ou cidade" style="max-width:420px"></div>
+      <div id="tableWrap"></div>
+    </section>
+
+    <!-- FAZER SITE -->
+    <section id="t-site" hidden></section>
+
+    <!-- NICHOS -->
+    <section id="t-nichos" hidden></section>
+
+    <!-- CONTA -->
+    <section id="t-conta" hidden></section>
+  </main>
+</div>
+
+<div id="modal" class="modal" hidden><div class="card" id="modalCard"></div></div>
+<div id="toast" class="toast" hidden></div>
+
+<script>
+"use strict";
+var $ = function (s, r) { return (r || document).querySelector(s); };
+var $$ = function (s, r) { return [].slice.call((r || document).querySelectorAll(s)); };
+var STAGES = [["novos", "Novos"], ["contato", "Em contato"], ["feito", "Site feito"], ["pagamento", "Pagamento"], ["pagos", "Pagos"]];
+var STAGE_IDX = { novos: 0, contato: 1, feito: 2, pagamento: 3, pagos: 4 };
+var FIELDS = [["nome", "Nome da empresa"], ["categoria", "Tipo de negócio"], ["telefone", "Telefone"], ["whatsapp", "Número do WhatsApp"], ["link_whatsapp", "Link para chamar no WhatsApp"], ["endereco", "Endereço"], ["cidade", "Cidade"], ["estado", "Estado"], ["nota", "Nota de avaliação"], ["total_avaliacoes", "Quantidade de avaliações"], ["avaliacoes", "Texto das avaliações"], ["horario", "Horário de funcionamento"], ["descricao", "Descrição do negócio"], ["site_atual", "Site que a empresa já tem"], ["nicho", "Nome do nicho"]];
+var FIELD_LABEL = {}; FIELDS.forEach(function (f) { FIELD_LABEL[f[0]] = f[1]; }); FIELD_LABEL.link_site = "Link do site pronto";
+var DEFAULT_WA = "Olá! Tudo bem? Falo com a {{nome}}? Preparei uma proposta de site para vocês e gostaria de mostrar. Posso enviar?";
+var PAGE = 150;
+
+var ST = { user: null, companies: [], niches: [], settings: { wa: "" }, tab: "lista", stage: "novos", q: "", limit: PAGE, siteId: null, siteNiche: null, nicheSel: null };
+
+// ---------- utilidades ----------
+function esc(s) { return String(s == null ? "" : s).replace(/[&<>"']/g, function (c) { return { "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]; }); }
+function brl(v) { return new Intl.NumberFormat("pt-BR", { style: "currency", currency: "BRL" }).format(v || 0); }
+function toast(t) { var el = $("#toast"); el.textContent = t; el.hidden = false; clearTimeout(toast.t); toast.t = setTimeout(function () { el.hidden = true; }, 3800); }
+function msg(el, t, kind) { el.innerHTML = t ? '<div class="msg ' + (kind || "err") + '">' + esc(t) + "</div>" : ""; }
+function api(path, opt) {
+  opt = opt || {};
+  var o = { method: opt.method || "GET", headers: {}, credentials: "same-origin" };
+  if (opt.body !== undefined) { o.headers["content-type"] = "application/json"; o.body = JSON.stringify(opt.body); }
+  return fetch("/api/" + path, o).then(function (r) {
+    return r.json().catch(function () { return {}; }).then(function (d) {
+      if (r.status === 401 && !opt.auth) { showAuth(); throw new Error(d.error || "Entre na sua conta."); }
+      if (!r.ok) throw new Error(d.error || "Algo deu errado. Tente de novo.");
+      return d;
+    });
+  }, function () { throw new Error("Sem conexão. Verifique a internet e tente de novo."); });
+}
+function busy(btn, on) { if (!btn) return; btn.disabled = on; }
+
+// ---------- telefone e WhatsApp ----------
+function digits(s) { return String(s || "").replace(/\D/g, ""); }
+function localNum(s) { var d = digits(s); if (d.indexOf("55") === 0 && d.length >= 12) d = d.slice(2); return d.replace(/^0+/, ""); }
+function fmtPhone(s) {
+  var d = localNum(s);
+  if (d.length === 11) return "(" + d.slice(0, 2) + ") " + d.slice(2, 7) + "-" + d.slice(7);
+  if (d.length === 10) return "(" + d.slice(0, 2) + ") " + d.slice(2, 6) + "-" + d.slice(6);
+  return String(s || "");
+}
+function waInfo(c) {
+  var raw = c.wa || c.phone;
+  if (!raw || !digits(raw)) return { ok: false, why: "Sem telefone" };
+  var d = localNum(raw);
+  if (d.length === 11 && d[2] === "9") return { ok: true, num: "55" + d };
+  if (d.length === 10) {
+    if ("6789".indexOf(d[2]) >= 0) return { ok: true, num: "55" + d.slice(0, 2) + "9" + d.slice(2) };
+    return { ok: false, why: "Telefone fixo: este número não tem WhatsApp" };
+  }
+  if (d.length === 8 || d.length === 9) return { ok: false, why: "Número sem DDD: não dá para abrir o WhatsApp" };
+  return { ok: false, why: "Número incompleto: não dá para abrir o WhatsApp" };
+}
+function nicheOf(id) { return ST.niches.filter(function (n) { return n.id === id; })[0] || null; }
+function varsOf(c, nicheId) {
+  var w = waInfo(c), n = nicheOf(nicheId === undefined ? c.niche_id : nicheId);
+  return {
+    nome: c.name, categoria: c.category, telefone: c.phone ? fmtPhone(c.phone) : "", whatsapp: w.ok ? fmtPhone(w.num) : "",
+    link_whatsapp: w.ok ? "https://wa.me/" + w.num : "", endereco: c.address, cidade: c.city, estado: c.state, nota: c.rating,
+    total_avaliacoes: c.reviews_count, avaliacoes: c.reviews, horario: c.hours, descricao: c.description, site_atual: c.site_current,
+    nicho: n ? n.name : "", link_site: c.link || ""
+  };
+}
+function fill(t, v) {
+  var empty = {}, unknown = {};
+  var out = String(t || "").replace(/\{\{\s*([a-zA-Z_]+)\s*\}\}/g, function (m, k) {
+    k = k.toLowerCase();
+    if (!(k in v)) { unknown[k] = 1; return m; }
+    var val = String(v[k] == null ? "" : v[k]).trim();
+    if (!val) empty[k] = 1;
+    return val;
+  });
+  return { out: out, empty: Object.keys(empty), unknown: Object.keys(unknown) };
+}
+function waMessage(c) {
+  var n = nicheOf(c.niche_id);
+  var t = (n && n.wa && n.wa.trim()) || (ST.settings.wa && ST.settings.wa.trim()) || DEFAULT_WA;
+  var out = fill(t, varsOf(c)).out;
+  if (c.link && !/\{\{\s*link_site\s*\}\}/i.test(t)) out += "\n\nAqui está o site que preparei para vocês: " + c.link;
+  return out.replace(/\n{3,}/g, "\n\n").trim();
+}
+function openWA(c, after) {
+  var w = waInfo(c);
+  if (!w.ok) { toast(w.why); return false; }
+  var url = "https://wa.me/" + w.num + "?text=" + encodeURIComponent(waMessage(c));
+  var win = window.open(url, "_blank");
+  if (win) { try { win.opener = null; } catch (e) {} if (after) after(); }
+  else { (after ? after() : Promise.resolve()).then(function () { location.href = url; }, function () { location.href = url; }); }
+  return true;
+}
+
+// ---------- leitura da lista colada ----------
+function normKey(s) { return String(s || "").toLowerCase().normalize("NFD").replace(/[̀-ͯ]/g, "").replace(/[^a-z0-9]/g, ""); }
+var HEAD = {
+  nome: "name", empresa: "name", nomedaempresa: "name", title: "name", name: "name", razaosocial: "name", nomefantasia: "name", estabelecimento: "name", negocio: "name", cliente: "name", empresas: "name",
+  categoria: "category", category: "category", categoryname: "category", categories: "category", tipo: "category", tipodenegocio: "category", segmento: "category", ramo: "category",
+  telefone: "phone", phone: "phone", fone: "phone", tel: "phone", celular: "phone", contato: "phone", phoneunformatted: "phone", numero: "phone", telefone1: "phone", phonenumber: "phone", telefones: "phone",
+  whatsapp: "wa", whats: "wa", zap: "wa", wpp: "wa",
+  endereco: "address", address: "address", rua: "address", logradouro: "address", street: "address", enderecocompleto: "address",
+  cidade: "city", city: "city", municipio: "city",
+  estado: "state", state: "state", uf: "state",
+  nota: "rating", rating: "rating", totalscore: "rating", avaliacao: "rating", estrelas: "rating", score: "rating", stars: "rating",
+  totalavaliacoes: "reviews_count", reviewscount: "reviews_count", qtdavaliacoes: "reviews_count", numerodeavaliacoes: "reviews_count", quantidadedeavaliacoes: "reviews_count", totalreviews: "reviews_count", qtdeavaliacoes: "reviews_count",
+  avaliacoes: "reviews", reviews: "reviews", comentarios: "reviews", textodasavaliacoes: "reviews",
+  horario: "hours", horarios: "hours", hours: "hours", openinghours: "hours", funcionamento: "hours", horariodefuncionamento: "hours",
+  descricao: "description", description: "description", sobre: "description", about: "description",
+  site: "site_current", website: "site_current", url: "site_current", siteatual: "site_current", web: "site_current",
+  nicho: "niche", niche: "niche"
+};
+function parseDelimited(text, del) {
+  var rows = [], row = [], cur = "", q = false, i = 0, start = true;
+  for (; i < text.length; i++) {
+    var ch = text[i];
+    if (q) {
+      if (ch === '"') { if (text[i + 1] === '"') { cur += '"'; i++; } else q = false; }
+      else cur += ch;
+    } else if (ch === '"' && start) { q = true; start = false; }
+    else if (ch === del) { row.push(cur.trim()); cur = ""; start = true; }
+    else if (ch === "\n") { row.push(cur.trim()); rows.push(row); row = []; cur = ""; start = true; }
+    else { cur += ch; if (ch !== " ") start = false; }
+  }
+  row.push(cur.trim()); rows.push(row);
+  return rows.filter(function (r) { return r.some(function (c) { return c; }); });
+}
+var PHONE_RE = /(\+?\(?\d[\d\s().-]{6,}\d)/;
+function isPhone(s) { var d = digits(s); return d.length >= 8 && d.length <= 14 && digits(s).length / String(s).replace(/\s/g, "").length > 0.6; }
+function cityFromAddress(c) {
+  if (c.city || !c.address) return;
+  var m = /,\s*([^,\d]+?)\s*-\s*([A-Z]{2})\b/.exec(c.address);
+  if (m) { c.city = m[1].trim(); if (!c.state) c.state = m[2]; }
+}
+function finish(c) {
+  Object.keys(c).forEach(function (k) { c[k] = String(c[k] == null ? "" : c[k]).trim(); });
+  if (c.reviews && !c.reviews_count && /^\d+([.,]\d+)?$/.test(c.reviews)) { c.reviews_count = c.reviews; c.reviews = ""; }
+  if (!c.phone && c.wa) { /* mantém wa como contato */ }
+  cityFromAddress(c);
+  return c;
+}
+function parseList(text) {
+  text = String(text || "").replace(/\r\n?/g, "\n").replace(/^﻿/, "");
+  var lines = text.split("\n").filter(function (l) { return l.trim(); });
+  if (!lines.length) return [];
+  var first = lines[0], del = null;
+  if (first.indexOf("\t") >= 0) del = "\t";
+  else if (first.indexOf(";") >= 0) del = ";";
+  else if (first.indexOf(",") >= 0) {
+    var hc = first.split(",").filter(function (c) { return HEAD[normKey(c)]; }).length;
+    if (hc >= 2) del = ",";
+  }
+  var out = [];
+  if (del) {
+    var rows = parseDelimited(text, del);
+    var head = rows[0].map(function (c) { return HEAD[normKey(c)] || null; });
+    var known = head.filter(Boolean).length;
+    var hasHeader = known >= 2 || (known >= 1 && !rows[0].some(isPhone));
+    if (hasHeader) {
+      rows.slice(1).forEach(function (r) {
+        var c = {};
+        head.forEach(function (f, i) { if (f && r[i] && !c[f]) c[f] = r[i]; });
+        if (c.name || c.phone || c.wa) out.push(finish(c));
+      });
+    } else {
+      rows.forEach(function (r) { out.push(finish(guessCells(r))); });
+    }
+  } else {
+    lines.forEach(function (l) { out.push(finish(guessLine(l))); });
+  }
+  return out.filter(function (c) { return c.name || c.phone || c.wa; });
+}
+function guessCells(cells) {
+  var c = {}, rest = [];
+  cells.forEach(function (v) {
+    if (!v) return;
+    if (!c.phone && isPhone(v)) c.phone = v;
+    else rest.push(v);
+  });
+  c.name = rest.shift() || "";
+  rest.forEach(function (v) {
+    if (!c.state && /^[A-Z]{2}$/.test(v)) c.state = v;
+    else if (!c.address && (/\d/.test(v) && v.length > 10 || /^(rua|av\.?|avenida|travessa|rod\.?|rodovia|praça|pça)\b/i.test(v))) c.address = v;
+    else if (!c.city && !/^\d/.test(v) && v.length < 60) c.city = v;
+    else if (!c.site_current && /^(https?:\/\/|www\.)/i.test(v)) c.site_current = v;
+  });
+  return c;
+}
+function guessLine(line) {
+  var c = {}, m = PHONE_RE.exec(line), rest = line;
+  if (m && digits(m[1]).length >= 8) { c.phone = m[1].trim(); rest = line.replace(m[1], " "); }
+  var parts = rest.split(/\s+[-–—|]\s+|\s*[|;,\t]\s*|\s+[-–—]$|^[-–—]\s+/).map(function (s) { return s.replace(/^[\s\-–—:]+|[\s\-–—:]+$/g, ""); }).filter(Boolean);
+  c.name = parts.shift() || "";
+  if (parts.length) {
+    var last = parts[parts.length - 1];
+    if (/^[A-Z]{2}$/.test(last)) { c.state = last; parts.pop(); last = parts[parts.length - 1]; }
+    if (last) {
+      var sm = /^(.*?)\s*[-/]\s*([A-Z]{2})$/.exec(last);
+      if (sm) { c.city = sm[1]; c.state = c.state || sm[2]; } else c.city = last;
+    }
+  }
+  return c;
+}
+
+// ---------- login ----------
+function showAuth(form) {
+  $("#app").hidden = true; $("#auth").hidden = false;
+  ["fLogin", "fSignup", "fRecover"].forEach(function (id) { $("#" + id).hidden = id !== (form || "fLogin"); });
+}
+$$("[data-go]").forEach(function (b) { b.onclick = function () { showAuth(b.dataset.go); msg($("#mLogin"), ""); msg($("#mSignup"), ""); msg($("#mRecover"), ""); }; });
+$("#fLogin").onsubmit = function (e) {
+  e.preventDefault(); var b = $("#fLogin button[type=submit]"); busy(b, true); msg($("#mLogin"), "");
+  api("login", { method: "POST", auth: 1, body: { email: $("#lEmail").value, password: $("#lPass").value } })
+    .then(function () { $("#lPass").value = ""; return start(); })
+    .catch(function (er) { msg($("#mLogin"), er.message); }).then(function () { busy(b, false); });
+};
+$("#fSignup").onsubmit = function (e) {
+  e.preventDefault(); var b = $("#fSignup button[type=submit]"); busy(b, true); msg($("#mSignup"), "");
+  api("signup", { method: "POST", auth: 1, body: { name: $("#sName").value, email: $("#sEmail").value, password: $("#sPass").value } })
+    .then(function (d) { $("#sPass").value = ""; return start().then(function () { showRecovery(d.recovery, true); }); })
+    .catch(function (er) { msg($("#mSignup"), er.message); }).then(function () { busy(b, false); });
+};
+$("#fRecover").onsubmit = function (e) {
+  e.preventDefault(); var b = $("#fRecover button[type=submit]"); busy(b, true); msg($("#mRecover"), "");
+  api("recover", { method: "POST", auth: 1, body: { email: $("#rEmail").value, code: $("#rCode").value, password: $("#rPass").value } })
+    .then(function (d) { $("#rPass").value = ""; $("#rCode").value = ""; return start().then(function () { showRecovery(d.recovery, false); }); })
+    .catch(function (er) { msg($("#mRecover"), er.message); }).then(function () { busy(b, false); });
+};
+function showRecovery(code, isNew) {
+  modal('<h3>' + (isNew ? "Guarde seu código de recuperação" : "Seu novo código de recuperação") + '</h3>' +
+    '<p>Se você esquecer a senha, este código é o único jeito de entrar de novo. Anote ou tire um print e guarde em lugar seguro. ' + (isNew ? "" : "O código antigo não vale mais.") + '</p>' +
+    '<div class="code">' + esc(code) + '</div>' +
+    '<div class="row"><button class="btn" data-copy>Copiar código</button><button class="btn primary" data-close>Já guardei</button></div>',
+    function (card) { $("[data-copy]", card).onclick = function () { copyText(code); toast("Código copiado."); }; });
+}
+
+// ---------- modal ----------
+function modal(html, init) {
+  var m = $("#modal"), c = $("#modalCard");
+  c.innerHTML = html; m.hidden = false;
+  $$("[data-close]", c).forEach(function (b) { b.onclick = closeModal; });
+  if (init) init(c);
+  var f = $("input,textarea", c); if (f) setTimeout(function () { f.focus(); }, 30);
+}
+function closeModal() { $("#modal").hidden = true; $("#modalCard").innerHTML = ""; }
+$("#modal").addEventListener("mousedown", function (e) { if (e.target.id === "modal") closeModal(); });
+document.addEventListener("keydown", function (e) { if (e.key === "Escape" && !$("#modal").hidden) closeModal(); });
+function confirmBox(title, text, okLabel, danger, onOk) {
+  modal('<h3>' + esc(title) + '</h3><p>' + esc(text) + '</p><div id="mm"></div><div class="row"><button class="btn" data-close>Cancelar</button><button class="btn ' + (danger ? "danger solid" : "primary") + '" data-ok>' + esc(okLabel) + '</button></div>',
+    function (card) {
+      $("[data-ok]", card).onclick = function () {
+        var b = this; busy(b, true);
+        Promise.resolve(onOk()).then(closeModal, function (er) { msg($("#mm", card), er.message); busy(b, false); });
+      };
+    });
+}
+
+// ---------- início ----------
+function start() {
+  return api("data").then(function (d) {
+    ST.user = d.user; ST.companies = d.companies; ST.niches = d.niches; ST.settings = d.settings || { wa: "" };
+    $("#auth").hidden = true; $("#app").hidden = false;
+    $("#who").textContent = d.user.name;
+    if (!ST.companies.length) $("#importBox").open = true;
+    setTab(ST.tab);
+  });
+}
+function setTab(t) {
+  ST.tab = t;
+  $$("#tabs button").forEach(function (b) { b.classList.toggle("on", b.dataset.tab === t); });
+  ["lista", "site", "nichos", "conta"].forEach(function (x) { $("#t-" + x).hidden = x !== t; });
+  if (t === "lista") renderLista();
+  if (t === "site") renderSite();
+  if (t === "nichos") renderNichos();
+  if (t === "conta") renderConta();
+  window.scrollTo(0, 0);
+}
+$$("#tabs button").forEach(function (b) { b.onclick = function () { setTab(b.dataset.tab); }; });
+
+// ---------- LISTA ----------
+function nicheOptions(sel, emptyLabel) {
+  return '<option value="">' + esc(emptyLabel) + "</option>" + ST.niches.map(function (n) {
+    return '<option value="' + esc(n.id) + '"' + (n.id === sel ? " selected" : "") + ">" + esc(n.name) + "</option>";
+  }).join("");
+}
+function renderLista() {
+  var cs = ST.companies, counts = { novos: 0, contato: 0, feito: 0, pagamento: 0, pagos: 0 }, total = 0;
+  cs.forEach(function (c) { counts[c.stage] = (counts[c.stage] || 0) + 1; if (c.stage === "pagos") total += +c.value || 0; });
+  $("#stTotal").textContent = brl(total);
+  $("#stSales").textContent = counts.pagos;
+  $("#stOpen").textContent = counts.contato + counts.feito + counts.pagamento;
+  var keep = $("#importNiche").value;
+  $("#importNiche").innerHTML = nicheOptions(keep, ST.niches.length ? "Sem nicho" : "Sem nicho (crie em Nichos e prompts)");
+  $("#stages").innerHTML = STAGES.map(function (s) {
+    return '<button data-stage="' + s[0] + '" class="' + (ST.stage === s[0] ? "on" : "") + '">' + s[1] + " <span>" + counts[s[0]] + "</span></button>";
+  }).join("");
+  renderTable();
+}
+function rowActions(c) {
+  var w = waInfo(c), h = "";
+  var B = function (act, label, cls, extra) { return '<button class="btn ' + (cls || "") + '" data-act="' + act + '" data-id="' + c.id + '"' + (extra || "") + ">" + label + "</button>"; };
+  if (c.stage === "novos") {
+    h += w.ok ? B("wa", WA_ICON + "WhatsApp", "wa") : (w.why === "Sem telefone" ? "" : '<span class="note">' + esc(w.why) + ".</span>");
+    h += B("site", "Fazer site", "primary");
+  } else if (c.stage === "contato") {
+    h += B("site", "Fazer site", "primary");
+  } else if (c.stage === "feito") {
+    h += '<input class="in link" data-link="' + c.id + '" type="url" inputmode="url" placeholder="Cole o link do site pronto" value="' + esc(c.link) + '">';
+    h += B("cobrar", "Cobrar", "primary");
+  } else if (c.stage === "pagamento") {
+    if (c.link) h += '<a class="btn ghost" href="' + esc(c.link) + '" target="_blank" rel="noopener">Ver site</a>';
+    h += B("pago", "Marcar como pago", "primary");
+  } else if (c.stage === "pagos") {
+    h += '<span class="money">' + brl(c.value) + "</span>";
+    if (c.link) h += '<a class="btn ghost" href="' + esc(c.link) + '" target="_blank" rel="noopener">Ver site</a>';
+    h += B("desfazer", "Desfazer");
+  }
+  if (c.stage !== "novos" && c.stage !== "pagos") h += B("voltar", "Voltar etapa", "ghost");
+  h += B("remover", "Remover", "ghost danger");
+  return h;
+}
+var WA_ICON = '<svg viewBox="0 0 24 24" fill="currentColor"><path d="M17.5 14.4c-.3-.1-1.8-.9-2-1-.3-.1-.5-.1-.7.1-.2.3-.8 1-.9 1.2-.2.2-.3.2-.6.1-.3-.1-1.3-.5-2.4-1.5-.9-.8-1.5-1.8-1.7-2.1-.2-.3 0-.5.1-.6l.4-.5c.2-.2.2-.3.3-.5.1-.2 0-.4 0-.5l-.9-2.2c-.2-.6-.5-.5-.7-.5h-.6c-.2 0-.5.1-.8.4-.3.3-1 1-1 2.5s1.1 2.9 1.2 3.1c.1.2 2.1 3.2 5.1 4.5 2.5 1 3 .8 3.6.7.6-.1 1.8-.7 2-1.4.2-.7.2-1.3.2-1.4-.1-.1-.3-.2-.6-.3zM12 2a10 10 0 0 0-8.6 15.1L2 22l5-1.3A10 10 0 1 0 12 2zm0 18.2c-1.6 0-3.1-.4-4.4-1.2l-.3-.2-3 .8.8-2.9-.2-.3A8.2 8.2 0 1 1 12 20.2z"/></svg>';
+function renderTable() {
+  var q = normKey(ST.q), qd = digits(ST.q);
+  var list = ST.companies.filter(function (c) {
+    if (c.stage !== ST.stage) return false;
+    if (!q) return true;
+    return normKey(c.name + " " + c.city + " " + c.category).indexOf(q) >= 0 || (qd.length >= 3 && digits(c.phone + " " + c.wa).indexOf(qd) >= 0);
+  });
+  if (ST.stage === "pagos") list.sort(function (a, b) { return b.updated - a.updated; });
+  var wrap = $("#tableWrap");
+  if (!list.length) {
+    var empt = { novos: "Nenhuma empresa nova. Cole uma lista em “Colar lista de empresas”.", contato: "Ninguém em contato ainda.", feito: "Nenhum site feito ainda.", pagamento: "Nenhuma cobrança em aberto.", pagos: "Nenhuma venda ainda." };
+    wrap.innerHTML = '<div class="tbl"><div class="empty">' + (q ? "Nada encontrado para essa busca." : empt[ST.stage]) + "</div></div>";
+    return;
+  }
+  var shown = list.slice(0, ST.limit);
+  wrap.innerHTML = '<div class="tbl"><table><thead><tr><th>Empresa</th><th>Telefone</th><th>Cidade</th><th style="text-align:right">Ações</th></tr></thead><tbody>' +
+    shown.map(function (c) {
+      var n = nicheOf(c.niche_id), sub = [c.category, n ? "Nicho: " + n.name : ""].filter(Boolean).join(" · ");
+      var ph = c.phone ? esc(fmtPhone(c.phone)) : c.wa ? esc(fmtPhone(c.wa)) : '<span class="nophone">sem telefone</span>';
+      return "<tr><td class=\"cname\"><b>" + esc(c.name) + "</b>" + (sub ? "<small>" + esc(sub) + "</small>" : "") + "</td>" +
+        '<td class="tphone">' + ph + '</td><td class="tcity">' + esc([c.city, c.state].filter(Boolean).join(" - ")) + "</td>" +
+        '<td class="tacts"><div class="acts">' + rowActions(c) + "</div></td></tr>";
+    }).join("") + "</tbody></table></div>" +
+    (list.length > shown.length ? '<div class="more"><button class="btn" id="more">Mostrar mais (' + (list.length - shown.length) + ")</button></div>" : "");
+  var mb = $("#more"); if (mb) mb.onclick = function () { ST.limit += PAGE; renderTable(); };
+}
+$("#stages").onclick = function (e) { var b = e.target.closest("[data-stage]"); if (!b) return; ST.stage = b.dataset.stage; ST.limit = PAGE; renderLista(); };
+$("#search").oninput = function () { ST.q = this.value; ST.limit = PAGE; renderTable(); };
+function byId(id) { return ST.companies.filter(function (c) { return c.id === id; })[0]; }
+function patch(c, body) {
+  return api("companies/" + c.id, { method: "PATCH", body: body }).then(function (d) { Object.assign(c, d.company); if (ST.tab === "lista") renderLista(); return c; });
+}
+function stageName(s) { return STAGES[STAGE_IDX[s]][1]; }
+$("#tableWrap").addEventListener("change", function (e) {
+  var inp = e.target.closest("[data-link]"); if (!inp) return;
+  var c = byId(inp.dataset.link), v = inp.value.trim();
+  if (v && !/^https?:\/\//i.test(v)) v = "https://" + v;
+  if (v === (c.link || "")) return;
+  api("companies/" + c.id, { method: "PATCH", body: { link: v } }).then(function (d) { Object.assign(c, d.company); inp.value = c.link; toast("Link salvo."); }, function (er) { toast(er.message); });
+});
+$("#tableWrap").addEventListener("click", function (e) {
+  var b = e.target.closest("[data-act]"); if (!b) return;
+  var c = byId(b.dataset.id), act = b.dataset.act; if (!c) return;
+  if (act === "wa") {
+    openWA(c, function () { return patch(c, { stage: "contato" }).then(function () { toast("WhatsApp aberto. Empresa foi para “Em contato”."); }, function (er) { toast(er.message); }); });
+  } else if (act === "site") {
+    openSite(c);
+  } else if (act === "cobrar") {
+    var inp = $('[data-link="' + c.id + '"]'), v = (inp ? inp.value : c.link || "").trim();
+    if (v && !/^https?:\/\//i.test(v)) v = "https://" + v;
+    if (!v) { toast("Cole o link do site pronto antes de cobrar."); if (inp) inp.focus(); return; }
+    if (!/^https?:\/\/\S+\.\S+/i.test(v)) { toast("Esse link não parece válido."); return; }
+    c.link = v;
+    var w = waInfo(c);
+    var go = function () { return patch(c, { link: v, stage: "pagamento" }).then(function () { toast(w.ok ? "Mensagem aberta no WhatsApp. Empresa foi para “Pagamento”." : "Empresa foi para “Pagamento”. " + w.why + "."); }, function (er) { toast(er.message); }); };
+    if (w.ok) openWA(c, go); else go();
+  } else if (act === "pago") {
+    modal('<h3>Marcar como pago</h3><p>' + esc(c.name) + '</p><div id="mm"></div><div class="field"><label for="payV">Valor recebido (R$)</label><input class="in" id="payV" inputmode="decimal" placeholder="Ex.: 497,00"></div><div class="row"><button class="btn" data-close>Cancelar</button><button class="btn primary" data-ok>Confirmar pagamento</button></div>',
+      function (card) {
+        var ok = function () {
+          var v = parseMoney($("#payV", card).value);
+          if (!(v > 0)) { msg($("#mm", card), "Digite o valor recebido."); return; }
+          busy($("[data-ok]", card), true);
+          patch(c, { stage: "pagos", value: v }).then(function () { closeModal(); toast("Venda registrada: " + brl(v) + "."); }, function (er) { msg($("#mm", card), er.message); busy($("[data-ok]", card), false); });
+        };
+        $("[data-ok]", card).onclick = ok;
+        $("#payV", card).onkeydown = function (ev) { if (ev.key === "Enter") ok(); };
+      });
+  } else if (act === "desfazer") {
+    confirmBox("Desfazer pagamento?", c.name + " volta para “Pagamento” e o valor de " + brl(c.value) + " sai do total vendido.", "Desfazer", false, function () { return patch(c, { stage: "pagamento" }); });
+  } else if (act === "voltar") {
+    var prev = STAGES[STAGE_IDX[c.stage] - 1][0];
+    patch(c, { stage: prev }).then(function () { toast(c.name + " voltou para “" + stageName(prev) + "”."); }, function (er) { toast(er.message); });
+  } else if (act === "remover") {
+    confirmBox("Remover empresa?", "“" + c.name + "” sai da lista. Isso não pode ser desfeito.", "Remover", true, function () {
+      return api("companies/" + c.id, { method: "DELETE" }).then(function () { ST.companies = ST.companies.filter(function (x) { return x !== c; }); renderLista(); });
+    });
+  }
+});
+function parseMoney(s) {
+  s = String(s || "").replace(/[R$\s]/g, "");
+  if (!s) return 0;
+  if (s.indexOf(",") >= 0) s = s.replace(/\./g, "").replace(",", ".");
+  else if (/^\d{1,3}(\.\d{3})+$/.test(s)) s = s.replace(/\./g, "");
+  var v = parseFloat(s); return isFinite(v) ? Math.round(v * 100) / 100 : 0;
+}
+$("#btnImport").onclick = function () {
+  var b = this, items = parseList($("#pasteBox").value), box = $("#mImport");
+  if (!items.length) { msg(box, "Não encontrei nenhuma empresa no texto colado."); return; }
+  busy(b, true); msg(box, "Importando " + items.length + " linha(s)…", "info");
+  var parts = [], i;
+  for (i = 0; i < items.length; i += 1000) parts.push(items.slice(i, i + 1000));
+  var added = 0, skipped = 0, nid = $("#importNiche").value || null;
+  parts.reduce(function (p, part) {
+    return p.then(function () { return api("companies/import", { method: "POST", body: { items: part, niche_id: nid } }).then(function (d) { added += d.added; skipped += d.skipped; }); });
+  }, Promise.resolve()).then(function () {
+    return api("data").then(function (d) { ST.companies = d.companies; ST.niches = d.niches; });
+  }).then(function () {
+    $("#pasteBox").value = ""; ST.stage = "novos"; ST.q = ""; $("#search").value = ""; renderLista();
+    msg(box, added + " empresa(s) nova(s) importada(s)" + (skipped ? ". " + skipped + " já estava(m) na lista e não foi(ram) duplicada(s)." : "."), "ok");
+  }, function (er) { msg(box, er.message); }).then(function () { busy(b, false); });
+};
+
+// ---------- FAZER SITE ----------
+function openSite(c) {
+  ST.siteId = c.id;
+  ST.siteNiche = c.niche_id || (ST.niches.length === 1 ? ST.niches[0].id : null);
+  setTab("site");
+}
+function renderSite() {
+  var el = $("#t-site"), c = byId(ST.siteId);
+  var opts = '<option value="">Escolha uma empresa</option>' + ST.companies.map(function (x) {
+    return '<option value="' + x.id + '"' + (c && x.id === c.id ? " selected" : "") + ">" + esc(x.name + (x.city ? " — " + x.city : "")) + "</option>";
+  }).join("");
+  var h = '<div class="card"><h2 style="margin-bottom:12px">Fazer site</h2>' +
+    '<div class="row" style="align-items:flex-end;margin-bottom:14px"><div class="grow" style="min-width:220px"><label for="sCompany">Empresa</label><select class="in" id="sCompany">' + opts + "</select></div>" +
+    '<div class="grow" style="min-width:200px"><label for="sNiche">Nicho (texto-modelo)</label><select class="in" id="sNiche">' + nicheOptions(ST.siteNiche, ST.niches.length ? "Escolha um nicho" : "Nenhum nicho criado") + "</select></div></div>";
+  if (!ST.companies.length) {
+    h += '<div class="msg info">Sua lista está vazia. Cole empresas na aba Lista primeiro.</div>';
+  } else if (!c) {
+    h += '<div class="msg info">Escolha uma empresa acima, ou clique em “Fazer site” numa empresa da Lista.</div>';
+  } else if (!ST.niches.length) {
+    h += '<div class="msg warn">Você ainda não tem nenhum nicho. Crie um em “Nichos e prompts” com o seu texto-modelo.</div><button class="btn primary" data-goto="nichos">Criar nicho</button>';
+  } else if (!ST.siteNiche) {
+    h += '<div class="msg info">Escolha o nicho para usar o texto-modelo dele.</div>';
+  } else {
+    var n = nicheOf(ST.siteNiche);
+    if (!n.prompt || !n.prompt.trim()) {
+      h += '<div class="msg warn">O nicho “' + esc(n.name) + '” está sem texto-modelo. Escreva ou carregue o texto em “Nichos e prompts”.</div><button class="btn primary" data-goto="nichos" data-niche="' + n.id + '">Editar nicho</button>';
+    } else {
+      var r = fill(n.prompt, varsOf(c, n.id));
+      if (r.empty.length) h += '<div class="msg warn"><b>Campos sem dado nesta empresa:</b> ' + r.empty.map(function (k) { return esc(FIELD_LABEL[k] || k) + " ({{" + k + "}})"; }).join(", ") + ". Eles ficaram vazios no texto. Revise antes de continuar.</div>";
+      if (r.unknown.length) h += '<div class="msg warn"><b>Campos que a plataforma não conhece:</b> ' + r.unknown.map(function (k) { return "{{" + esc(k) + "}}"; }).join(", ") + ". Eles ficaram como estão.</div>";
+      h += '<label for="sText">Texto pronto (pode editar antes de continuar)</label><textarea class="in mono" id="sText" spellcheck="false">' + esc(r.out) + "</textarea>" +
+        '<div class="row" style="margin-top:12px"><button class="btn primary" id="sGo">Continuar: copiar e abrir o AI Studio</button><button class="btn" id="sCopy">Só copiar</button><span class="mut small">Etapa atual: ' + esc(stageName(c.stage)) + "</span></div>" +
+        '<div id="sDone" style="margin-top:14px"></div>';
+    }
+  }
+  el.innerHTML = h + "</div>";
+  $("#sCompany").onchange = function () { var x = byId(this.value); ST.siteId = x ? x.id : null; ST.siteNiche = x ? (x.niche_id || (ST.niches.length === 1 ? ST.niches[0].id : null)) : null; renderSite(); };
+  $("#sNiche").onchange = function () {
+    ST.siteNiche = this.value || null;
+    var x = byId(ST.siteId);
+    if (x && ST.siteNiche && x.niche_id !== ST.siteNiche) patch(x, { niche_id: ST.siteNiche }).catch(function (er) { toast(er.message); });
+    renderSite();
+  };
+  $$("[data-goto]", el).forEach(function (b) { b.onclick = function () { if (b.dataset.niche) ST.nicheSel = b.dataset.niche; else ST.nicheSel = "new"; setTab("nichos"); }; });
+  var go = $("#sGo");
+  if (go) {
+    go.onclick = function () {
+      var ta = $("#sText"), text = ta.value;
+      if (!text.trim()) { toast("O texto está vazio."); return; }
+      copyFrom(ta);
+      var win = window.open("https://aistudio.google.com/", "_blank");
+      if (win) { try { win.opener = null; } catch (e) {} }
+      var done = function () {
+        $("#sDone").innerHTML = '<div class="msg ok">Texto copiado' + (win ? " e AI Studio aberto em outra aba" : "") + '. Lá, cole com Ctrl+V (no celular, toque e segure e escolha Colar) e gere o site. Depois volte na Lista, etapa “Site feito”, e cole o link do site pronto.</div>' +
+          (win ? "" : '<a class="btn" href="https://aistudio.google.com/" target="_blank" rel="noopener">Abrir o AI Studio</a> ') + '<button class="btn" data-back>Voltar para a lista</button>';
+        $("[data-back]").onclick = function () { ST.stage = "feito"; setTab("lista"); };
+      };
+      if (STAGE_IDX[c.stage] < 2) patch(c, { stage: "feito" }).then(done, function (er) { toast(er.message); done(); }); else done();
+    };
+    $("#sCopy").onclick = function () { copyFrom($("#sText")); toast("Texto copiado."); };
+  }
+}
+function copyFrom(ta) {
+  var ok = false;
+  try { ta.focus(); ta.select(); ok = document.execCommand("copy"); } catch (e) {}
+  try { ta.setSelectionRange(0, 0); ta.scrollTop = 0; } catch (e) {}
+  if (navigator.clipboard && navigator.clipboard.writeText) navigator.clipboard.writeText(ta.value).catch(function () {});
+  return ok;
+}
+function copyText(t) {
+  var ta = document.createElement("textarea"); ta.value = t; ta.style.position = "fixed"; ta.style.opacity = "0";
+  document.body.appendChild(ta); ta.select(); try { document.execCommand("copy"); } catch (e) {}
+  document.body.removeChild(ta);
+  if (navigator.clipboard && navigator.clipboard.writeText) navigator.clipboard.writeText(t).catch(function () {});
+}
+
+// ---------- NICHOS ----------
+function chipsFor(target, withLink) {
+  var list = FIELDS.slice(); if (withLink) list.push(["link_site", "Link do site pronto"]);
+  return '<div class="chips" data-target="' + target + '">' + list.map(function (f) { return '<button type="button" title="' + esc(f[1]) + '" data-f="' + f[0] + '">{{' + f[0] + "}}</button>"; }).join("") + "</div>";
+}
+function insertAt(ta, text) {
+  ta.focus();
+  var s = ta.selectionStart, e = ta.selectionEnd;
+  if (typeof ta.setRangeText === "function") { ta.setRangeText(text, s, e, "end"); }
+  else { ta.value = ta.value.slice(0, s) + text + ta.value.slice(e); ta.selectionStart = ta.selectionEnd = s + text.length; }
+  ta.dispatchEvent(new Event("input"));
+}
+function renderNichos() {
+  var el = $("#t-nichos");
+  if (ST.nicheSel !== "new" && !nicheOf(ST.nicheSel)) ST.nicheSel = ST.niches.length ? ST.niches[0].id : "new";
+  var counts = {}; ST.companies.forEach(function (c) { if (c.niche_id) counts[c.niche_id] = (counts[c.niche_id] || 0) + 1; });
+  var n = ST.nicheSel === "new" ? { id: "", name: "", prompt: "", wa: "" } : nicheOf(ST.nicheSel);
+  el.innerHTML =
+    '<div class="nlayout"><div class="card"><div class="row between" style="margin-bottom:10px"><h3>Seus nichos</h3><button class="btn" id="nNew">+ Novo nicho</button></div>' +
+    (ST.niches.length ? '<ul class="nlist">' + ST.niches.map(function (x) { return '<li><button data-n="' + x.id + '" class="' + (x.id === ST.nicheSel ? "on" : "") + '"><span>' + esc(x.name) + "</span><small>" + (counts[x.id] || 0) + "</small></button></li>"; }).join("") + "</ul>" : '<p class="mut small">Nenhum nicho ainda. Crie o primeiro, por exemplo: dentista, lava-jato, salão de beleza.</p>') +
+    "</div>" +
+    '<div class="card"><h2 style="margin-bottom:14px">' + (n.id ? "Editar nicho" : "Novo nicho") + '</h2><div id="mNiche"></div>' +
+    '<div class="field"><label for="nName">Nome do nicho</label><input class="in" id="nName" value="' + esc(n.name) + '" placeholder="Ex.: Dentista"></div>' +
+    '<div class="field"><div class="row between" style="margin-bottom:5px"><label for="nPrompt" style="margin:0">Texto-modelo do site (prompt)</label><label class="btn" style="margin:0;font-weight:550">Carregar de arquivo<input type="file" id="nFile" accept=".txt,.html,.htm,.md,text/*" hidden></label></div>' +
+    '<p class="mut small">Clique num campo para colocar ele onde está o cursor. Na hora de fazer o site, cada campo vira o dado da empresa.</p>' + chipsFor("nPrompt") +
+    '<textarea class="in mono" id="nPrompt" spellcheck="false" placeholder="Cole ou escreva aqui o seu prompt. Ex.: Crie um site para {{nome}}, {{categoria}} em {{cidade}}…">' + esc(n.prompt) + '</textarea><div class="mut small" id="nSize"></div></div>' +
+    '<div class="field"><label for="nWa">Mensagem de WhatsApp deste nicho (opcional)</label><p class="mut small">Se ficar vazia, a plataforma usa a mensagem padrão. Depois que o link do site é colado, ele entra no fim da mensagem (ou onde você puser {{link_site}}).</p>' + chipsFor("nWa", true) +
+    '<textarea class="in" id="nWa" rows="4">' + esc(n.wa) + "</textarea></div>" +
+    '<div class="row"><button class="btn primary" id="nSave">Salvar nicho</button>' + (n.id ? '<button class="btn ghost danger" id="nDel">Excluir nicho</button>' : "") + "</div></div></div>" +
+    '<div class="card" style="margin-top:16px"><h3 style="margin-bottom:6px">Mensagem padrão de WhatsApp</h3><p class="mut small" style="margin-bottom:8px">Usada quando o nicho não tem mensagem própria. {{nome}} vira o nome da empresa.</p><div id="mDefWa"></div>' + chipsFor("dWa", true) +
+    '<textarea class="in" id="dWa" rows="3" placeholder="' + esc(DEFAULT_WA) + '">' + esc(ST.settings.wa || "") + '</textarea><div class="row" style="margin-top:10px"><button class="btn" id="dSave">Salvar mensagem padrão</button></div></div>';
+
+  var size = function () { var l = $("#nPrompt").value.length; $("#nSize").textContent = l ? l.toLocaleString("pt-BR") + " caracteres" : ""; };
+  size(); $("#nPrompt").oninput = size;
+  $$(".chips", el).forEach(function (box) { box.onclick = function (e) { var b = e.target.closest("[data-f]"); if (b) insertAt($("#" + box.dataset.target), "{{" + b.dataset.f + "}}"); }; });
+  $("#nNew").onclick = function () { ST.nicheSel = "new"; renderNichos(); $("#nName").focus(); };
+  $$("[data-n]", el).forEach(function (b) { b.onclick = function () { ST.nicheSel = b.dataset.n; renderNichos(); }; });
+  $("#nFile").onchange = function () {
+    var f = this.files[0]; if (!f) return;
+    if (f.size > 900000) { msg($("#mNiche"), "Arquivo grande demais (máximo 900 KB)."); return; }
+    var rd = new FileReader();
+    rd.onload = function () { $("#nPrompt").value = rd.result; size(); if (!$("#nName").value.trim()) $("#nName").value = f.name.replace(/\.[^.]+$/, ""); toast("Arquivo carregado. Clique em Salvar nicho."); };
+    rd.readAsText(f, "utf-8"); this.value = "";
+  };
+  $("#nSave").onclick = function () {
+    var b = this, body = { name: $("#nName").value, prompt: $("#nPrompt").value, wa: $("#nWa").value };
+    if (!body.name.trim()) { msg($("#mNiche"), "Dê um nome ao nicho."); return; }
+    busy(b, true);
+    var p = n.id ? api("niches/" + n.id, { method: "PUT", body: body }).then(function () { Object.assign(n, { name: body.name.trim(), prompt: body.prompt, wa: body.wa.trim() }); })
+      : api("niches", { method: "POST", body: body }).then(function (d) { ST.niches.push(d.niche); ST.nicheSel = d.niche.id; });
+    p.then(function () { ST.niches.sort(function (a, b2) { return a.name.localeCompare(b2.name, "pt-BR"); }); renderNichos(); toast("Nicho salvo."); }, function (er) { msg($("#mNiche"), er.message); busy(b, false); });
+  };
+  var del = $("#nDel");
+  if (del) del.onclick = function () {
+    confirmBox("Excluir nicho?", "O nicho “" + n.name + "” e o texto-modelo dele serão apagados. As empresas desse nicho continuam na lista, sem nicho.", "Excluir", true, function () {
+      return api("niches/" + n.id, { method: "DELETE" }).then(function () {
+        ST.niches = ST.niches.filter(function (x) { return x.id !== n.id; });
+        ST.companies.forEach(function (c) { if (c.niche_id === n.id) c.niche_id = null; });
+        if (ST.siteNiche === n.id) ST.siteNiche = null;
+        ST.nicheSel = null; renderNichos();
+      });
+    });
+  };
+  $("#dSave").onclick = function () {
+    var b = this, v = $("#dWa").value; busy(b, true);
+    api("settings", { method: "PUT", body: { wa: v } }).then(function () { ST.settings.wa = v.trim(); msg($("#mDefWa"), "Mensagem padrão salva.", "ok"); }, function (er) { msg($("#mDefWa"), er.message); }).then(function () { busy(b, false); });
+  };
+}
+
+// ---------- CONTA ----------
+function renderConta() {
+  var el = $("#t-conta"), u = ST.user;
+  el.innerHTML = '<div class="conta">' +
+    '<form class="card" id="cData"><h3 style="margin-bottom:12px">Meus dados</h3><div id="mData"></div>' +
+    '<div class="field"><label for="cName">Nome</label><input class="in" id="cName" value="' + esc(u.name) + '" required></div>' +
+    '<div class="field"><label for="cEmail">E-mail</label><input class="in" id="cEmail" type="email" value="' + esc(u.email) + '" required></div>' +
+    '<button class="btn primary" type="submit">Salvar dados</button></form>' +
+    '<form class="card" id="cPass"><h3 style="margin-bottom:12px">Trocar senha</h3><div id="mPass"></div>' +
+    '<div class="field"><label for="cCur">Senha atual</label><input class="in" id="cCur" type="password" autocomplete="current-password" required></div>' +
+    '<div class="field"><label for="cNew">Nova senha (mínimo 8 caracteres)</label><input class="in" id="cNew" type="password" autocomplete="new-password" minlength="8" required></div>' +
+    '<button class="btn primary" type="submit">Trocar senha</button></form>' +
+    '<form class="card" id="cRec"><h3 style="margin-bottom:6px">Código de recuperação</h3><p class="mut small" style="margin-bottom:12px">É o que permite entrar se você esquecer a senha. Gere um novo se perdeu o antigo.</p><div id="mRec"></div>' +
+    '<div class="field"><label for="cRecPass">Sua senha</label><input class="in" id="cRecPass" type="password" autocomplete="current-password" required></div>' +
+    '<button class="btn" type="submit">Gerar novo código</button></form>' +
+    '<div class="card"><div class="row between"><div><h3>Sair</h3><p class="mut small">Encerra o acesso neste aparelho.</p></div><button class="btn" id="cOut">Sair</button></div></div>' +
+    '<div class="card"><div class="row between"><div class="grow"><h3 style="color:var(--red)">Excluir minha conta</h3><p class="mut small">Apaga a conta, todas as empresas, nichos e vendas. Não tem volta.</p></div><button class="btn danger" id="cDel">Excluir conta</button></div></div>' +
+    "</div>";
+  $("#cData").onsubmit = function (e) {
+    e.preventDefault(); var b = $("button", this); busy(b, true);
+    api("me", { method: "PUT", body: { name: $("#cName").value, email: $("#cEmail").value } }).then(function (d) { ST.user = d.user; $("#who").textContent = d.user.name; msg($("#mData"), "Dados salvos.", "ok"); }, function (er) { msg($("#mData"), er.message); }).then(function () { busy(b, false); });
+  };
+  $("#cPass").onsubmit = function (e) {
+    e.preventDefault(); var b = $("button", this); busy(b, true);
+    api("password", { method: "POST", body: { current: $("#cCur").value, password: $("#cNew").value } }).then(function () { $("#cCur").value = ""; $("#cNew").value = ""; msg($("#mPass"), "Senha trocada. Outros aparelhos foram desconectados.", "ok"); }, function (er) { msg($("#mPass"), er.message); }).then(function () { busy(b, false); });
+  };
+  $("#cRec").onsubmit = function (e) {
+    e.preventDefault(); var b = $("button", this); busy(b, true);
+    api("recovery-code", { method: "POST", body: { password: $("#cRecPass").value } }).then(function (d) { $("#cRecPass").value = ""; msg($("#mRec"), ""); showRecovery(d.recovery, false); }, function (er) { msg($("#mRec"), er.message); }).then(function () { busy(b, false); });
+  };
+  $("#cOut").onclick = function () { api("logout", { method: "POST", auth: 1 }).catch(function () {}).then(resetAndLogin); };
+  $("#cDel").onclick = function () {
+    modal('<h3>Excluir minha conta</h3><p>Isso apaga a conta e tudo dentro dela: empresas, nichos, prompts e vendas. Não pode ser desfeito.</p><div id="mm"></div><div class="field"><label for="delPass">Digite sua senha para confirmar</label><input class="in" id="delPass" type="password" autocomplete="current-password"></div><div class="row"><button class="btn" data-close>Cancelar</button><button class="btn danger solid" data-ok>Excluir tudo</button></div>',
+      function (card) {
+        $("[data-ok]", card).onclick = function () {
+          var b = this; busy(b, true);
+          api("me", { method: "DELETE", body: { password: $("#delPass", card).value } }).then(function () { closeModal(); resetAndLogin(); toast("Conta excluída."); }, function (er) { msg($("#mm", card), er.message); busy(b, false); });
+        };
+      });
+  };
+}
+function resetAndLogin() {
+  ST = { user: null, companies: [], niches: [], settings: { wa: "" }, tab: "lista", stage: "novos", q: "", limit: PAGE, siteId: null, siteNiche: null, nicheSel: null };
+  $("#search").value = ""; $("#pasteBox").value = ""; msg($("#mImport"), "");
+  showAuth("fLogin");
+}
+
+// ---------- iniciar ----------
+api("data", { auth: 1 }).then(function (d) {
+  ST.user = d.user; ST.companies = d.companies; ST.niches = d.niches; ST.settings = d.settings || { wa: "" };
+  $("#who").textContent = d.user.name; $("#auth").hidden = true; $("#app").hidden = false;
+  if (!ST.companies.length) $("#importBox").open = true;
+  setTab("lista");
+}, function () { showAuth("fLogin"); });
+</script>
+</body>
+</html>
