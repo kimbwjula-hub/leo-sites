@@ -637,7 +637,7 @@ function L() {
     if (c.wanted || c.stage === "feito" || c.stage === "pagamento" || c.stage === "pagos") o.ints++;
     if (isToday(c.contacted)) o.today++;
     if (isToday(c.wanted)) o.intToday++;
-    if (c.stage === "novos") { if (isBurned(c)) { o.burnedQ++; return; } o.leads.push(c); if (waInfo(c).ok) o.queue.push(c); else o.noWa++; }
+    if (c.stage === "novos") { if (c.teste) return; if (isBurned(c)) { o.burnedQ++; return; } o.leads.push(c); if (waInfo(c).ok) o.queue.push(c); else o.noWa++; }
     else if (c.stage === "contato") { if (c.snooze && c.snooze > t && !c.replied) o.snoozed.push(c); else o.replies.push(c); }
     else if (c.stage === "feito") o.making.push(c);
     else if (c.stage === "pagamento") o.sent.push(c);
@@ -1171,7 +1171,7 @@ function xStepsHtml() {
       inner = '<div class="ximg" id="xpv' + i + '">' + (ok ? '<button class="xmini" style="border:0;background:none;padding:0" data-pv="' + i + '"><span style="font-size:12.5px;border-radius:14px;background:rgba(0,128,105,.1);color:var(--gd);padding:6px 10px;font-weight:600">👁 Ver imagem</span></button>' : "") + '</div><div class="xfile" id="xf' + i + '">🖼️ ' + flab + "</div>" +
         '<div class="xmini"><label>📁 ' + (p.mediaId ? "Trocar imagem" : "Escolher imagem") + '<input type="file" hidden data-up="' + i + '" accept="image/*"></label></div><textarea data-i="' + i + '" data-f="text" placeholder="Legenda (opcional)">' + esc(p.text || "") + "</textarea>";
     } else inner = '<textarea data-i="' + i + '" data-f="text" placeholder="Digite a mensagem">' + esc(p.text || "") + "</textarea>";
-    return pill + '<div class="xbub">' + inner + '<div class="ft"><span class="n">' + (i + 1) + "ª mensagem</span><button data-mv=\"-1\" data-i=\"" + i + '">↑</button><button data-mv="1" data-i="' + i + '">↓</button><button data-rm="' + i + '">🗑</button><span>✓✓</span></div></div>';
+    return pill + '<div class="xbub">' + inner + '<div class="ft"><span class="n">' + (i + 1) + "ª mensagem</span><button data-mv=\"-1\" data-i=\"" + i + '">↑</button><button data-mv="1" data-i="' + i + '">↓</button><button data-rm="' + i + '">🗑</button><button data-ts="' + i + '" title="Testar no meu número">🧪</button><span>✓✓</span></div></div>';
   }).join("");
 }
 var XPART = 1400000;
@@ -1242,6 +1242,20 @@ function xPendRefresh() {
   var g1 = ($("#xP2a") || {}).value, g2 = ($("#xP2b") || {}).value;
   box.innerHTML = xPendHtml(pend, { p2GapMin: g1 || (XS.cfg || {}).p2GapMin, p2GapMax: g2 || (XS.cfg || {}).p2GapMax });
 }
+function xTestNum() { var v = ""; try { v = localStorage.getItem("nitro_testnum") || ""; } catch (e) {} return v || "77976011071"; }
+// cria (ou zera) a empresa de teste com o seu número
+function xTestCompany(num) {
+  var id = "teste" + num.slice(-11), c = ST.companies.filter(function (x) { return x.id === id; })[0], t = Math.floor(Date.now() / 1000);
+  if (!c) {
+    c = { id: id, name: "TESTE · meu número", wa: "+55 " + num.slice(-11), phone: "", city: "Teste", state: "", nicho: ST.niche, stage: "novos", teste: true, created: t, updated: t, reset: t, tries: 0 };
+    addCompanies([c]);
+  } else {
+    c.stage = "novos"; c.teste = true; c.nicho = ST.niche; c.tries = 0; c.reset = t;
+    ["replied", "replied2", "funnel", "contacted", "sent_auto", "wanted", "snooze"].forEach(function (k) { delete c[k]; });
+    touch(c); rebuild();
+  }
+  return id;
+}
 function xRow(ic, title, sub, right) { return '<div class="xr"><span class="ic">' + ic + '</span><div class="tx"><b>' + title + "</b>" + (sub ? "<small>" + sub + "</small>" : "") + "</div>" + (right || "") + "</div>"; }
 function xSw(id, on) { return '<label class="sw"><input type="checkbox" id="' + id + '"' + (on ? " checked" : "") + "><i></i></label>"; }
 function xNum(id, v, min) { return '<input type="number" id="' + id + '" min="' + (min || 0) + '" value="' + esc(v) + '">'; }
@@ -1268,7 +1282,10 @@ function extSheet() {
       xRow("⏰", "Não mandar sozinho se atrasar mais de", "horas (WhatsApp desconectado). 0 = sempre", xNum("xFL", f.maxLateH == null ? 12 : f.maxLateH, 0)) +
       '<div class="xr"><span class="ic">✋</span><div class="tx"><b>Palavras de parada</b><small>Se responder com uma delas, o funil não vai</small><textarea class="xtxa" id="xFS" rows="2">' + esc(f.stopWords || "") + "</textarea></div></div>" +
       '<div class="xchat" id="xSteps">' + xStepsHtml() + "</div>" +
-      '<div class="xadd" id="xAddB"><button class="a1" data-add="text"><i>💬</i>Mensagem</button><button class="a2" data-add="audio"><i>🎤</i>Áudio</button><button class="a3" data-add="image"><i>🖼️</i>Imagem</button></div></div>';
+      '<div class="xadd" id="xAddB"><button class="a1" data-add="text"><i>💬</i>Mensagem</button><button class="a2" data-add="audio"><i>🎤</i>Áudio</button><button class="a3" data-add="image"><i>🖼️</i>Imagem</button></div>' +
+      '<div class="xr"><span class="ic">🧪</span><div class="tx"><b>Testar no meu número</b><small><b>Simular cliente:</b> você recebe a saudação, responde como se fosse a empresa e o funil roda igual ao de verdade (fora do horário também). A empresa "TESTE" aparece nos funis P1, P2 e P3.</small></div></div>' +
+      '<div class="xr" style="min-height:0;padding-top:0"><span class="ic"></span><input id="xTN" type="tel" placeholder="Seu WhatsApp com DDD" style="flex:1;height:40px;border:0;border-bottom:2px solid var(--g);font-size:16px;outline:none;background:none" value="' + esc(xTestNum()) + '"></div>' +
+      '<div class="xacts"><button class="go" id="xTC">Simular cliente</button><button id="xTA">Só o funil</button></div></div>';
   } else h += '<div class="xc"><div class="xr"><div class="tx"><small>Assim que a extensão ligar no PC, as configurações aparecem aqui.</small></div></div></div>';
   h += '<div class="xc xpend" id="xPend">' + xPendHtml(pend, c) + "</div>";
   h += '<div class="xc"><div class="cap">Parte 2 agendada · <span id="xQn">0</span></div><div id="xQ"></div></div><div class="xc xlog"><div class="cap">Registro</div><div id="xeLog"></div></div></div>';
@@ -1292,6 +1309,7 @@ function extSheet() {
   var box = $("#xSteps", s);
   if (box) {
     box.onclick = async function (e) {
+      var tsb = e.target.closest("[data-ts]"); if (tsb) { xTest([+tsb.dataset.ts]); return; }
       var b = e.target.closest("[data-mv],[data-rm],[data-pv],[data-rec]"); if (!b) return;
       if (b.dataset.pv != null) {
         var i = +b.dataset.pv, p = XS.cfg.funnel.steps[i], out = $("#xpv" + i, box);
@@ -1330,7 +1348,7 @@ function extSheet() {
     });
   }
   var add = $("#xAddB", s); if (add) add.onclick = function (e) { var b = e.target.closest("[data-add]"); if (!b) return; xReadSteps(box); (XS.cfg.funnel.steps = XS.cfg.funnel.steps || []).push({ type: b.dataset.add, text: "", delaySec: 60 }); box.innerHTML = xStepsHtml(); box.lastElementChild.scrollIntoView({ block: "center", behavior: "smooth" }); };
-  var sv = $("#xSave", s); if (sv) sv.onclick = function () {
+  function xSave(quiet) {
     xReadSteps(box);
     var c2 = XS.cfg, v = function (id) { return $(id, s).value; };
     if (XS.uploading) { toast("Espere o arquivo terminar de enviar."); return; }
@@ -1341,7 +1359,28 @@ function extSheet() {
     if ((c2.funnel.steps || []).some(function (p) { return p.type === "text" && !String(p.text || "").trim(); })) { toast("Tem mensagem vazia no funil. Escreva ou apague."); return; }
     if ((c2.funnel.steps || []).some(function (p) { return p.type !== "text" && !p.mediaId; })) { toast("Tem áudio/imagem sem arquivo. Escolha o arquivo ou apague."); return; }
     if (!c2.days.length) { toast("Escolha pelo menos um dia."); return; }
-    xCmd("cfg", c2).then(function () { toast("Salvo. Enviando para a extensão…"); }).catch(function (e) { toast("Erro: " + e.message); });
+    return xCmd("cfg", c2).then(function () { if (!quiet) toast("Salvo. Enviando para a extensão…"); return true; }).catch(function (e) { toast("Erro: " + e.message); return false; });
+  }
+  var sv = $("#xSave", s); if (sv) sv.onclick = function () { xSave(false); };
+  function xTest(steps) {
+    var inp = $("#xTN", s), num = (inp && inp.value || "").replace(/\D/g, "");
+    if (num.length < 10) { toast("Coloque seu número com DDD no campo Testar."); if (inp) inp.focus(); return; }
+    try { localStorage.setItem("nitro_testnum", num); } catch (e) {}
+    var r = xSave(true); if (!r || !r.then) return;
+    r.then(function (ok) { if (!ok) return; return xCmd("test", { num: num, steps: steps || null }).then(function () { toast("Teste enviado. Acompanhe no Registro e no seu WhatsApp."); }); });
+  }
+  var ta = $("#xTA", s); if (ta) ta.onclick = function () { xTest(null); };
+  var tc = $("#xTC", s); if (tc) tc.onclick = function () {
+    var inp = $("#xTN", s), num = (inp && inp.value || "").replace(/\D/g, "");
+    if (num.length < 10) { toast("Coloque seu número com DDD."); return; }
+    try { localStorage.setItem("nitro_testnum", num); } catch (e) {}
+    var r = xSave(true); if (!r || !r.then) return;
+    tc.textContent = "Enviando…";
+    r.then(function (ok) {
+      if (!ok) { tc.textContent = "Simular cliente"; return; }
+      var id = xTestCompany(num);
+      setTimeout(function () { xCmd("testlead", { id: id }).then(function () { tc.textContent = "Simular cliente"; toast("Saudação de teste a caminho do seu WhatsApp. Responda como se fosse a empresa."); }); }, 1500);
+    });
   };
   s.addEventListener("click", function (e) {
     var b = e.target.closest("[data-qc],#xQall,#xQre,#xQpz"); if (!b) return;
