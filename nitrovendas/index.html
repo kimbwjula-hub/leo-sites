@@ -1092,13 +1092,42 @@ async function xRefresh() {
   try { var m = await xApi("GET", "main"); XS.e = m.ext || null; ST.settings.ext = m.ext; } catch (err) {}
   xStatus();
 }
+var XPART = 1400000;
+async function xUpMedia(box, i, dataUrl, name) {
+  xReadSteps(box);
+  var p = XS.cfg.funnel.steps[i]; if (!p) return;
+  var id = Date.now().toString(36) + Math.random().toString(36).slice(2, 6), n = Math.ceil(dataUrl.length / XPART);
+  XS.uploading = (XS.uploading || 0) + 1;
+  var lab = $("#xf" + i, box); if (lab) lab.innerHTML = '<span class="warn">Enviando arquivo… 0/' + n + "</span>";
+  try {
+    for (var k = 0; k < n; k++) { await xApi("PUT", "media/" + id + "/" + k, { d: dataUrl.slice(k * XPART, (k + 1) * XPART) }); if (lab) lab.innerHTML = '<span class="warn">Enviando arquivo… ' + (k + 1) + "/" + n + "</span>"; }
+    var mm = /^data:([^;,]+)/.exec(dataUrl);
+    await xApi("PUT", "media/" + id, { parts: n, name: name, mime: mm ? mm[1] : "" });
+    p.mediaId = id; p.fileName = name; p._new = true; p.up = true; XS.mcache = XS.mcache || {}; XS.mcache[id] = dataUrl;
+    box.innerHTML = xStepsHtml(); toast("Arquivo enviado. Toque em Salvar configurações.");
+  } catch (err) { if (lab) lab.innerHTML = '<span class="bad">Falhou: ' + esc(err.message) + "</span>"; }
+  XS.uploading--;
+}
+async function xGetMedia(id) {
+  XS.mcache = XS.mcache || {}; if (XS.mcache[id]) return XS.mcache[id];
+  var meta = await xApi("GET", "media/" + id), out = "";
+  for (var k = 0; k < meta.parts; k++) out += (await xApi("GET", "media/" + id + "/" + k)).d;
+  XS.mcache[id] = out; return out;
+}
 function xStepsHtml() {
   var st = (XS.cfg.funnel || {}).steps || [];
-  if (!st.length) return '<p class="sub">Nenhum passo. Adicione uma mensagem abaixo (áudio e imagem você adiciona pelo painel do PC).</p>';
+  if (!st.length) return '<p class="sub">Nenhum passo. Adicione abaixo.</p>';
   return st.map(function (p, i) {
     var d = xDelay(p.delaySec), ic = p.type === "audio" ? "🎤 Áudio" : p.type === "image" ? "🖼️ Imagem" : "💬 Mensagem";
-    var body = p.type === "audio" ? '<div class="sub">' + esc(p.fileName || "áudio gravado") + " · para trocar o arquivo use o painel do PC</div>"
-      : '<textarea data-i="' + i + '" data-f="text" placeholder="' + (p.type === "image" ? "Legenda (opcional)" : "Texto da mensagem") + '">' + esc(p.text || "") + "</textarea>" + (p.type === "image" ? '<div class="sub">' + esc(p.fileName || "imagem") + "</div>" : "");
+    var body = "";
+    if (p.type === "audio" || p.type === "image") {
+      var fileLab = p.mediaId ? esc(p.fileName || (p.type === "audio" ? "áudio" : "imagem")) + (p.up === false && !p._new ? " · aguardando o PC enviar o arquivo" : "") : '<span class="bad">sem arquivo</span>';
+      body += '<div class="sub" id="xf' + i + '">' + fileLab + "</div>";
+      body += '<div class="row" style="flex-wrap:wrap"><label class="btn" style="flex:1">📁 ' + (p.type === "audio" ? "Escolher áudio" : "Escolher imagem") + '<input type="file" hidden data-up="' + i + '" accept="' + (p.type === "audio" ? "audio/*" : "image/*") + '"></label>' +
+        (p.type === "audio" ? '<button class="btn" style="flex:1" data-rec="' + i + '">' + (XS.rec && XS.rec.i === i ? "⏹ Parar e usar" : "🎙️ Gravar") + "</button>" : "") +
+        (p.mediaId && (p.up !== false || p._new) ? '<button class="btn" style="flex:1" data-pv="' + i + '">' + (p.type === "audio" ? "▶ Ouvir" : "👁 Ver") + "</button>" : "") + '</div><div id="xpv' + i + '"></div>';
+    }
+    if (p.type !== "audio") body += '<textarea data-i="' + i + '" data-f="text" placeholder="' + (p.type === "image" ? "Legenda (opcional)" : "Texto da mensagem") + '">' + esc(p.text || "") + "</textarea>";
     return '<div class="stp"><div class="hd"><span>' + (i + 1) + ". " + ic + '</span><button class="ib" data-mv="-1" data-i="' + i + '">↑</button><button class="ib" data-mv="1" data-i="' + i + '">↓</button><button class="ib" data-rm="' + i + '">✕</button></div>' +
       '<div class="row"><label>Esperar antes de enviar</label><input type="number" min="0" data-i="' + i + '" data-f="dv" value="' + d[0] + '"><select data-i="' + i + '" data-f="du"><option value="s"' + (d[1] === "s" ? " selected" : "") + '>seg</option><option value="m"' + (d[1] === "m" ? " selected" : "") + '>min</option><option value="h"' + (d[1] === "h" ? " selected" : "") + ">horas</option></select></div>" + body + "</div>";
   }).join("");
@@ -1138,7 +1167,7 @@ function extSheet() {
       '<div class="row"><label>Respeitar o horário do disparo</label><input type="checkbox" id="xFH"' + (f.respectHours !== false ? " checked" : "") + "></div>" +
       '<div class="row"><label>Não mandar sozinho se a resposta tiver mais de (horas)</label><input type="number" id="xFL" min="0" value="' + (f.maxLateH == null ? 12 : f.maxLateH) + '"></div>' +
       '<div class="row" style="display:block"><label>Palavras de parada (separe por vírgula)</label><textarea id="xFS">' + esc(f.stopWords || "") + "</textarea></div>" +
-      '<div id="xSteps">' + xStepsHtml() + '</div><button class="btn" id="xAdd" style="width:100%">+ Mensagem</button>' +
+      '<div id="xSteps">' + xStepsHtml() + '</div><div class="bar" id="xAddB"><button class="btn" data-add="text">+ Mensagem</button><button class="btn" data-add="audio">+ Áudio</button><button class="btn" data-add="image">+ Imagem</button></div>' +
       '<div class="bar"><button class="btn pri" id="xSave">Salvar configurações</button></div>';
   }
   h += "<h4>Enviar parte 2 (" + pend.length + ")</h4>";
@@ -1162,15 +1191,50 @@ function extSheet() {
       else { var i = +b.dataset.i, j = i + (+b.dataset.mv); if (j >= 0 && j < st.length) { var tmp = st[i]; st[i] = st[j]; st[j] = tmp; } }
       box.innerHTML = xStepsHtml();
     };
-    var add = $("#xAdd", s); if (add) add.onclick = function () { xReadSteps(box); (XS.cfg.funnel.steps = XS.cfg.funnel.steps || []).push({ type: "text", text: "", delaySec: 60 }); box.innerHTML = xStepsHtml(); };
+    var add = $("#xAddB", s); if (add) add.onclick = function (e) { var b = e.target.closest("[data-add]"); if (!b) return; xReadSteps(box); (XS.cfg.funnel.steps = XS.cfg.funnel.steps || []).push({ type: b.dataset.add, text: "", delaySec: 60 }); box.innerHTML = xStepsHtml(); };
+    if (box) {
+      box.addEventListener("change", function (e) {
+        var inp = e.target.closest("[data-up]"); if (!inp || !inp.files[0]) return;
+        var i = +inp.dataset.up, fl = inp.files[0];
+        if (fl.size > 15 * 1024 * 1024) { toast("Arquivo grande demais (máximo 15 MB)."); return; }
+        var rd = new FileReader(); rd.onload = function () { xUpMedia(box, i, rd.result, fl.name); }; rd.readAsDataURL(fl);
+      });
+      box.addEventListener("click", async function (e) {
+        var pv = e.target.closest("[data-pv]"), rc = e.target.closest("[data-rec]");
+        if (pv) {
+          var i = +pv.dataset.pv, p = XS.cfg.funnel.steps[i], out = $("#xpv" + i, box); out.innerHTML = '<div class="sub">Carregando…</div>';
+          try { var d = await xGetMedia(p.mediaId); out.innerHTML = p.type === "audio" ? '<audio controls autoplay style="width:100%" src="' + d + '"></audio>' : '<img style="max-width:100%;border-radius:8px" src="' + d + '">'; }
+          catch (err) { out.innerHTML = '<div class="sub bad">Não consegui abrir: ' + esc(err.message) + "</div>"; }
+        }
+        if (rc) {
+          var j = +rc.dataset.rec;
+          if (XS.rec && XS.rec.i === j) { XS.rec.mr.stop(); return; }
+          if (XS.rec) { toast("Já está gravando outro passo."); return; }
+          try {
+            var stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+            var mr = new MediaRecorder(stream), parts = [];
+            mr.ondataavailable = function (ev) { if (ev.data.size) parts.push(ev.data); };
+            mr.onstop = function () {
+              stream.getTracks().forEach(function (t) { t.stop(); });
+              var type = mr.mimeType || "audio/webm", blob = new Blob(parts, { type: type }); XS.rec = null;
+              var rd2 = new FileReader(); rd2.onload = function () { xUpMedia(box, j, rd2.result, "gravação." + (/mp4|aac/.test(type) ? "m4a" : "webm")); }; rd2.readAsDataURL(blob);
+            };
+            mr.start(); XS.rec = { i: j, mr: mr }; xReadSteps(box); box.innerHTML = xStepsHtml(); toast("Gravando… toque em Parar quando terminar.");
+          } catch (err) { toast("Não consegui usar o microfone: " + err.message); }
+        }
+      });
+    }
     var sv = $("#xSave", s); if (sv) sv.onclick = function () {
       xReadSteps(box);
       var c2 = XS.cfg, v = function (id) { return $(id, s).value; };
       c2.perRound = +v("#xPR"); c2.roundMin = +v("#xRM"); c2.gapMin = +v("#xG1"); c2.gapMax = +v("#xG2"); c2.dailyMax = +v("#xDM"); c2.startH = v("#xH1"); c2.endH = v("#xH2");
       c2.days = [].map.call(s.querySelectorAll("#xDays .on"), function (b) { return +b.dataset.d; });
       c2.funnel.on = $("#xFO", s).checked; c2.funnel.respectHours = $("#xFH", s).checked; c2.funnel.maxLateH = +v("#xFL") || 0; c2.funnel.stopWords = v("#xFS");
+      if (XS.uploading) { toast("Espere o arquivo terminar de enviar."); return; }
+      if (XS.rec) { toast("Pare a gravação primeiro."); return; }
       var bad = (c2.funnel.steps || []).some(function (p) { return p.type === "text" && !String(p.text || "").trim(); });
       if (bad) { toast("Tem mensagem vazia no funil. Escreva o texto ou remova o passo."); return; }
+      if ((c2.funnel.steps || []).some(function (p) { return p.type !== "text" && !p.mediaId; })) { toast("Tem passo de áudio/imagem sem arquivo. Escolha o arquivo ou remova."); return; }
       if (!c2.days.length) { toast("Escolha pelo menos um dia."); return; }
       xCmd("cfg", c2).then(function () { toast("Configurações enviadas para a extensão."); }).catch(function (e) { toast("Erro: " + e.message); });
     };

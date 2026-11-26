@@ -30,13 +30,30 @@ export async function onRequest({ request, env, params }) {
   const p = params.path || [], m = request.method, t = Date.now();
   try {
     if (p[0] === "state" && m === "GET") {
-      const r = await db.prepare("SELECT k, v FROM docs WHERE ws = ?").bind(ws).all();
+      const r = await db.prepare("SELECT k, v FROM docs WHERE ws = ? AND (k = 'main' OR k LIKE 'chunk:%')").bind(ws).all();
       const out = { main: {}, chunks: {} };
       for (const row of r.results || []) {
         if (row.k === "main") out.main = JSON.parse(row.v);
         else if (row.k.startsWith("chunk:")) out.chunks[row.k.slice(6)] = JSON.parse(row.v);
       }
       return J(out);
+    }
+    // Arquivos do funil (áudio/imagem), em partes de até 1,5 MB
+    if (p[0] === "media" && /^[a-z0-9]{4,40}$/.test(p[1] || "")) {
+      const base = "media:" + p[1], part = p[2];
+      if (part != null && !/^\d{1,3}$/.test(part)) return J({ error: "parte" }, 400);
+      const k = part == null ? base : base + ":" + part;
+      if (m === "GET") {
+        const r = await db.prepare("SELECT v FROM docs WHERE ws = ? AND k = ?").bind(ws, k).first();
+        return r ? J(JSON.parse(r.v)) : J({ error: "nao_achei" }, 404);
+      }
+      if (m === "PUT") {
+        const b = await request.text();
+        if (b.length > 1900000) return J({ error: "tamanho" }, 413);
+        JSON.parse(b);
+        await db.prepare("INSERT OR REPLACE INTO docs (ws, k, v, updated) VALUES (?, ?, ?, ?)").bind(ws, k, b, t).run();
+        return J({ ok: true });
+      }
     }
     if (p[0] === "main" && m === "GET") {
       const cur = await db.prepare("SELECT v FROM docs WHERE ws = ? AND k = 'main'").bind(ws).first();
