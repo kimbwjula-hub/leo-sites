@@ -153,8 +153,7 @@ textarea.paste:focus{border-color:var(--g)}
   var LS = function (k, v) { try { if (v === undefined) return localStorage.getItem(k); if (v === null) localStorage.removeItem(k); else localStorage.setItem(k, v); } catch (e) { return null; } };
   var m = /[#&]k=([a-z0-9]{24,64})/.exec(location.hash);
   if (m) { LS("nitro_key", m[1]); history.replaceState(null, "", location.pathname); }
-  var KEY = LS("nitro_key");
-  if (!KEY) { var a = new Uint8Array(20); crypto.getRandomValues(a); KEY = Array.prototype.map.call(a, function (x) { return ("0" + x.toString(36)).slice(-2); }).join("").slice(0, 32); while (KEY.length < 32) KEY += "a"; LS("nitro_key", KEY); }
+  var KEY = "publico0000000000000000000000000"; // mesmo banco para qualquer aparelho
   window.NITRO_KEY = KEY;
   var state = { main: {}, chunks: {} }, docSubs = [], colSubs = [], loaded = false;
   try { var c = JSON.parse(LS("nitro_cache_" + KEY) || "null"); if (c && c.main) state = c; } catch (e) {}
@@ -1103,7 +1102,7 @@ $("#setBtn").onclick = function () {
     '<button class="mi" data-s="xp"><i>🔎</i>Prompt de extração (IA)</button>' +
     '<button class="mi" data-s="burn"><i>🔥</i>Números queimados (' + burnCount() + ')</button>' +
     '<button class="mi" data-s="csv"><i>📤</i>Exportar backup (CSV)</button>' +
-    '<button class="mi" data-s="link"><i>🔗</i>Abrir em outro aparelho</button>' +
+    '<button class="mi" data-s="link"><i>🔗</i>Copiar link do site</button>' +
     '<button class="mi" data-s="niche"><i>' + N().icon + "</i>Trocar nicho</button>" +
     '<a class="mi" href="' + AI_URL + '" target="_blank" rel="noopener"><i>✨</i>Abrir AI Studio</a>', function (s) {
     s.onclick = function (e) {
@@ -1112,7 +1111,7 @@ $("#setBtn").onclick = function () {
       else if (b.dataset.s === "msgs") msgSheet();
       else if (b.dataset.s === "goal") goalSheet();
       else if (b.dataset.s === "csv") exportCsv();
-      else if (b.dataset.s === "link") { var u = location.origin + "/#k=" + window.NITRO_KEY; copyText(u); closeSheet(); toast("Link pessoal copiado. Abra ele no outro aparelho. Não compartilhe: quem tiver esse link vê seus dados.", 8000); }
+      else if (b.dataset.s === "link") { var u = location.origin + "/"; copyText(u); closeSheet(); toast("Link copiado. Qualquer aparelho que abrir vê os mesmos dados.", 5000); }
       else if (b.dataset.s === "burn") burnSheet();
       else if (b.dataset.s === "xp") xpSheet();
       else { closeSheet(); $("#nicheBtn").click(); }

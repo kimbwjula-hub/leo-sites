@@ -6,11 +6,24 @@ async function init(db) {
   await db.prepare("CREATE TABLE IF NOT EXISTS docs (ws TEXT NOT NULL, k TEXT NOT NULL, v TEXT NOT NULL, updated INTEGER NOT NULL, PRIMARY KEY (ws, k))").run();
   ready = true;
 }
+// Acesso aberto: quem abre o site usa sempre o mesmo banco (o principal, com mais empresas).
+const PUB = "publico0000000000000000000000000";
+let SHARED = "";
+async function sharedWs(db) {
+  if (SHARED) return SHARED;
+  const c = await db.prepare("SELECT v FROM docs WHERE ws = '_cfg' AND k = 'shared'").first();
+  if (c && c.v) return (SHARED = c.v);
+  const r = await db.prepare("SELECT ws, SUM(LENGTH(v)) n FROM docs WHERE k LIKE 'chunk:%' AND ws <> '_cfg' GROUP BY ws ORDER BY n DESC LIMIT 1").first();
+  const w = r && r.ws ? r.ws : PUB;
+  await db.prepare("INSERT OR REPLACE INTO docs (ws, k, v, updated) VALUES ('_cfg', 'shared', ?, ?)").bind(w, Date.now()).run();
+  return (SHARED = w);
+}
 export async function onRequest({ request, env, params }) {
   const db = env.DB;
   if (!db) return J({ error: "sem_banco" }, 500);
-  const ws = request.headers.get("x-key") || "";
+  let ws = request.headers.get("x-key") || "";
   if (!/^[a-z0-9]{24,64}$/.test(ws)) return J({ error: "chave" }, 401);
+  if (ws === PUB) { await init(db); ws = await sharedWs(db); }
   const u = new URL(request.url), o = request.headers.get("origin");
   if (request.method !== "GET" && o && o !== u.origin && !/^(chrome|moz)-extension:\/\//.test(o)) return J({ error: "origem" }, 403);
   await init(db);
