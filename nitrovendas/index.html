@@ -780,6 +780,7 @@ function vProspect(o) {
 }
 function vReplies(o) {
   var h = "";
+  if (o.replies.length) { var nr = o.replies.filter(function (c) { return c.replied; }).length; h += '<div class="day">Responderam: <b>' + nr + "</b> · Aguardando: <b>" + (o.replies.length - nr) + "</b></div>"; }
   if (!o.replies.length) return '<div class="empty"><h3>Ninguém esperando resposta</h3><p>Quem você chamar na Fila aparece aqui.' + (o.snoozed.length ? "<br>" + o.snoozed.length + " agendado(s) para depois." : "") + "</p></div>";
   if (o.replies.length > 8) h += '<input class="srch" id="q" type="search" placeholder="Pesquisar" value="' + esc(ST.q || "") + '">';
   var q = normKey(ST.q || ""), list = o.replies, t = now();
@@ -790,13 +791,13 @@ function vReplies(o) {
   var row = function (c) {
     var tries = c.tries || 1, late = !c.replied && t - (c.contacted || c.updated || t) >= 86400;
     if (c.replied) return chatRow(c, '<span class="g">Respondeu ' + ago(c.replied) + (c.funnel === "concluido" ? " · funil enviado" : "") + "</span>", hhmm(c.replied), "g", "!");
-    var l2 = tries >= 3 ? '<span class="r">3 tentativas sem resposta</span>' : late ? '<span class="r">Sem resposta ' + ago(c.contacted || c.updated) + "</span>" : "<span>✓✓ " + esc(city(c) || "Aguardando resposta") + "</span>";
+    var l2 = tries >= 3 ? '<span class="r">3 tentativas sem resposta</span>' : late ? '<span class="r">✓✓ Enviado · sem resposta ' + ago(c.contacted || c.updated) + "</span>" : "<span>✓✓ Enviado · aguardando resposta" + (city(c) ? " · " + esc(city(c)) : "") + "</span>";
     return chatRow(c, l2, hhmm(c.contacted || c.updated), late ? "r" : "", tries > 1 ? tries + "x" : "");
   };
   h += '<div class="list">';
   if (resp.length) h += sec("Responderam · " + resp.length) + resp.map(row).join("");
-  if (rec.length) h += sec("Recentes · " + rec.length) + rec.map(row).join("");
-  if (old.length) h += sec("Sem resposta há mais de 1 dia · " + old.length, "r") + old.map(row).join("");
+  if (rec.length) h += sec("Enviado · aguardando resposta · " + rec.length, "a") + rec.map(row).join("");
+  if (old.length) h += sec("Enviado · sem resposta há mais de 1 dia · " + old.length, "r") + old.map(row).join("");
   if (o.snoozed.length) h += '<div class="next" style="padding-top:12px">' + o.snoozed.length + " agendado(s) para depois</div>";
   return h + "</div>";
 }
