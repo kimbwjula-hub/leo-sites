@@ -792,6 +792,7 @@ function vReplies(o) {
   var row = function (c) {
     var tries = c.tries || 1, late = t - (c.contacted || c.updated || t) >= 86400;
     var l2 = tries >= 3 ? '<span class="r">3 tentativas sem resposta</span>' : late ? '<span class="r">✓✓ Enviado · sem resposta ' + ago(c.contacted || c.updated) + "</span>" : "<span>✓✓ Enviado · aguardando resposta" + (city(c) ? " · " + esc(city(c)) : "") + "</span>";
+    if (c.funnel === "concluido" || c.funnel === "andamento") l2 = '<span class="g">✓✓ Parte 2 ' + (c.funnel === "concluido" ? "enviada" : "enviando") + " · aguardando resposta</span>";
     return chatRow(c, l2, hhmm(c.contacted || c.updated), late ? "r" : "", tries > 1 ? tries + "x" : "");
   };
   h += '<div class="list">';
