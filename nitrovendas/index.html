@@ -992,36 +992,25 @@ function closeSheet() { $("#sheet").hidden = true; $("#sh").innerHTML = ""; rend
 $("#sheet").addEventListener("click", function (e) { if (e.target.id === "sheet" || e.target.closest("[data-close]")) closeSheet(); });
 
 // ---------- prompt de extração (IA busca as empresas) ----------
-var XP_HEAD = "Empresa;Categoria;WhatsApp;Telefone;Endereço;Cidade;UF;Nota;Qtd avaliações;Horário;Site;Descrição;Avaliações";
+var XP_HEAD = "Empresa;WhatsApp;Endereço;Nota;Avaliações";
 function extractPrompt(cities, qty) {
   var n = N();
   return [
-    "Você é um pesquisador de leads. Pesquise no Google Maps (e no site, Instagram e Facebook de cada empresa, quando precisar achar o WhatsApp) empresas de " + n.name.toUpperCase() + " nestas cidades:",
+    "Pesquise no Google Maps empresas de " + n.name.toUpperCase() + " nestas cidades:",
     cities,
     "",
-    "Quero até " + qty + " empresas. Priorize, nesta ordem: 1) quem NÃO tem site próprio; 2) quem tem mais avaliações no Google; 3) quem tem nota maior. Ignore empresas fechadas permanentemente, franquias grandes e anúncios repetidos.",
+    "Quero até " + qty + " empresas, só as que têm WhatsApp.",
     "",
-    "ENTREGA: um arquivo de planilha .xlsx para download (se não conseguir gerar arquivo, um .csv separado por ponto e vírgula, ou, em último caso, o mesmo conteúdo num bloco de código).",
-    "Só uma aba. A linha 1 é o cabeçalho, com estas 13 colunas, exatamente com estes nomes e nesta ordem:",
+    "Entregue uma planilha .xlsx (se não conseguir, .csv separado por ponto e vírgula) com uma aba só e EXATAMENTE estas 5 colunas, nesta ordem, com este cabeçalho na linha 1:",
     XP_HEAD.split(";").join(" | "),
-    "Da linha 2 em diante, uma empresa por linha. Sem linhas em branco, sem títulos, sem totais, sem células mescladas.",
     "",
-    "REGRAS DE CADA CAMPO:",
-    "- Empresa: nome como aparece no Google Maps.",
-    "- Categoria: a categoria do Google Maps (ex.: Serviço de limpeza de estofados).",
-    "- WhatsApp: só número de CELULAR, no formato +55 DD 9XXXX-XXXX. Procure no perfil do Google, no site, na bio do Instagram e em links wa.me. Se só existir telefone fixo, deixe vazio.",
-    "- Telefone: o telefone do Google Maps, no formato (DD) XXXX-XXXX ou (DD) 9XXXX-XXXX.",
-    "- Endereço: rua, número e bairro.",
-    "- Cidade: nome da cidade. UF: sigla com 2 letras.",
-    "- Nota: com vírgula (ex.: 4,8). Qtd avaliações: só o número inteiro (ex.: 132).",
-    "- Horário: resumido (ex.: Seg a Sex 8h–18h, Sáb 8h–12h).",
-    "- Site: endereço do site próprio. Se não tiver, deixe vazio (Instagram e Facebook não contam como site).",
-    "- Descrição: 1 frase com os serviços que a empresa oferece, tirada do perfil ou das fotos.",
-    "- Avaliações: até 3 trechos curtos de avaliações reais de clientes, separados por \" | \".",
+    "- Empresa: nome completo, exatamente como aparece no Google Maps.",
+    "- WhatsApp: celular no formato +55 DD 9XXXX-XXXX (procure no Google Maps, no site ou no Instagram da empresa).",
+    "- Endereço: completo, no formato: Rua, número - Bairro, Cidade - UF.",
+    "- Nota: a nota do Google, com vírgula (ex.: 4,8).",
+    "- Avaliações: a quantidade de avaliações no Google, só o número (ex.: 132).",
     "",
-    "PROIBIDO: inventar dado. Se não achar, deixe a célula vazia. Não use ; dentro das células (troque por vírgula). Não repita empresa nem número. Não numere as linhas. Telefones como TEXTO (não como número).",
-    "",
-    "Se não couber tudo de uma vez, entregue a primeira planilha e avise CONTINUA. Quando eu disser \"continue\", gere outra planilha igual (com o cabeçalho) só com as empresas novas."
+    "Uma empresa por linha, sem linhas em branco. Não invente nada: se não achar a nota ou as avaliações, deixe a célula vazia. Não repita empresa nem número. WhatsApp como texto."
   ].join("\n");
 }
 function xpSheet() {
