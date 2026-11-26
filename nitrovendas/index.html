@@ -882,6 +882,7 @@ function openCompany(c) {
     if (/^https?:\/\//i.test(c.link || "")) h += A("", "↗", "Abrir o site", "", 'href="' + esc(c.link) + '" target="_blank" rel="noopener"');
     h += chat;
   }
+  if (c.stage === "contato") h += B("", "↩", "Voltar etapa", "Funil P2, Funil P1 ou Fila", 'data-a="more" data-id="' + id + '"');
   h += B("", "⋯", "Mais opções", "", 'data-a="more" data-id="' + id + '"');
   $("#toast").hidden = true; $("#sh").innerHTML = h; $("#sheet").hidden = false;
 }
@@ -1081,7 +1082,13 @@ function telLink(c) { var t = telNum(c); return t ? '<a class="mi" href="tel:' +
 function moreSheet(c) {
   var w = waInfo(c), h = "<h3>" + esc(dn(c)) + '</h3><p class="sub">' + esc(meta(c) || "Sem contato") + "</p>";
   if (c.stage === "feito" || c.stage === "pagamento") h += '<button class="mi" data-m="copy"><i>📋</i>Copiar texto do site</button>';
-  if (BACK[c.stage]) h += '<button class="mi" data-m="back"><i>↩️</i>' + BACK[c.stage][1] + "</button>";
+  if (c.stage === "contato") {
+    var lv = c.replied2 ? 3 : c.replied ? 2 : 1;
+    h += '<p class="sub">Está no Funil P' + lv + ". Voltar para:</p>";
+    if (lv === 3) h += '<button class="mi" data-m="bk" data-to="p2"><i>↩️</i>Funil P2 (respondeu a saudação, funil a enviar)</button>';
+    if (lv >= 2) h += '<button class="mi" data-m="bk" data-to="p1"><i>↩️</i>Funil P1 (saudação enviada, aguardando)</button>';
+    h += '<button class="mi" data-m="bk" data-to="fila"><i>↩️</i>Fila (como nova, recebe a saudação de novo)</button>';
+  } else if (BACK[c.stage]) h += '<button class="mi" data-m="back"><i>↩️</i>' + BACK[c.stage][1] + "</button>";
   h += '<button class="mi red" data-m="del"><i>🗑️</i>Remover</button>';
   sheet(h, function (s) {
     s.onclick = function (e) {
@@ -1089,6 +1096,15 @@ function moreSheet(c) {
       var m = b.dataset.m;
       if (m === "copy") { copyText(aiText(c)); closeSheet(); toast("Texto copiado."); }
       else if (m === "later") { sheet("<h3>Chamar depois</h3><p>" + esc(cleanName(c.name)) + " sai dos chamados e volta sozinha.</p>" + [1, 3, 7].map(function (d) { return '<button class="mi" data-a="later" data-d="' + d + '" data-id="' + esc(c.id) + '"><i>⏰</i>' + (d === 1 ? "Amanhã" : "Em " + d + " dias") + "</button>"; }).join("")); }
+      else if (m === "bk") {
+        var to = b.dataset.to;
+        delete c.replied2; c.funnel = "";
+        if (to !== "p2") delete c.replied;
+        if (to === "fila") { c.stage = "novos"; c.tries = 0; delete c.contacted; delete c.sent_auto; }
+        c.reset = Math.floor(Date.now() / 1000);
+        touch(c); closeSheet(); render();
+        toast(to === "fila" ? "Voltou para a Fila." : "Voltou para o Funil " + to.toUpperCase() + ". A extensão acompanha em até 1 minuto.");
+      }
       else if (m === "back") { if (c.stage === "pagos" && !b.dataset.sure) { b.dataset.sure = 1; b.lastChild.textContent = "Toque de novo para desfazer"; return; } move(c, BACK[c.stage][0]); closeSheet(); }
       else if (m === "del") { if (!b.dataset.sure) { b.dataset.sure = 1; b.lastChild.textContent = "Toque de novo para remover"; return; } removeCompany(c); closeSheet(); toast("Removida."); }
     };
