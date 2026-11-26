@@ -873,7 +873,7 @@ function vResp0(o) {
   var f = function (l) { return q ? l.filter(function (c) { return normKey(c.name + " " + c.city).indexOf(q) >= 0; }) : l; };
   fin = f(fin); go = f(go);
   var row = function (c) {
-    var st = c.funnel === "concluido" ? "Funil enviado" : c.funnel === "parado" ? "Funil parado" : c.funnel === "atrasado" ? "Funil atrasado · mandar pelo painel" : c.funnel ? "Funil em andamento" : "Sem funil";
+    var st = c.funnel === "concluido" ? "Funil enviado" : c.funnel === "parado" ? "Funil parado" : c.funnel === "atrasado" ? "Funil atrasado · mandar pelo painel" : c.funnel === "erro" ? "Funil deu erro · reenviar pelo painel" : c.funnel ? "Funil em andamento" : "Sem funil";
     return chatRow(c, '<span class="g">Respondeu ' + ago(c.replied) + " · " + st + "</span>", hhmm(c.replied), "g", "!");
   };
   h += '<div class="list">';
@@ -1226,7 +1226,7 @@ function extSheet() {
   } else h += '<div class="xc"><div class="xr"><div class="tx"><small>Assim que a extensão ligar no PC, as configurações aparecem aqui.</small></div></div></div>';
   h += '<div class="xc xpend"><div class="cap">Enviar parte 2 · ' + pend.length + "</div>";
   h += pend.length ? pend.map(function (x) {
-    var lab = x.funnel === "parado" ? '<span style="color:var(--red)">disse que não quer</span>' : x.funnel === "atrasado" ? '<span style="color:var(--amb)">respondeu · funil atrasado</span>' : x.replied ? '<span style="color:var(--g)">respondeu ' + esc(ago(x.replied)) + "</span>" : "não respondeu";
+    var lab = x.funnel === "erro" ? '<span style="color:var(--red)">' + (x.replied ? "respondeu · " : "") + "funil deu erro, reenviar</span>" : x.funnel === "parado" ? '<span style="color:var(--red)">disse que não quer</span>' : x.funnel === "atrasado" ? '<span style="color:var(--amb)">respondeu · funil atrasado</span>' : x.replied ? '<span style="color:var(--g)">respondeu ' + esc(ago(x.replied)) + "</span>" : "não respondeu";
     var on = x.replied && x.funnel !== "parado";
     return '<div class="xr" data-p2="' + esc(x.id) + '"' + (on ? ' data-on="1"' : "") + ">" + av(x) + '<div class="tx"><b>' + esc(cleanName(x.name)) + "</b><small>" + lab + '</small></div><span class="xck' + (on ? " on" : "") + '">' + (on ? "✓" : "") + "</span></div>";
   }).join("") + xRow("⏳", "Intervalo entre contatos", "segundos, sorteado entre os dois", xNum("xP2a", (c.p2GapMin || 60), 5) + '<span class="to">a</span>' + xNum("xP2b", (c.p2GapMax || 120), 5)) +
