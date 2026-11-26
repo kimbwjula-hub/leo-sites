@@ -1095,6 +1095,7 @@ async function xCmd(op, data) {
   list.push({ seq: seq, op: op, data: data || null, t: Math.floor(seq / 1000) });
   await xApi("PUT", "main", { extCmds: list });
   XS.pend = seq; xStatus();
+  [1200, 2500, 4000].forEach(function (ms) { setTimeout(xRefresh, ms); });
   return seq;
 }
 function xDelay(sec) { sec = +sec || 0; if (sec && sec % 3600 === 0) return [sec / 3600, "h"]; if (sec && sec % 60 === 0) return [sec / 60, "m"]; return [sec, "s"]; }
@@ -1113,14 +1114,16 @@ function xStatus() {
     el.innerHTML = '<div class="xline">' + l + '</div><div class="xline" style="color:var(--mut);font-size:13px">' + l2 + "</div>" +
       '<div class="xst"><div class="k"><small>Disparos hoje</small><b>' + (r.dayCount || 0) + "</b> / " + ((e.cfg || {}).dailyMax || "?") + '</div><div class="k"><small>Responderam</small><b>' + (e.respondidos || 0) + "</b> de " + (e.enviados || 0) + '</div><div class="k"><small>Funis rodando</small><b>' + (e.funilAtivos || 0) + '</b></div><div class="k"><small>Disparo</small><b style="color:' + (r.on ? "var(--g)" : "var(--mut)") + '">' + (r.on ? "Rodando" : "Pausado") + "</b></div></div>";
   }
-  var b = $("#xeRun"); if (b && e) { var ron = e.run && e.run.on; b.textContent = ron ? "Pausar disparo" : "Iniciar disparo"; b.dataset.op = ron ? "stop" : "start"; b.className = ron ? "stop" : "go"; }
+  var b = $("#xeRun"); if (b && e && !(XS.pend && !(e.ack >= XS.pend))) { var ron = e.run && e.run.on; b.textContent = ron ? "Pausar disparo" : "Iniciar disparo"; b.dataset.op = ron ? "stop" : "start"; b.className = ron ? "stop" : "go"; }
   var m = $("#xeMsg");
-  if (m) m.innerHTML = XS.pend ? (e && e.ack >= XS.pend ? '<span class="ok">✓✓ Aplicado na extensão</span>' : '<span class="warn">✓ Enviado · aplicando em até 30 s</span>') : "";
+  if (m) m.innerHTML = XS.pend ? (e && e.ack >= XS.pend ? '<span class="ok">✓✓ Aplicado na extensão</span>' : '<span class="warn">✓ Enviado · aplicando…</span>') : "";
   var lg = $("#xeLog");
   if (lg && e) lg.innerHTML = (e.log || []).map(function (x) { return '<div class="xr"><span class="tm">' + esc(hhmm(x.t)) + '</span><div class="tx"><b>' + esc(x.x) + "</b></div></div>"; }).join("") || '<div class="xr"><div class="tx"><small>Sem registros.</small></div></div>';
 }
 async function xRefresh() {
   if (!$("#xeSt")) { clearInterval(XS.timer); XS.timer = 0; return; }
+  XS.n = (XS.n || 0) + 1;
+  if (XS.n % 4 === 1) xApi("PUT", "main", { extWatch: Math.floor(Date.now() / 1000) }).catch(function () {});
   try { var m = await xApi("GET", "main"); XS.e = m.ext || null; ST.settings.ext = m.ext; } catch (err) {}
   xStatus();
 }
@@ -1219,10 +1222,10 @@ function extSheet() {
   var pg = document.createElement("div"); pg.id = "xpage"; pg.className = "xp"; pg.innerHTML = h; document.body.appendChild(pg); document.body.style.overflow = "hidden";
   var s = pg;
   xStatus();
-  if (!XS.timer) XS.timer = setInterval(xRefresh, 5000);
+  XS.n = 0; if (!XS.timer) XS.timer = setInterval(xRefresh, 2000);
   xRefresh();
   s.querySelector("[data-x=close]").onclick = extClose;
-  $("#xeRun", s).onclick = function () { var op = this.dataset.op; xCmd(op).then(function () { toast(op === "start" ? "Iniciando o disparo…" : "Pausando o disparo…"); }).catch(function (e) { toast("Erro: " + e.message); }); };
+  $("#xeRun", s).onclick = function () { var op = this.dataset.op; this.textContent = op === "start" ? "Iniciando…" : "Pausando…"; xCmd(op).then(function () { toast(op === "start" ? "Iniciando o disparo…" : "Pausando o disparo…"); }).catch(function (e) { toast("Erro: " + e.message); }); };
   $("#xeScan", s).onclick = function () { xCmd("scan").then(function () { toast("A extensão vai reler as conversas."); }).catch(function (e) { toast("Erro: " + e.message); }); };
   var dz = $("#xDays", s); if (dz) dz.onclick = function (e) { var b = e.target.closest("[data-d]"); if (b) b.classList.toggle("on"); };
   var pl = s.querySelector(".xpend"); pl.onclick = function (e) { var r = e.target.closest("[data-p2]"); if (!r) return; var on = !r.dataset.on; if (on) r.dataset.on = "1"; else delete r.dataset.on; var k = r.querySelector(".xck"); k.className = "xck" + (on ? " on" : ""); k.textContent = on ? "✓" : ""; var b = $("#xP2", s); if (b) { delete b.dataset.sure; b.textContent = "Enviar parte 2 para as marcadas"; } };
