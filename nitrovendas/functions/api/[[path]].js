@@ -38,6 +38,10 @@ export async function onRequest({ request, env, params }) {
       }
       return J(out);
     }
+    if (p[0] === "main" && m === "GET") {
+      const cur = await db.prepare("SELECT v FROM docs WHERE ws = ? AND k = 'main'").bind(ws).first();
+      return J(cur ? JSON.parse(cur.v) : {});
+    }
     if (p[0] === "main" && m === "PUT") {
       const patch = await request.json();
       if (!patch || typeof patch !== "object" || Array.isArray(patch)) return J({ error: "dados" }, 400);

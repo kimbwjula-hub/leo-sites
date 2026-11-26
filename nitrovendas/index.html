@@ -122,6 +122,21 @@ textarea.paste:focus{border-color:var(--g)}
 .sh .paste{margin:0 16px;width:calc(100% - 32px)}
 .toast{position:fixed;left:12px;right:12px;bottom:calc(16px + env(safe-area-inset-bottom));z-index:60;max-width:520px;margin:0 auto;background:#3b4a54;color:#fff;padding:12px 14px;border-radius:8px;font-size:14px;display:flex;align-items:center;gap:10px}
 .toast span{flex:1}.tu{color:#53e6a2;font-weight:700}
+.xe{padding:0 16px 8px}.xe h4{margin:18px 0 8px;font-size:13px;color:var(--mut,#667781);text-transform:uppercase;letter-spacing:.04em}
+.xe .st{display:flex;flex-wrap:wrap;gap:6px 14px;font-size:14px;padding:10px 12px;border-radius:10px;background:#f0f2f5}
+.xe .ok{color:#008069;font-weight:600}.xe .bad{color:#d93025;font-weight:600}.xe .warn{color:#b26a00;font-weight:600}
+.xe .row{display:flex;gap:8px;align-items:center;margin:6px 0;font-size:14px}.xe .row label{flex:1}
+.xe input[type=number],.xe input[type=time],.xe select{width:86px;height:36px;border:1px solid var(--line);border-radius:8px;padding:0 8px;background:#fff;font-size:14px}
+.xe textarea{width:100%;min-height:60px;border:1px solid var(--line);border-radius:8px;padding:8px;font:inherit;font-size:14px;box-sizing:border-box}
+.xe .stp{border:1px solid var(--line);border-radius:10px;padding:8px 10px;margin:8px 0}
+.xe .stp .hd{display:flex;align-items:center;gap:6px;font-weight:600;font-size:14px}.xe .stp .hd span{flex:1}
+.xe .ib{width:34px;height:34px;border-radius:8px;border:1px solid var(--line);background:#fff;font-size:15px}
+.xe .days{display:flex;gap:4px;flex-wrap:wrap}.xe .days button{height:34px;min-width:40px;border-radius:17px;border:1px solid var(--line);background:#fff;font-size:13px}
+.xe .days button.on{background:#008069;color:#fff;border-color:#008069}
+.xe .bar{display:flex;gap:8px;margin:12px 0}.xe .bar .btn{flex:1}.xe .btn.pri{background:#008069;color:#fff;border-color:#008069}.xe .btn.red{color:#d93025}
+.xe .lg{font-size:12.5px;line-height:1.45;max-height:260px;overflow:auto;background:#f0f2f5;border-radius:10px;padding:8px 10px}
+.xe .lg div{border-bottom:1px solid #e3e6ea;padding:3px 0}.xe .pl{max-height:300px;overflow:auto}.xe .pl label{display:flex;gap:8px;align-items:center;padding:7px 0;border-bottom:1px solid #eef0f2;font-size:14px}
+.xe .msg{font-size:13px;margin:6px 0;min-height:18px}
 </style>
 </head>
 <body>
@@ -780,7 +795,8 @@ function vProspect(o) {
   h += '<div class="next">' + o.queue.length + " na fila" + (nx ? " · próxima: " + esc(dn(nx)) : "") + "</div>";
   return h;
 }
-function extBar() {
+function extBar() { return '<div data-a="ext" style="cursor:pointer">' + extBar0() + "</div>"; }
+function extBar0() {
   var e = ST.settings.ext, t = Date.now() / 1000;
   if (!e || !e.alive) return '<div class="day" style="color:#d93025">Extensão ainda não conectou</div>';
   if (t - e.alive > 180) return '<div class="day" style="color:#d93025">Extensão desligada desde ' + esc(dateBR(e.alive)) + " " + esc(hhmm(e.alive)) + " · dados podem estar atrasados</div>";
@@ -973,6 +989,7 @@ document.addEventListener("click", function (e) {
   if (a === "dl") { downloadPrompt(); return; }
   if (a === "goal") { goalSheet(); return; }
   if (a === "xp") { xpSheet(); return; }
+  if (a === "ext") { extSheet(); return; }
   if (!c) return;
   if (a === "open") { openCompany(c); return; }
   if (a === "laterMenu") { sheet("<h3>Chamar depois</h3><p>" + esc(dn(c)) + " sai dos chamados e volta sozinha na data.</p>" + [1, 3, 7].map(function (d) { return '<button class="mi" data-a="later" data-d="' + d + '" data-id="' + esc(c.id) + '">' + (d === 1 ? "Amanhã" : "Em " + d + " dias") + "</button>"; }).join("")); return; }
@@ -1030,6 +1047,141 @@ document.addEventListener("visibilitychange", function () { if (document.visibil
 function sheet(html, init) { $("#toast").hidden = true; $("#sh").innerHTML = '<div class="grab"></div>' + html; $("#sheet").hidden = false; if (init) init($("#sh")); }
 function closeSheet() { $("#sheet").hidden = true; $("#sh").innerHTML = ""; render(); }
 $("#sheet").addEventListener("click", function (e) { if (e.target.id === "sheet" || e.target.closest("[data-close]")) closeSheet(); });
+
+// ---------- painel da extensão (controle pelo celular) ----------
+var XS = { e: null, cfg: null, pend: 0, timer: 0 };
+function xApi(method, path, body) {
+  return fetch("/api/" + path, { method: method, cache: "no-store", headers: { "x-key": window.NITRO_KEY || "", "content-type": "application/json" }, body: body ? JSON.stringify(body) : undefined })
+    .then(function (r) { if (!r.ok) throw new Error("erro " + r.status); return r.json(); });
+}
+async function xCmd(op, data) {
+  var m = await xApi("GET", "main"), list = (m.extCmds || []).slice(-14), seq = Date.now();
+  list.push({ seq: seq, op: op, data: data || null, t: Math.floor(seq / 1000) });
+  await xApi("PUT", "main", { extCmds: list });
+  XS.pend = seq; xStatus();
+  return seq;
+}
+function xDelay(sec) { sec = +sec || 0; if (sec && sec % 3600 === 0) return [sec / 3600, "h"]; if (sec && sec % 60 === 0) return [sec / 60, "m"]; return [sec, "s"]; }
+function xStatus() {
+  var el = $("#xeSt"); if (!el) return;
+  var e = XS.e, t = Date.now() / 1000, h = "";
+  if (!e || !e.alive) h = '<span class="bad">A extensão ainda não conectou. Atualize a extensão no PC (versão 1.2.0).</span>';
+  else {
+    var on = t - e.alive < 120;
+    h += on ? '<span class="ok">● Extensão ligada</span>' : '<span class="bad">● Extensão desligada desde ' + esc(dateBR(e.alive)) + " " + esc(hhmm(e.alive)) + "</span>";
+    h += e.wa ? '<span class="ok">● WhatsApp conectado</span>' : '<span class="bad">● WhatsApp desconectado</span>';
+    var r = e.run || {};
+    h += "<span>Disparo: <b>" + (r.on ? "rodando" : "pausado") + "</b></span>";
+    h += "<span>Hoje: <b>" + (r.dayCount || 0) + "/" + ((e.cfg || {}).dailyMax || "?") + "</b></span>";
+    h += "<span>Responderam: <b>" + (e.respondidos || 0) + "</b> de " + (e.enviados || 0) + "</span>";
+    h += "<span>Funis rodando: <b>" + (e.funilAtivos || 0) + "</b></span>";
+    if (e.scan) h += '<span class="warn">Sincronizando: faltam ' + e.scan + "</span>";
+    else h += "<span>Conferido " + esc(ago(e.check || e.alive)) + "</span>";
+    if (r.status) h += '<span style="flex-basis:100%;color:#54656f">' + esc(r.status) + "</span>";
+    if (e.ver) h += '<span style="color:#8696a0">v' + esc(e.ver) + " · atualizado " + esc(ago(e.alive)) + "</span>";
+  }
+  el.innerHTML = h;
+  var b = $("#xeRun"); if (b && e) { var ron = e.run && e.run.on; b.textContent = ron ? "⏸ Pausar disparo" : "▶ Iniciar disparo"; b.dataset.op = ron ? "stop" : "start"; b.className = "btn " + (ron ? "red" : "pri"); }
+  var m = $("#xeMsg");
+  if (m && XS.pend) m.innerHTML = e && e.ack >= XS.pend ? '<span class="ok">✓ A extensão aplicou.</span>' : '<span class="warn">Enviado. A extensão aplica em até 30 segundos…</span>';
+  var lg = $("#xeLog");
+  if (lg && e) lg.innerHTML = (e.log || []).map(function (x) { return "<div><b>" + esc(hhmm(x.t)) + "</b> " + esc(x.x) + "</div>"; }).join("") || "Sem registros.";
+}
+async function xRefresh() {
+  if (!$("#xeSt")) { clearInterval(XS.timer); XS.timer = 0; return; }
+  try { var m = await xApi("GET", "main"); XS.e = m.ext || null; ST.settings.ext = m.ext; } catch (err) {}
+  xStatus();
+}
+function xStepsHtml() {
+  var st = (XS.cfg.funnel || {}).steps || [];
+  if (!st.length) return '<p class="sub">Nenhum passo. Adicione uma mensagem abaixo (áudio e imagem você adiciona pelo painel do PC).</p>';
+  return st.map(function (p, i) {
+    var d = xDelay(p.delaySec), ic = p.type === "audio" ? "🎤 Áudio" : p.type === "image" ? "🖼️ Imagem" : "💬 Mensagem";
+    var body = p.type === "audio" ? '<div class="sub">' + esc(p.fileName || "áudio gravado") + " · para trocar o arquivo use o painel do PC</div>"
+      : '<textarea data-i="' + i + '" data-f="text" placeholder="' + (p.type === "image" ? "Legenda (opcional)" : "Texto da mensagem") + '">' + esc(p.text || "") + "</textarea>" + (p.type === "image" ? '<div class="sub">' + esc(p.fileName || "imagem") + "</div>" : "");
+    return '<div class="stp"><div class="hd"><span>' + (i + 1) + ". " + ic + '</span><button class="ib" data-mv="-1" data-i="' + i + '">↑</button><button class="ib" data-mv="1" data-i="' + i + '">↓</button><button class="ib" data-rm="' + i + '">✕</button></div>' +
+      '<div class="row"><label>Esperar antes de enviar</label><input type="number" min="0" data-i="' + i + '" data-f="dv" value="' + d[0] + '"><select data-i="' + i + '" data-f="du"><option value="s"' + (d[1] === "s" ? " selected" : "") + '>seg</option><option value="m"' + (d[1] === "m" ? " selected" : "") + '>min</option><option value="h"' + (d[1] === "h" ? " selected" : "") + ">horas</option></select></div>" + body + "</div>";
+  }).join("");
+}
+function xReadSteps(root) {
+  var st = XS.cfg.funnel.steps || [];
+  root.querySelectorAll("[data-f]").forEach(function (el) {
+    var p = st[+el.dataset.i]; if (!p) return;
+    if (el.dataset.f === "text") p.text = el.value;
+    if (el.dataset.f === "dv") p._v = +el.value || 0;
+    if (el.dataset.f === "du") p._u = el.value;
+  });
+  st.forEach(function (p) { if (p._v != null) { p.delaySec = p._v * (p._u === "h" ? 3600 : p._u === "m" ? 60 : 1); delete p._v; delete p._u; } });
+}
+function xPendList() {
+  return ST.companies.filter(function (c) { return c.stage === "contato" && mine(c) && c.funnel !== "andamento" && c.funnel !== "concluido"; })
+    .sort(function (a, b) { return (b.replied ? 1 : 0) - (a.replied ? 1 : 0) || (b.replied || 0) - (a.replied || 0); });
+}
+function extSheet() {
+  XS.e = ST.settings.ext || null;
+  XS.cfg = JSON.parse(JSON.stringify((XS.e && XS.e.cfg) || {}));
+  var c = XS.cfg, f = c.funnel = c.funnel || {}, DN = ["Dom", "Seg", "Ter", "Qua", "Qui", "Sex", "Sáb"], days = c.days || [1, 2, 3, 4, 5, 6];
+  var pend = xPendList();
+  var h = '<h3>Extensão do WhatsApp</h3><div class="xe">' +
+    '<div class="st" id="xeSt"></div><div class="bar"><button class="btn pri" id="xeRun" data-op="start">▶ Iniciar disparo</button><button class="btn" id="xeScan">🔄 Conferir conversas</button></div><div class="msg" id="xeMsg"></div>';
+  if (!XS.e || !XS.e.cfg) h += '<p class="sub">Assim que a extensão 1.2.0 ligar no PC, as configurações aparecem aqui.</p>';
+  else {
+    h += "<h4>Ritmo do disparo</h4>" +
+      '<div class="row"><label>Mensagens por rodada</label><input type="number" id="xPR" min="1" value="' + (c.perRound || 5) + '"></div>' +
+      '<div class="row"><label>Rodada a cada (min)</label><input type="number" id="xRM" min="1" value="' + (c.roundMin || 10) + '"></div>' +
+      '<div class="row"><label>Intervalo entre mensagens (seg)</label><input type="number" id="xG1" min="10" value="' + (c.gapMin || 45) + '"><span>a</span><input type="number" id="xG2" min="10" value="' + (c.gapMax || 120) + '"></div>' +
+      '<div class="row"><label>Máximo por dia</label><input type="number" id="xDM" min="1" value="' + (c.dailyMax || 60) + '"></div>' +
+      '<div class="row"><label>Horário</label><input type="time" id="xH1" value="' + esc(c.startH || "08:00") + '"><span>às</span><input type="time" id="xH2" value="' + esc(c.endH || "18:00") + '"></div>' +
+      '<div class="days" id="xDays">' + DN.map(function (n, i) { return '<button data-d="' + i + '" class="' + (days.indexOf(i) >= 0 ? "on" : "") + '">' + n + "</button>"; }).join("") + "</div>" +
+      "<h4>Funil (depois da resposta)</h4>" +
+      '<div class="row"><label>Funil ligado</label><input type="checkbox" id="xFO"' + (f.on ? " checked" : "") + "></div>" +
+      '<div class="row"><label>Respeitar o horário do disparo</label><input type="checkbox" id="xFH"' + (f.respectHours !== false ? " checked" : "") + "></div>" +
+      '<div class="row"><label>Não mandar sozinho se a resposta tiver mais de (horas)</label><input type="number" id="xFL" min="0" value="' + (f.maxLateH == null ? 12 : f.maxLateH) + '"></div>' +
+      '<div class="row" style="display:block"><label>Palavras de parada (separe por vírgula)</label><textarea id="xFS">' + esc(f.stopWords || "") + "</textarea></div>" +
+      '<div id="xSteps">' + xStepsHtml() + '</div><button class="btn" id="xAdd" style="width:100%">+ Mensagem</button>' +
+      '<div class="bar"><button class="btn pri" id="xSave">Salvar configurações</button></div>';
+  }
+  h += "<h4>Enviar parte 2 (" + pend.length + ")</h4>";
+  h += pend.length ? '<p class="sub">Receberam a saudação e ainda não receberam a parte 2.</p><div class="pl">' + pend.map(function (x) {
+    var lab = x.funnel === "parado" ? '<span class="bad">disse que não quer</span>' : x.funnel === "atrasado" ? '<span class="warn">respondeu · atrasado</span>' : x.replied ? '<span class="ok">respondeu</span>' : '<span style="color:#8696a0">não respondeu</span>';
+    return '<label><input type="checkbox" data-p2="' + esc(x.id) + '"' + (x.replied && x.funnel !== "parado" ? " checked" : "") + "><span><b>" + esc(cleanName(x.name)) + "</b> · " + lab + "</span></label>";
+  }).join("") + '</div><div class="bar"><button class="btn pri" id="xP2">Enviar parte 2 para as marcadas</button></div>' : '<p class="sub">Ninguém pendente.</p>';
+  h += '<h4>Registro</h4><div class="lg" id="xeLog"></div></div>';
+  sheet(h, function (s) {
+    xStatus();
+    if (!XS.timer) XS.timer = setInterval(xRefresh, 5000);
+    xRefresh();
+    $("#xeRun", s).onclick = function () { var op = this.dataset.op; xCmd(op).then(function () { toast(op === "start" ? "Iniciando o disparo…" : "Pausando o disparo…"); }).catch(function (e) { toast("Erro: " + e.message); }); };
+    $("#xeScan", s).onclick = function () { xCmd("scan").then(function () { toast("A extensão vai reler as conversas."); }).catch(function (e) { toast("Erro: " + e.message); }); };
+    var dz = $("#xDays", s); if (dz) dz.onclick = function (e) { var b = e.target.closest("[data-d]"); if (b) b.classList.toggle("on"); };
+    var box = $("#xSteps", s);
+    if (box) box.onclick = function (e) {
+      var b = e.target.closest("[data-mv],[data-rm]"); if (!b) return;
+      xReadSteps(box); var st = XS.cfg.funnel.steps;
+      if (b.dataset.rm != null) st.splice(+b.dataset.rm, 1);
+      else { var i = +b.dataset.i, j = i + (+b.dataset.mv); if (j >= 0 && j < st.length) { var tmp = st[i]; st[i] = st[j]; st[j] = tmp; } }
+      box.innerHTML = xStepsHtml();
+    };
+    var add = $("#xAdd", s); if (add) add.onclick = function () { xReadSteps(box); (XS.cfg.funnel.steps = XS.cfg.funnel.steps || []).push({ type: "text", text: "", delaySec: 60 }); box.innerHTML = xStepsHtml(); };
+    var sv = $("#xSave", s); if (sv) sv.onclick = function () {
+      xReadSteps(box);
+      var c2 = XS.cfg, v = function (id) { return $(id, s).value; };
+      c2.perRound = +v("#xPR"); c2.roundMin = +v("#xRM"); c2.gapMin = +v("#xG1"); c2.gapMax = +v("#xG2"); c2.dailyMax = +v("#xDM"); c2.startH = v("#xH1"); c2.endH = v("#xH2");
+      c2.days = [].map.call(s.querySelectorAll("#xDays .on"), function (b) { return +b.dataset.d; });
+      c2.funnel.on = $("#xFO", s).checked; c2.funnel.respectHours = $("#xFH", s).checked; c2.funnel.maxLateH = +v("#xFL") || 0; c2.funnel.stopWords = v("#xFS");
+      var bad = (c2.funnel.steps || []).some(function (p) { return p.type === "text" && !String(p.text || "").trim(); });
+      if (bad) { toast("Tem mensagem vazia no funil. Escreva o texto ou remova o passo."); return; }
+      if (!c2.days.length) { toast("Escolha pelo menos um dia."); return; }
+      xCmd("cfg", c2).then(function () { toast("Configurações enviadas para a extensão."); }).catch(function (e) { toast("Erro: " + e.message); });
+    };
+    var p2 = $("#xP2", s); if (p2) p2.onclick = function () {
+      var ids = [].map.call(s.querySelectorAll("[data-p2]:checked"), function (x) { return x.dataset.p2; });
+      if (!ids.length) { toast("Marque pelo menos uma empresa."); return; }
+      if (!p2.dataset.sure) { p2.dataset.sure = 1; p2.textContent = "Toque de novo para enviar para " + ids.length; return; }
+      xCmd("part2", { ids: ids }).then(function () { toast("Parte 2 agendada para " + ids.length + ". Vai uma por vez."); p2.textContent = "Enviado ✓"; }).catch(function (e) { toast("Erro: " + e.message); });
+    };
+  });
+}
 
 // ---------- prompt de extração (IA busca as empresas) ----------
 var XP_HEAD = "Empresa;WhatsApp;Endereço;Nota;Avaliações";
@@ -1123,6 +1275,7 @@ function moreSheet(c) {
 }
 $("#setBtn").onclick = function () {
   sheet("<h3>Ajustes</h3>" +
+    '<button class="mi" data-s="ext"><i>📱</i>Painel da extensão do WhatsApp</button>' +
     '<button class="mi" data-s="dl"><i>📎</i>Baixar arquivo do prompt</button>' +
     '<button class="mi" data-s="msgs"><i>💬</i>Mensagens do WhatsApp</button>' +
     '<button class="mi" data-s="goal"><i>🎯</i>Meta de chamadas por dia</button>' +
@@ -1134,7 +1287,8 @@ $("#setBtn").onclick = function () {
     '<a class="mi" href="' + AI_URL + '" target="_blank" rel="noopener"><i>✨</i>Abrir AI Studio</a>', function (s) {
     s.onclick = function (e) {
       var b = e.target.closest("[data-s]"); if (!b) return;
-      if (b.dataset.s === "dl") downloadPrompt();
+      if (b.dataset.s === "ext") extSheet();
+      else if (b.dataset.s === "dl") downloadPrompt();
       else if (b.dataset.s === "msgs") msgSheet();
       else if (b.dataset.s === "goal") goalSheet();
       else if (b.dataset.s === "csv") exportCsv();
