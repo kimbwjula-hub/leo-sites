@@ -1120,6 +1120,7 @@ function xStatus() {
   var b = $("#xeRun"); if (b && e && !(XS.pend && !(e.ack >= XS.pend))) { var ron = e.run && e.run.on; b.textContent = ron ? "Pausar disparo" : "Iniciar disparo"; b.dataset.op = ron ? "stop" : "start"; b.className = ron ? "stop" : "go"; }
   var m = $("#xeMsg");
   if (m) m.innerHTML = XS.pend ? (e && e.ack >= XS.pend ? '<span class="ok">✓✓ Aplicado na extensão</span>' : '<span class="warn">✓ Enviado · aplicando…</span>') : "";
+  xPendRefresh();
   var q = $("#xQ");
   if (q && e) {
     var L = e.p2 || [], tn = Date.now() / 1000; $("#xQn").textContent = L.length;
@@ -1127,7 +1128,8 @@ function xStatus() {
     q.innerHTML = L.length ? (outH ? '<div class="xline"><span class="warn">Fora do horário do disparo: começa quando o horário abrir.</span></div>' : "") + L.map(function (x) {
       var w = x.next - tn, quando = w <= 5 ? "agora" : w < 3600 ? "em " + (w < 60 ? Math.round(w) + " s" : Math.round(w / 60) + " min") : "às " + hhmm(x.next);
       return '<div class="xr"><span class="ic">🕒</span><div class="tx"><b>' + esc(x.name) + "</b><small>" + esc(quando) + " · " + esc(new Date(x.next * 1000).toLocaleTimeString("pt-BR", { hour: "2-digit", minute: "2-digit" })) + '</small></div><button class="btn" style="color:var(--red);border-radius:16px;padding:6px 12px" data-qc="' + esc(x.id) + '">Cancelar</button></div>';
-    }).join("") + '<div class="xacts"><button id="xQre">Reprogramar com o intervalo acima</button><button class="stop" id="xQall">Cancelar todos</button></div>' : '<div class="xr"><div class="tx"><small>Nada agendado.</small></div></div>';
+    }).join("") + '<div class="xacts"><button id="xQpz">' + (e.p2Paused ? "▶ Continuar fila" : "⏸ Pausar fila") + '</button><button class="stop" id="xQall">Cancelar todos</button></div><div class="xacts" style="padding-top:0"><button id="xQre">Reprogramar com o intervalo acima</button></div>' : '<div class="xr"><div class="tx"><small>Nada agendado.</small></div></div>';
+    if (e.p2Paused && L.length) q.insertAdjacentHTML("afterbegin", '<div class="xline"><span class="warn">⏸ Fila pausada. Nada da parte 2 sai até você continuar.</span></div>');
   }
   var lg = $("#xeLog");
   if (lg && e) lg.innerHTML = (e.log || []).map(function (x) { return '<div class="xr"><span class="tm">' + esc(hhmm(x.t)) + '</span><div class="tx"><b>' + esc(x.x) + "</b></div></div>"; }).join("") || '<div class="xr"><div class="tx"><small>Sem registros.</small></div></div>';
@@ -1191,13 +1193,40 @@ function xReadSteps(root) {
   });
   st.forEach(function (p) { if (p._v != null) { p.delaySec = p._v * (p._u === "h" ? 3600 : p._u === "m" ? 60 : 1); delete p._v; delete p._u; } });
 }
+function xLivre(c) {
+  var fs = ((XS.e || ST.settings.ext || {}).fst || {})[c.id];
+  if (fs) return fs === "erro" || fs === "parado" || fs === "palavra de parada" || fs === "atrasado" || fs === "resposta falsa" || fs === "parcial:erro";
+  return c.funnel !== "andamento" && c.funnel !== "concluido";
+}
 function xPendList() {
-  return ST.companies.filter(function (c) { return c.stage === "contato" && mine(c) && c.funnel !== "andamento" && c.funnel !== "concluido"; })
+  return ST.companies.filter(function (c) { return c.stage === "contato" && mine(c) && xLivre(c); })
     .sort(function (a, b) { return (b.replied ? 1 : 0) - (a.replied ? 1 : 0) || (b.replied || 0) - (a.replied || 0); });
 }
 function xInHours(c) {
   var d = new Date(), m = d.getHours() * 60 + d.getMinutes(), p = function (x) { var a = String(x || "0:0").split(":"); return +a[0] * 60 + +a[1]; };
   return (c.days || [1, 2, 3, 4, 5, 6]).indexOf(d.getDay()) >= 0 && m >= p(c.startH || "08:00") && m < p(c.endH || "18:00");
+}
+function xPendHtml(pend, c) {
+  XS.sel = XS.sel || {};
+  var h = '<div class="cap">Enviar parte 2 · ' + pend.length + "</div>";
+  if (!pend.length) return h + '<div class="xr"><div class="tx"><small>Ninguém pendente. Quem já recebeu a parte 2 não aparece aqui.</small></div></div>';
+  return h + pend.map(function (x) {
+    var fs = ((XS.e || {}).fst || {})[x.id] || x.funnel;
+    var lab = /erro/.test(fs || "") ? '<span style="color:var(--red)">' + (/parcial/.test(fs) ? "parou no meio por erro · continua de onde parou" : "deu erro, reenviar") + "</span>" : fs === "parado" || fs === "palavra de parada" ? '<span style="color:var(--red)">disse que não quer</span>' : fs === "atrasado" ? '<span style="color:var(--amb)">respondeu · funil atrasado</span>' : x.replied ? '<span style="color:var(--g)">respondeu ' + esc(ago(x.replied)) + "</span>" : "não respondeu";
+    if (XS.sel[x.id] == null) XS.sel[x.id] = !!(x.replied && fs !== "parado" && fs !== "palavra de parada");
+    var on = XS.sel[x.id];
+    return '<div class="xr" data-p2="' + esc(x.id) + '"' + (on ? ' data-on="1"' : "") + ">" + av(x) + '<div class="tx"><b>' + esc(cleanName(x.name)) + "</b><small>" + lab + '</small></div><span class="xck' + (on ? " on" : "") + '">' + (on ? "✓" : "") + "</span></div>";
+  }).join("") + xRow("⏳", "Intervalo entre contatos", "segundos, sorteado entre os dois", xNum("xP2a", (c.p2GapMin || 60), 5) + '<span class="to">a</span>' + xNum("xP2b", (c.p2GapMax || 120), 5)) +
+    '<div class="xacts"><button class="go" id="xP2">Enviar parte 2 para as marcadas</button></div>';
+}
+function xPendRefresh() {
+  var box = $("#xPend"); if (!box || XS.p2busy) return;
+  var a = document.activeElement; if (a && box.contains(a)) return;
+  var pend = xPendList(), ids = pend.map(function (x) { return x.id; }).join(",");
+  if (ids === XS.pendIds && XS.e && XS.e.alive === XS.pendAlive) return;
+  XS.pendIds = ids; XS.pendAlive = XS.e && XS.e.alive;
+  var g1 = ($("#xP2a") || {}).value, g2 = ($("#xP2b") || {}).value;
+  box.innerHTML = xPendHtml(pend, { p2GapMin: g1 || (XS.cfg || {}).p2GapMin, p2GapMax: g2 || (XS.cfg || {}).p2GapMax });
 }
 function xRow(ic, title, sub, right) { return '<div class="xr"><span class="ic">' + ic + '</span><div class="tx"><b>' + title + "</b>" + (sub ? "<small>" + sub + "</small>" : "") + "</div>" + (right || "") + "</div>"; }
 function xSw(id, on) { return '<label class="sw"><input type="checkbox" id="' + id + '"' + (on ? " checked" : "") + "><i></i></label>"; }
@@ -1227,14 +1256,14 @@ function extSheet() {
       '<div class="xchat" id="xSteps">' + xStepsHtml() + "</div>" +
       '<div class="xadd" id="xAddB"><button class="a1" data-add="text"><i>💬</i>Mensagem</button><button class="a2" data-add="audio"><i>🎤</i>Áudio</button><button class="a3" data-add="image"><i>🖼️</i>Imagem</button></div></div>';
   } else h += '<div class="xc"><div class="xr"><div class="tx"><small>Assim que a extensão ligar no PC, as configurações aparecem aqui.</small></div></div></div>';
-  h += '<div class="xc xpend"><div class="cap">Enviar parte 2 · ' + pend.length + "</div>";
-  h += pend.length ? pend.map(function (x) {
+  h += '<div class="xc xpend" id="xPend">' + xPendHtml(pend, c) + "</div>";
+  h += '<div class="xc"><div class="cap">Parte 2 agendada · <span id="xQn">0</span></div><div id="xQ"></div></div><div class="xc xlog"><div class="cap">Registro</div><div id="xeLog"></div></div></div>';
+  if (0) h += (pend.length ? pend.map(function (x) {
     var lab = x.funnel === "erro" ? '<span style="color:var(--red)">' + (x.replied ? "respondeu · " : "") + "funil deu erro, reenviar</span>" : x.funnel === "parado" ? '<span style="color:var(--red)">disse que não quer</span>' : x.funnel === "atrasado" ? '<span style="color:var(--amb)">respondeu · funil atrasado</span>' : x.replied ? '<span style="color:var(--g)">respondeu ' + esc(ago(x.replied)) + "</span>" : "não respondeu";
     var on = x.replied && x.funnel !== "parado";
     return '<div class="xr" data-p2="' + esc(x.id) + '"' + (on ? ' data-on="1"' : "") + ">" + av(x) + '<div class="tx"><b>' + esc(cleanName(x.name)) + "</b><small>" + lab + '</small></div><span class="xck' + (on ? " on" : "") + '">' + (on ? "✓" : "") + "</span></div>";
   }).join("") + xRow("⏳", "Intervalo entre contatos", "segundos, sorteado entre os dois", xNum("xP2a", (c.p2GapMin || 60), 5) + '<span class="to">a</span>' + xNum("xP2b", (c.p2GapMax || 120), 5)) +
-    '<div class="xacts"><button class="go" id="xP2">Enviar parte 2 para as marcadas</button></div>' : '<div class="xr"><div class="tx"><small>Ninguém pendente.</small></div></div>';
-  h += '</div><div class="xc"><div class="cap">Parte 2 agendada · <span id="xQn">0</span></div><div id="xQ"></div></div><div class="xc xlog"><div class="cap">Registro</div><div id="xeLog"></div></div></div>';
+    '<div class="xacts"><button class="go" id="xP2">Enviar parte 2 para as marcadas</button></div>' : "");
   h += '<div class="xsave"><div class="m" id="xeMsg"></div>' + (has ? '<button id="xSave">Salvar</button>' : "") + "</div>";
   var pg = document.createElement("div"); pg.id = "xpage"; pg.className = "xp"; pg.innerHTML = h; document.body.appendChild(pg); document.body.style.overflow = "hidden";
   var s = pg;
@@ -1245,7 +1274,7 @@ function extSheet() {
   $("#xeRun", s).onclick = function () { var op = this.dataset.op; this.textContent = op === "start" ? "Iniciando…" : "Pausando…"; xCmd(op).then(function () { toast(op === "start" ? "Iniciando o disparo…" : "Pausando o disparo…"); }).catch(function (e) { toast("Erro: " + e.message); }); };
   $("#xeScan", s).onclick = function () { xCmd("scan").then(function () { toast("A extensão vai reler as conversas."); }).catch(function (e) { toast("Erro: " + e.message); }); };
   var dz = $("#xDays", s); if (dz) dz.onclick = function (e) { var b = e.target.closest("[data-d]"); if (b) b.classList.toggle("on"); };
-  var pl = s.querySelector(".xpend"); pl.onclick = function (e) { var r = e.target.closest("[data-p2]"); if (!r) return; var on = !r.dataset.on; if (on) r.dataset.on = "1"; else delete r.dataset.on; var k = r.querySelector(".xck"); k.className = "xck" + (on ? " on" : ""); k.textContent = on ? "✓" : ""; var b = $("#xP2", s); if (b) { delete b.dataset.sure; b.textContent = "Enviar parte 2 para as marcadas"; } };
+  var pl = s.querySelector(".xpend"); pl.onclick = function (e) { if (e.target.closest("#xP2")) return xSendP2(); var r = e.target.closest("[data-p2]"); if (!r) return; var on = !r.dataset.on; XS.sel[r.dataset.p2] = on; if (on) r.dataset.on = "1"; else delete r.dataset.on; var k = r.querySelector(".xck"); k.className = "xck" + (on ? " on" : ""); k.textContent = on ? "✓" : ""; var b = $("#xP2", s); if (b) { delete b.dataset.sure; b.textContent = "Enviar parte 2 para as marcadas"; } };
   var box = $("#xSteps", s);
   if (box) {
     box.onclick = async function (e) {
@@ -1301,18 +1330,26 @@ function extSheet() {
     xCmd("cfg", c2).then(function () { toast("Salvo. Enviando para a extensão…"); }).catch(function (e) { toast("Erro: " + e.message); });
   };
   s.addEventListener("click", function (e) {
-    var b = e.target.closest("[data-qc],#xQall,#xQre"); if (!b) return;
+    var b = e.target.closest("[data-qc],#xQall,#xQre,#xQpz"); if (!b) return;
+    if (b.id === "xQpz") { var pz = !(XS.e && XS.e.p2Paused); b.textContent = pz ? "Pausando…" : "Continuando…"; xCmd(pz ? "p2pause" : "p2resume").then(function () { if (XS.e) XS.e.p2Paused = pz; }); return; }
     if (b.id === "xQre") { xCmd("p2resched", { gapMin: +($("#xP2a", s) || {}).value || 60, gapMax: +($("#xP2b", s) || {}).value || 120 }).then(function () { toast("Reprogramando a fila…"); }); return; }
     if (b.id === "xQall") { if (!b.dataset.sure) { b.dataset.sure = 1; b.textContent = "Toque de novo para cancelar todos"; return; } xCmd("p2cancel", { ids: null }).then(function () { toast("Cancelando toda a parte 2…"); }); return; }
     b.textContent = "Cancelando…"; b.disabled = true;
     xCmd("p2cancel", { ids: [b.dataset.qc] }).then(function () { toast("Cancelado."); });
   });
-  var p2 = $("#xP2", s); if (p2) p2.onclick = function () {
+  function xSendP2() {
+    var p2 = $("#xP2", s); if (!p2) return;
     var ids = [].map.call(s.querySelectorAll("[data-p2][data-on]"), function (x) { return x.dataset.p2; });
     if (!ids.length) { toast("Marque pelo menos uma empresa."); return; }
     if (!p2.dataset.sure) { p2.dataset.sure = 1; p2.textContent = "Toque de novo: enviar para " + ids.length; return; }
-    xCmd("part2", { ids: ids, gapMin: +($("#xP2a", s) || {}).value || 60, gapMax: +($("#xP2b", s) || {}).value || 120 }).then(function () { toast("Parte 2 agendada para " + ids.length + ". Vai uma por vez."); p2.textContent = "Agendado ✓"; }).catch(function (e) { toast("Erro: " + e.message); });
-  };
+    XS.p2busy = true;
+    xCmd("part2", { ids: ids, gapMin: +($("#xP2a", s) || {}).value || 60, gapMax: +($("#xP2b", s) || {}).value || 120 }).then(function () {
+      toast("Parte 2 agendada para " + ids.length + ". Vai uma por vez.");
+      // tira da lista na hora (a extensão confirma em seguida)
+      XS.e = XS.e || {}; XS.e.fst = XS.e.fst || {}; ids.forEach(function (id) { XS.e.fst[id] = "agendado"; delete XS.sel[id]; });
+      XS.p2busy = false; XS.pendIds = null; xPendRefresh();
+    }).catch(function (e) { XS.p2busy = false; toast("Erro: " + e.message); });
+  }
 }
 
 // ---------- prompt de extração (IA busca as empresas) ----------
