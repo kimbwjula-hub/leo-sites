@@ -138,7 +138,7 @@ textarea.paste:focus{border-color:var(--g)}
 <div id="app" hidden>
   <header class="top">
     <div class="tb"><button class="pill" id="nicheBtn"></button><button class="icb" id="setBtn" aria-label="Ajustes">⋮</button></div>
-    <nav class="nav" id="nav"><button data-tab="prospect">Fila<span class="bd" hidden></span></button><button data-tab="replies">Chamados<span class="bd" hidden></span></button><button data-tab="resp">Responderam<span class="bd" hidden></span></button><button data-tab="sites">Interessados<span class="bd" hidden></span></button><button data-tab="sales">Vendas</button></nav>
+    <nav class="nav" id="nav"><button data-tab="prospect">Fila<span class="bd" hidden></span></button><button data-tab="replies">Funil P1<span class="bd" hidden></span></button><button data-tab="resp">Funil P2<span class="bd" hidden></span></button><button data-tab="p3">Funil P3<span class="bd" hidden></span></button><button data-tab="sites">Interessados<span class="bd" hidden></span></button><button data-tab="sales">Vendas</button></nav>
   </header>
   <span id="saving" class="saving"></span>
   <main id="view"></main>
@@ -645,10 +645,10 @@ $("#nicheBtn").onclick = function () { $$(".niche").forEach(function (b) { b.cla
 // ---------- render ----------
 function render() {
   var o = L(), n = N();
-  if (ST.tab !== "replies" && ST.tab !== "resp") ST.q = "";
+  if (["replies", "resp", "p3"].indexOf(ST.tab) < 0) ST.q = "";
   $("#nicheBtn").textContent = n.short;
-  var nResp = o.replies.filter(function (c) { return c.replied; }).length;
-  var bd = { prospect: o.queue.length, replies: o.replies.length - nResp, resp: nResp, sites: o.making.length + o.sent.length };
+  var nResp = o.replies.filter(function (c) { return c.replied && !c.replied2; }).length, nP3 = o.replies.filter(function (c) { return c.replied2; }).length;
+  var bd = { prospect: o.queue.length, replies: o.replies.length - nResp - nP3, resp: nResp, p3: nP3, sites: o.making.length + o.sent.length };
   $$("#nav button").forEach(function (b) {
     b.classList.toggle("on", b.dataset.tab === ST.tab);
     var s = $(".bd", b); if (!s) return;
@@ -658,10 +658,11 @@ function render() {
   if (ST.tab === "prospect") v.innerHTML = vProspect(o);
   else if (ST.tab === "replies") v.innerHTML = vReplies(o);
   else if (ST.tab === "resp") v.innerHTML = vResp(o);
+  else if (ST.tab === "p3") v.innerHTML = vP3(o);
   else if (ST.tab === "sites") v.innerHTML = vSites(o);
   else v.innerHTML = vSales(o);
 }
-document.addEventListener("input", function (e) { if (e.target.id === "q") { ST.q = e.target.value; var el = $("#view"), sc = el.querySelector(".list"); if (sc) { var o = L(); el.innerHTML = ST.tab === "resp" ? vResp(o) : vReplies(o); var i = $("#q"); if (i) { i.focus(); i.setSelectionRange(i.value.length, i.value.length); } } } });
+document.addEventListener("input", function (e) { if (e.target.id === "q") { ST.q = e.target.value; var el = $("#view"), sc = el.querySelector(".list"); if (sc) { var o = L(); el.innerHTML = ST.tab === "resp" ? vResp(o) : ST.tab === "p3" ? vP3(o) : vReplies(o); var i = $("#q"); if (i) { i.focus(); i.setSelectionRange(i.value.length, i.value.length); } } } });
 $("#nav").onclick = function (e) { var b = e.target.closest("[data-tab]"); if (!b) return; ST.tab = b.dataset.tab; render(); window.scrollTo(0, 0); };
 
 function head() { return ""; }
@@ -781,9 +782,9 @@ function vProspect(o) {
   return h;
 }
 function vReplies(o) {
-  var h = "", all = o.replies.filter(function (c) { return !c.replied; }), nr = o.replies.length - all.length;
-  if (!all.length) return '<div class="empty"><h3>Ninguém aguardando resposta</h3><p>Quem você chamar na Fila aparece aqui.' + (nr ? "<br>" + nr + " já respondeu: veja na aba Responderam." : "") + (o.snoozed.length ? "<br>" + o.snoozed.length + " agendado(s) para depois." : "") + "</p></div>";
-  h += '<div class="day">Aguardando resposta: <b>' + all.length + "</b>" + (nr ? " · Responderam: <b>" + nr + "</b>" : "") + "</div>";
+  var h = "", all = o.replies.filter(function (c) { return !c.replied && !c.replied2; }), nr = o.replies.length - all.length;
+  if (!all.length) return '<div class="empty"><h3>Funil P1 vazio</h3><p>Saudação enviada · aguardando resposta. Quem receber a saudação aparece aqui.' + (nr ? "<br>" + nr + " já respondeu: veja Funil P2 e P3." : "") + (o.snoozed.length ? "<br>" + o.snoozed.length + " agendado(s) para depois." : "") + "</p></div>";
+  h += '<div class="day">Saudação enviada · aguardando resposta: <b>' + all.length + "</b></div>";
   if (all.length > 8) h += '<input class="srch" id="q" type="search" placeholder="Pesquisar" value="' + esc(ST.q || "") + '">';
   var q = normKey(ST.q || ""), list = all, t = now();
   if (q) list = list.filter(function (c) { return normKey(c.name + " " + c.city).indexOf(q) >= 0; });
@@ -802,10 +803,10 @@ function vReplies(o) {
   return h + "</div>";
 }
 function vResp(o) {
-  var all = o.replies.filter(function (c) { return c.replied; }).sort(function (a, b) { return b.replied - a.replied; });
-  if (!all.length) return '<div class="empty"><h3>Ninguém respondeu ainda</h3><p>Quando a empresa responder no WhatsApp, ela sai de Chamados e aparece aqui com o funil.</p></div>';
+  var all = o.replies.filter(function (c) { return c.replied && !c.replied2; }).sort(function (a, b) { return b.replied - a.replied; });
+  if (!all.length) return '<div class="empty"><h3>Funil P2 vazio</h3><p>Responderam à saudação · o funil será enviado. Quem responder a saudação aparece aqui.</p></div>';
   var fin = all.filter(function (c) { return c.funnel === "concluido"; }), go = all.filter(function (c) { return c.funnel !== "concluido"; });
-  var h = '<div class="day">Responderam: <b>' + all.length + "</b> · Funil enviado: <b>" + fin.length + "</b></div>";
+  var h = '<div class="day">Responderam à saudação · o funil será enviado<br>Total: <b>' + all.length + "</b> · Funil enviado: <b>" + fin.length + "</b></div>";
   if (all.length > 8) h += '<input class="srch" id="q" type="search" placeholder="Pesquisar" value="' + esc(ST.q || "") + '">';
   var q = normKey(ST.q || "");
   var f = function (l) { return q ? l.filter(function (c) { return normKey(c.name + " " + c.city).indexOf(q) >= 0; }) : l; };
@@ -815,14 +816,25 @@ function vResp(o) {
     return chatRow(c, '<span class="g">Respondeu ' + ago(c.replied) + " · " + st + "</span>", hhmm(c.replied), "g", "!");
   };
   h += '<div class="list">';
-  if (go.length) h += sec("Respondeu · funil em andamento · " + go.length, "a") + go.map(row).join("");
-  if (fin.length) h += sec("Respondeu · funil enviado (parte 2) · " + fin.length) + fin.map(row).join("");
+  if (go.length) h += sec("Funil a enviar / enviando · " + go.length, "a") + go.map(row).join("");
+  if (fin.length) h += sec("Funil enviado · aguardando resposta · " + fin.length) + fin.map(row).join("");
   return h + "</div>";
+}
+function vP3(o) {
+  var all = o.replies.filter(function (c) { return c.replied2; }).sort(function (a, b) { return b.replied2 - a.replied2; });
+  if (!all.length) return '<div class="empty"><h3>Funil P3 vazio</h3><p>Responderam à mensagem do funil · conversar e fechar. Quem responder o funil aparece aqui.</p></div>';
+  var h = '<div class="day">Responderam à mensagem do funil · conversar e fechar<br>Total: <b>' + all.length + "</b></div>";
+  if (all.length > 8) h += '<input class="srch" id="q" type="search" placeholder="Pesquisar" value="' + esc(ST.q || "") + '">';
+  var q = normKey(ST.q || "");
+  if (q) all = all.filter(function (c) { return normKey(c.name + " " + c.city).indexOf(q) >= 0; });
+  return h + '<div class="list">' + sec("Responderam o funil · " + all.length) + all.map(function (c) {
+    return chatRow(c, '<span class="g">Respondeu o funil ' + ago(c.replied2) + (city(c) ? " · " + esc(city(c)) : "") + "</span>", hhmm(c.replied2), "g", "!");
+  }).join("") + "</div>";
 }
 function vSites(o) {
   var h = "", t = now();
   if (!ST.settings.dl) h += '<div class="note">Baixe o arquivo do prompt uma vez.<button class="btn" data-a="dl">Baixar</button></div>';
-  if (!o.making.length && !o.sent.length) return h + '<div class="empty"><h3>Nenhum interessado</h3><p>Quando a empresa topar, abra ela em Chamados e toque em Quer site.</p></div>';
+  if (!o.making.length && !o.sent.length) return h + '<div class="empty"><h3>Nenhum interessado</h3><p>Quando a empresa topar, abra ela no Funil P3 e toque em Quer site.</p></div>';
   h += '<div class="list">';
   if (o.sent.length) h += sec("Site pronto · " + o.sent.length) + o.sent.map(function (c) {
     return chatRow(c, '<span class="g">Site pronto · avisar e fechar</span>', hhmm(c.sent || c.updated), "g", "✓");
@@ -1065,7 +1077,7 @@ function paySheet(c) {
     $("#val", s).onkeydown = function (e) { if (e.key === "Enter") done(parseMoney(this.value)); };
   });
 }
-var BACK = { contato: ["novos", "Voltar para a fila"], feito: ["contato", "Voltar para Chamados"], pagamento: ["feito", "Voltar para fazer o site"], pagos: ["pagamento", "Desfazer venda"] };
+var BACK = { contato: ["novos", "Voltar para a fila"], feito: ["contato", "Voltar para o funil"], pagamento: ["feito", "Voltar para fazer o site"], pagos: ["pagamento", "Desfazer venda"] };
 function telLink(c) { var t = telNum(c); return t ? '<a class="mi" href="tel:' + t + '"><i>📞</i>Ligar</a>' : ""; }
 function moreSheet(c) {
   var w = waInfo(c), h = "<h3>" + esc(dn(c)) + '</h3><p class="sub">' + esc(meta(c) || "Sem contato") + "</p>";

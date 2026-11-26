@@ -63,6 +63,7 @@ export async function onRequest({ request, env, params }) {
       if (typeof q.wa_invalid === "boolean") patch.wa_invalid = q.wa_invalid;
       if (typeof q.sent_auto === "boolean") patch.sent_auto = q.sent_auto;
       if (Number.isFinite(q.replied)) patch.replied = Math.floor(q.replied);
+      if (Number.isFinite(q.replied2)) patch.replied2 = Math.floor(q.replied2);
       if (typeof q.funnel === "string") patch.funnel = q.funnel.slice(0, 40);
       const r = await db.prepare("SELECT k, v FROM docs WHERE ws = ? AND k LIKE 'chunk:%'").bind(ws).all();
       for (const row of r.results || []) {
