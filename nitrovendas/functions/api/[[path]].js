@@ -12,7 +12,7 @@ export async function onRequest({ request, env, params }) {
   const ws = request.headers.get("x-key") || "";
   if (!/^[a-z0-9]{24,64}$/.test(ws)) return J({ error: "chave" }, 401);
   const u = new URL(request.url), o = request.headers.get("origin");
-  if (request.method !== "GET" && o && o !== u.origin) return J({ error: "origem" }, 403);
+  if (request.method !== "GET" && o && o !== u.origin && !/^(chrome|moz)-extension:\/\//.test(o)) return J({ error: "origem" }, 403);
   await init(db);
   const p = params.path || [], m = request.method, t = Date.now();
   try {
@@ -49,6 +49,31 @@ export async function onRequest({ request, env, params }) {
         await db.prepare("DELETE FROM docs WHERE ws = ? AND k = ?").bind(ws, k).run();
         return J({ ok: true });
       }
+    }
+    if (p[0] === "mark" && m === "POST") {
+      const b = await request.json();
+      const id = String(b && b.id || "");
+      if (!/^[A-Za-z0-9_-]{1,64}$/.test(id)) return J({ error: "id" }, 400);
+      const ok = { stage: ["novos", "contato", "perdido"], };
+      const patch = {};
+      const q = b.patch || {};
+      if (q.stage && ok.stage.includes(q.stage)) patch.stage = q.stage;
+      if (Number.isFinite(q.contacted)) patch.contacted = Math.floor(q.contacted);
+      if (q.incTries) patch.__inc = 1;
+      if (typeof q.wa_invalid === "boolean") patch.wa_invalid = q.wa_invalid;
+      if (typeof q.sent_auto === "boolean") patch.sent_auto = q.sent_auto;
+      if (Number.isFinite(q.replied)) patch.replied = Math.floor(q.replied);
+      if (typeof q.funnel === "string") patch.funnel = q.funnel.slice(0, 40);
+      const r = await db.prepare("SELECT k, v FROM docs WHERE ws = ? AND k LIKE 'chunk:%'").bind(ws).all();
+      for (const row of r.results || []) {
+        const d = JSON.parse(row.v), it = (d.items || []).find(x => x.id === id);
+        if (!it) continue;
+        if (patch.__inc) { it.tries = (it.tries || 0) + 1; delete patch.__inc; }
+        Object.assign(it, patch); it.updated = Math.floor(t / 1000);
+        await db.prepare("INSERT OR REPLACE INTO docs (ws, k, v, updated) VALUES (?, ?, ?, ?)").bind(ws, row.k, JSON.stringify(d), t).run();
+        return J({ ok: true, item: { id: it.id, stage: it.stage, tries: it.tries } });
+      }
+      return J({ error: "nao_achei" }, 404);
     }
     return J({ error: "rota" }, 404);
   } catch (e) {
