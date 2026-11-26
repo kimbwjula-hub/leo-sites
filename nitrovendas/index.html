@@ -30,8 +30,8 @@ a{color:inherit;text-decoration:none}
 .pill{font-size:19px;font-weight:600;color:#fff}
 .pill:after{content:" ▾";font-size:13px;opacity:.8}
 .icb{margin-left:auto;width:44px;height:44px;color:#fff;font-size:22px;line-height:44px;text-align:center}
-.nav{display:flex}
-.nav button{flex:1 1 auto;padding:0 6px;height:44px;color:rgba(255,255,255,.75);font-size:14px;font-weight:600;border-bottom:3px solid transparent;display:flex;align-items:center;justify-content:center;gap:5px;white-space:nowrap}
+.nav{display:flex;overflow-x:auto;scrollbar-width:none}.nav::-webkit-scrollbar{display:none}
+.nav button{flex:1 1 auto;padding:0 6px;height:44px;color:rgba(255,255,255,.75);font-size:13.5px;font-weight:600;border-bottom:3px solid transparent;display:flex;align-items:center;justify-content:center;gap:5px;white-space:nowrap}
 .nav button svg{display:none}
 .nav button.on{color:#fff;border-bottom-color:#fff}
 .nav .bd{min-width:18px;height:18px;padding:0 5px;border-radius:9px;background:#fff;color:var(--g);font-size:11px;font-weight:700;display:inline-grid;place-items:center;letter-spacing:0}
@@ -138,7 +138,7 @@ textarea.paste:focus{border-color:var(--g)}
 <div id="app" hidden>
   <header class="top">
     <div class="tb"><button class="pill" id="nicheBtn"></button><button class="icb" id="setBtn" aria-label="Ajustes">⋮</button></div>
-    <nav class="nav" id="nav"><button data-tab="prospect">Fila<span class="bd" hidden></span></button><button data-tab="replies">Chamados<span class="bd" hidden></span></button><button data-tab="sites">Interessados<span class="bd" hidden></span></button><button data-tab="sales">Vendas</button></nav>
+    <nav class="nav" id="nav"><button data-tab="prospect">Fila<span class="bd" hidden></span></button><button data-tab="replies">Chamados<span class="bd" hidden></span></button><button data-tab="resp">Responderam<span class="bd" hidden></span></button><button data-tab="sites">Interessados<span class="bd" hidden></span></button><button data-tab="sales">Vendas</button></nav>
   </header>
   <span id="saving" class="saving"></span>
   <main id="view"></main>
@@ -645,9 +645,10 @@ $("#nicheBtn").onclick = function () { $$(".niche").forEach(function (b) { b.cla
 // ---------- render ----------
 function render() {
   var o = L(), n = N();
-  if (ST.tab !== "replies") ST.q = "";
+  if (ST.tab !== "replies" && ST.tab !== "resp") ST.q = "";
   $("#nicheBtn").textContent = n.short;
-  var bd = { prospect: o.queue.length, replies: o.replies.length, sites: o.making.length + o.sent.length };
+  var nResp = o.replies.filter(function (c) { return c.replied; }).length;
+  var bd = { prospect: o.queue.length, replies: o.replies.length - nResp, resp: nResp, sites: o.making.length + o.sent.length };
   $$("#nav button").forEach(function (b) {
     b.classList.toggle("on", b.dataset.tab === ST.tab);
     var s = $(".bd", b); if (!s) return;
@@ -656,10 +657,11 @@ function render() {
   var v = $("#view");
   if (ST.tab === "prospect") v.innerHTML = vProspect(o);
   else if (ST.tab === "replies") v.innerHTML = vReplies(o);
+  else if (ST.tab === "resp") v.innerHTML = vResp(o);
   else if (ST.tab === "sites") v.innerHTML = vSites(o);
   else v.innerHTML = vSales(o);
 }
-document.addEventListener("input", function (e) { if (e.target.id === "q") { ST.q = e.target.value; var el = $("#view"), sc = el.querySelector(".list"); if (sc) { var o = L(); el.innerHTML = vReplies(o); var i = $("#q"); if (i) { i.focus(); i.setSelectionRange(i.value.length, i.value.length); } } } });
+document.addEventListener("input", function (e) { if (e.target.id === "q") { ST.q = e.target.value; var el = $("#view"), sc = el.querySelector(".list"); if (sc) { var o = L(); el.innerHTML = ST.tab === "resp" ? vResp(o) : vReplies(o); var i = $("#q"); if (i) { i.focus(); i.setSelectionRange(i.value.length, i.value.length); } } } });
 $("#nav").onclick = function (e) { var b = e.target.closest("[data-tab]"); if (!b) return; ST.tab = b.dataset.tab; render(); window.scrollTo(0, 0); };
 
 function head() { return ""; }
@@ -779,26 +781,41 @@ function vProspect(o) {
   return h;
 }
 function vReplies(o) {
-  var h = "";
-  if (o.replies.length) { var nr = o.replies.filter(function (c) { return c.replied; }).length; h += '<div class="day">Responderam: <b>' + nr + "</b> · Aguardando: <b>" + (o.replies.length - nr) + "</b></div>"; }
-  if (!o.replies.length) return '<div class="empty"><h3>Ninguém esperando resposta</h3><p>Quem você chamar na Fila aparece aqui.' + (o.snoozed.length ? "<br>" + o.snoozed.length + " agendado(s) para depois." : "") + "</p></div>";
-  if (o.replies.length > 8) h += '<input class="srch" id="q" type="search" placeholder="Pesquisar" value="' + esc(ST.q || "") + '">';
-  var q = normKey(ST.q || ""), list = o.replies, t = now();
+  var h = "", all = o.replies.filter(function (c) { return !c.replied; }), nr = o.replies.length - all.length;
+  if (!all.length) return '<div class="empty"><h3>Ninguém aguardando resposta</h3><p>Quem você chamar na Fila aparece aqui.' + (nr ? "<br>" + nr + " já respondeu: veja na aba Responderam." : "") + (o.snoozed.length ? "<br>" + o.snoozed.length + " agendado(s) para depois." : "") + "</p></div>";
+  h += '<div class="day">Aguardando resposta: <b>' + all.length + "</b>" + (nr ? " · Responderam: <b>" + nr + "</b>" : "") + "</div>";
+  if (all.length > 8) h += '<input class="srch" id="q" type="search" placeholder="Pesquisar" value="' + esc(ST.q || "") + '">';
+  var q = normKey(ST.q || ""), list = all, t = now();
   if (q) list = list.filter(function (c) { return normKey(c.name + " " + c.city).indexOf(q) >= 0; });
-  var resp = list.filter(function (c) { return c.replied; }).sort(function (a, b) { return b.replied - a.replied; });
-  var old = list.filter(function (c) { return !c.replied && t - (c.contacted || c.updated || t) >= 86400; });
-  var rec = list.filter(function (c) { return !c.replied && t - (c.contacted || c.updated || t) < 86400; });
+  var old = list.filter(function (c) { return t - (c.contacted || c.updated || t) >= 86400; });
+  var rec = list.filter(function (c) { return t - (c.contacted || c.updated || t) < 86400; });
   var row = function (c) {
-    var tries = c.tries || 1, late = !c.replied && t - (c.contacted || c.updated || t) >= 86400;
-    if (c.replied) return chatRow(c, '<span class="g">Respondeu ' + ago(c.replied) + (c.funnel === "concluido" ? " · funil enviado" : "") + "</span>", hhmm(c.replied), "g", "!");
+    var tries = c.tries || 1, late = t - (c.contacted || c.updated || t) >= 86400;
     var l2 = tries >= 3 ? '<span class="r">3 tentativas sem resposta</span>' : late ? '<span class="r">✓✓ Enviado · sem resposta ' + ago(c.contacted || c.updated) + "</span>" : "<span>✓✓ Enviado · aguardando resposta" + (city(c) ? " · " + esc(city(c)) : "") + "</span>";
     return chatRow(c, l2, hhmm(c.contacted || c.updated), late ? "r" : "", tries > 1 ? tries + "x" : "");
   };
   h += '<div class="list">';
-  if (resp.length) h += sec("Responderam · " + resp.length) + resp.map(row).join("");
   if (rec.length) h += sec("Enviado · aguardando resposta · " + rec.length, "a") + rec.map(row).join("");
   if (old.length) h += sec("Enviado · sem resposta há mais de 1 dia · " + old.length, "r") + old.map(row).join("");
   if (o.snoozed.length) h += '<div class="next" style="padding-top:12px">' + o.snoozed.length + " agendado(s) para depois</div>";
+  return h + "</div>";
+}
+function vResp(o) {
+  var all = o.replies.filter(function (c) { return c.replied; }).sort(function (a, b) { return b.replied - a.replied; });
+  if (!all.length) return '<div class="empty"><h3>Ninguém respondeu ainda</h3><p>Quando a empresa responder no WhatsApp, ela sai de Chamados e aparece aqui com o funil.</p></div>';
+  var fin = all.filter(function (c) { return c.funnel === "concluido"; }), go = all.filter(function (c) { return c.funnel !== "concluido"; });
+  var h = '<div class="day">Responderam: <b>' + all.length + "</b> · Funil enviado: <b>" + fin.length + "</b></div>";
+  if (all.length > 8) h += '<input class="srch" id="q" type="search" placeholder="Pesquisar" value="' + esc(ST.q || "") + '">';
+  var q = normKey(ST.q || "");
+  var f = function (l) { return q ? l.filter(function (c) { return normKey(c.name + " " + c.city).indexOf(q) >= 0; }) : l; };
+  fin = f(fin); go = f(go);
+  var row = function (c) {
+    var st = c.funnel === "concluido" ? "Funil enviado" : c.funnel === "parado" ? "Funil parado" : c.funnel ? "Funil em andamento" : "Sem funil";
+    return chatRow(c, '<span class="g">Respondeu ' + ago(c.replied) + " · " + st + "</span>", hhmm(c.replied), "g", "!");
+  };
+  h += '<div class="list">';
+  if (go.length) h += sec("Respondeu · funil em andamento · " + go.length, "a") + go.map(row).join("");
+  if (fin.length) h += sec("Respondeu · funil enviado (parte 2) · " + fin.length) + fin.map(row).join("");
   return h + "</div>";
 }
 function vSites(o) {
