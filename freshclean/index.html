@@ -1,0 +1,406 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Fresh e Clean · Higienização de Estofados em Pindamonhangaba</title>
+<meta name="description" content="Limpeza, higienização e impermeabilização de sofás, colchões, cadeiras, poltronas, bancos de carro, tapetes, carpetes e cortinas em Pindamonhangaba, SP e região. Orçamento pelo WhatsApp.">
+<meta name="theme-color" content="#031c91">
+<link rel="icon" href="img/logo.png">
+<meta property="og:title" content="Fresh e Clean · Higienização de Estofados">
+<meta property="og:description" content="Seu estofado limpo, sua família mais feliz. Higienização e impermeabilização em Pindamonhangaba, SP e região.">
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@500;600;700;800&family=Manrope:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+:root{--royal:#031c91;--royal-2:#1432b8;--deep:#021159;--lime:#b4e61d;--lime-2:#96c900;--bg:#f4f7ff;--ink:#091142;--muted:#525c8a;--line:#dce2f7;--wa:#1fb85a;--r:22px}
+*{box-sizing:border-box;margin:0;padding:0}
+html{overflow-x:hidden;scroll-behavior:smooth;-webkit-text-size-adjust:100%}
+body{font-family:Manrope,system-ui,sans-serif;background:var(--bg);color:var(--ink);line-height:1.55;overflow-x:hidden}
+img{display:block;max-width:100%}
+a{color:inherit;text-decoration:none}
+h1,h2,h3{font-family:Poppins,sans-serif;line-height:1.08;letter-spacing:-.02em}
+.wrap{width:min(1120px,100% - 40px);margin-inline:auto}
+.tag{display:inline-flex;align-items:center;gap:8px;font:600 12px/1 Poppins;letter-spacing:.14em;text-transform:uppercase;color:var(--royal)}
+.tag::before{content:"";width:18px;height:3px;border-radius:3px;background:var(--lime-2)}
+h2{font-size:clamp(30px,7.4vw,46px);font-weight:800;margin:12px 0 14px}
+h2 em{font-style:normal;background:linear-gradient(transparent 58%,var(--lime) 58% 92%,transparent 92%);padding:0 4px}
+.lead{color:var(--muted);font-size:17px;max-width:560px}
+section{padding:76px 0}
+
+/* botões */
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:10px;font:700 16px/1 Poppins;padding:18px 24px;border-radius:999px;transition:transform .2s,box-shadow .2s}
+.btn:active{transform:scale(.97)}
+.btn svg{width:22px;height:22px;flex:none}
+.btn-lime{background:var(--lime);color:var(--deep);box-shadow:0 10px 30px -8px rgba(180,230,29,.55)}
+.btn-lime:hover{transform:translateY(-2px)}
+.btn-ghost{border:2px solid rgba(255,255,255,.28);color:#fff}
+.btn-wa{background:var(--wa);color:#fff;box-shadow:0 12px 30px -10px rgba(31,184,90,.7)}
+
+/* header */
+header{position:sticky;top:0;z-index:50;background:rgba(3,28,145,.92);backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px)}
+.nav{display:flex;align-items:center;justify-content:space-between;height:66px}
+.brand{display:flex;align-items:center;gap:10px}
+.brand .ic{height:34px;width:auto}
+.brand .wm{height:22px;width:auto}
+.nav .btn{padding:11px 16px;font-size:14px}
+
+/* hero */
+.hero{background:radial-gradient(120% 80% at 90% 10%,var(--royal-2),var(--royal) 45%,var(--deep));color:#fff;padding:34px 0 0;border-radius:0 0 40px 40px;position:relative;overflow:hidden}
+.hero::after{content:"";position:absolute;inset:0;background-image:radial-gradient(rgba(255,255,255,.08) 1px,transparent 1px);background-size:22px 22px;mask:linear-gradient(#000,transparent 70%);pointer-events:none}
+.hero .wrap{position:relative;z-index:1;display:grid;gap:30px}
+.loc{display:inline-flex;align-items:center;gap:8px;background:rgba(255,255,255,.1);border:1px solid rgba(255,255,255,.18);padding:8px 14px;border-radius:999px;font-size:13px;font-weight:600;width:max-content}
+.loc svg{width:16px;height:16px;color:var(--lime)}
+.hero h1{font-size:clamp(40px,11vw,70px);font-weight:800;margin:18px 0 16px}
+.hero h1 .hl{color:var(--lime)}
+.hero p.sub{font-size:17px;color:rgba(255,255,255,.82);max-width:470px}
+.cta-row{display:flex;flex-wrap:wrap;gap:12px;margin-top:26px}
+.cta-row .btn{flex:1 1 auto}
+.proof{display:flex;gap:22px;margin-top:26px;font-size:13px;color:rgba(255,255,255,.75)}
+.proof b{display:block;font:800 24px/1 Poppins;color:#fff;margin-bottom:4px}
+.hero-photo{position:relative;align-self:end;margin:0 auto 48px;width:min(400px,92%)}
+.hero-photo .blob{position:absolute;left:50%;bottom:0;width:92%;aspect-ratio:1;transform:translateX(-50%);border-radius:50%;background:var(--lime);box-shadow:0 0 0 14px rgba(180,230,29,.18),0 0 0 30px rgba(180,230,29,.07)}
+.hero-photo img{position:relative;width:100%;height:auto;aspect-ratio:4/5;object-fit:cover;object-position:50% 50%;border-radius:999px 999px 30px 30px;border:6px solid var(--lime);box-shadow:0 30px 60px -20px rgba(0,0,0,.55),0 0 0 14px rgba(180,230,29,.14)}
+.hero-photo .chip{position:absolute;background:#fff;color:var(--ink);border-radius:16px;padding:10px 14px;font:600 13px/1.25 Manrope,system-ui,sans-serif;box-shadow:0 14px 30px -12px rgba(0,0,0,.45);display:flex;gap:9px;align-items:center}
+.hero-photo .chip i{width:30px;height:30px;border-radius:10px;background:var(--royal);display:grid;place-items:center;flex:none}
+.hero-photo .chip i svg{width:17px;height:17px;color:var(--lime)}
+.chip.c1{left:-14px;top:30%}.chip.c2{right:-14px;top:74%}
+
+/* faixa */
+.ticker{background:var(--lime);color:var(--deep);overflow:hidden;transform:rotate(-2deg);margin:-14px -10px 0;position:relative;z-index:3}
+.ticker div{display:flex;gap:34px;white-space:nowrap;padding:14px 0;font:700 15px/1 Poppins;text-transform:uppercase;letter-spacing:.04em;animation:tk 26s linear infinite;width:max-content}
+.ticker span::after{content:"✦";margin-left:34px}
+@keyframes tk{to{transform:translateX(-50%)}}
+
+/* benefícios */
+.bens{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-top:30px}
+.ben{background:#fff;border:1px solid var(--line);border-radius:var(--r);padding:20px 16px}
+.ben .ico{width:46px;height:46px;border-radius:14px;background:var(--royal);display:grid;place-items:center;margin-bottom:14px}
+.ben .ico svg{width:24px;height:24px;color:var(--lime)}
+.ben h3{font-size:16px;font-weight:700;margin-bottom:5px}
+.ben p{font-size:13.5px;color:var(--muted);line-height:1.45}
+
+/* serviços carrossel */
+.svc-head{display:flex;align-items:end;justify-content:space-between;gap:16px}
+.arrows{display:none;gap:8px}
+.arrows button{width:46px;height:46px;border-radius:50%;border:1.5px solid var(--line);background:#fff;cursor:pointer;display:grid;place-items:center}
+.arrows svg{width:20px;height:20px}
+.rail{display:flex;gap:14px;overflow-x:auto;scroll-snap-type:x mandatory;scroll-padding-inline:20px;padding:26px 20px 10px;margin:0 -20px;scrollbar-width:none}
+.rail::-webkit-scrollbar{display:none}
+.card{flex:0 0 78%;max-width:340px;scroll-snap-align:start;background:#fff;border-radius:26px;overflow:hidden;border:1px solid var(--line);display:flex;flex-direction:column}
+.card .ph{position:relative}
+.card .ph img{width:100%;height:auto;aspect-ratio:4/3;object-fit:cover}
+.card .num{position:absolute;top:12px;left:12px;background:var(--lime);color:var(--deep);font:800 13px/1 Poppins;padding:7px 10px;border-radius:999px}
+.card .bd{padding:18px 18px 20px;display:flex;flex-direction:column;flex:1}
+.card h3{font-size:20px;font-weight:700}
+.card p{color:var(--muted);font-size:14.5px;margin:6px 0 16px;flex:1}
+.card a{display:inline-flex;align-items:center;gap:8px;font:700 14px/1 Poppins;color:var(--royal)}
+.card a svg{width:18px;height:18px;transition:transform .2s}
+.card a:hover svg{transform:translateX(4px)}
+.dots{display:flex;justify-content:center;gap:6px;margin-top:12px}
+.dots i{width:7px;height:7px;border-radius:9px;background:var(--line);transition:all .3s}
+.dots i.on{width:22px;background:var(--royal)}
+
+/* antes depois */
+.ba{background:var(--deep);color:#fff;border-radius:40px;margin:0 10px;padding:66px 0}
+.ba .tag{color:var(--lime)}
+.ba .lead{color:rgba(255,255,255,.72)}
+.ba-box{position:relative;margin-top:28px;border-radius:26px;overflow:hidden;aspect-ratio:3/2;background:#000}
+.ba-box img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;transition:opacity .6s ease}
+.ba-box .after{opacity:0}
+.ba-box.show-after .after{opacity:1}
+.ba-label{position:absolute;top:14px;left:14px;z-index:2;background:rgba(2,17,89,.75);backdrop-filter:blur(6px);padding:7px 12px;border-radius:999px;font:700 12px/1 Poppins;letter-spacing:.1em;text-transform:uppercase}
+.ba-label b{color:var(--lime);font-weight:700}
+.switch{display:grid;grid-template-columns:1fr 1fr;background:rgba(255,255,255,.08);border-radius:999px;padding:5px;margin-top:16px;position:relative}
+.switch button{position:relative;z-index:1;border:0;background:none;color:#fff;font:700 15px/1 Poppins;padding:15px;border-radius:999px;cursor:pointer;transition:color .3s}
+.switch .pill{position:absolute;top:5px;bottom:5px;left:5px;width:calc(50% - 5px);background:var(--lime);border-radius:999px;transition:transform .4s cubic-bezier(.6,.2,.2,1)}
+.switch.after .pill{transform:translateX(100%)}
+.switch button.on{color:var(--deep)}
+
+/* por que */
+.why{display:grid;gap:26px}
+.why-card{background:linear-gradient(135deg,var(--royal),var(--royal-2));color:#fff;border-radius:28px;padding:28px 24px;position:relative;overflow:hidden}
+.why-card::before{content:"";position:absolute;right:-60px;top:-60px;width:180px;height:180px;border-radius:50%;background:var(--lime);opacity:.16}
+.why-card h3{font-size:22px;margin-bottom:10px}
+.why-card p{color:rgba(255,255,255,.8);font-size:15px}
+.list{display:grid;gap:12px;margin-top:6px}
+.list li{list-style:none;display:flex;gap:12px;align-items:flex-start;background:#fff;border:1px solid var(--line);border-radius:18px;padding:15px}
+.list li i{width:26px;height:26px;border-radius:50%;background:var(--lime);display:grid;place-items:center;flex:none;margin-top:1px}
+.list li i svg{width:15px;height:15px;color:var(--deep)}
+.list b{display:block;font-family:Poppins;font-weight:600}
+.list span{font-size:14px;color:var(--muted)}
+
+/* passos */
+.steps{display:grid;gap:0;margin-top:30px;position:relative}
+.step{display:grid;grid-template-columns:58px 1fr;gap:16px;padding-bottom:26px;position:relative}
+.step:not(:last-child)::before{content:"";position:absolute;left:28px;top:58px;bottom:0;width:2px;background:repeating-linear-gradient(var(--royal) 0 6px,transparent 6px 12px);opacity:.35}
+.step .n{width:58px;height:58px;border-radius:18px;background:var(--royal);color:var(--lime);font:800 24px/58px Poppins;text-align:center}
+.step h3{font-size:19px;margin:6px 0 4px}
+.step p{color:var(--muted);font-size:15px}
+
+/* área */
+.area{background:#fff;border:1px solid var(--line);border-radius:28px;padding:26px 22px;display:grid;gap:18px;align-items:center}
+.area .pin{width:64px;height:64px;border-radius:20px;background:var(--lime);display:grid;place-items:center}
+.area .pin svg{width:32px;height:32px;color:var(--deep)}
+.area h3{font-size:24px}
+.area p{color:var(--muted)}
+
+/* van */
+.van{background:#fff;border:1px solid var(--line);border-radius:30px;overflow:hidden;display:grid}
+.van img{width:100%;height:auto;aspect-ratio:3/4;object-fit:cover;object-position:50% 50%}
+.van-bd{padding:24px 22px 26px}
+.van-bd h3{font-size:25px;margin:10px 0 8px}
+.van-bd p{color:var(--muted);margin-bottom:20px}
+/* faq */
+.faq{margin-top:26px;display:grid;gap:10px}
+details{background:#fff;border:1px solid var(--line);border-radius:18px;padding:0 18px;transition:background .2s}
+details[open]{background:#fff;box-shadow:0 14px 30px -20px rgba(3,28,145,.45)}
+summary{list-style:none;cursor:pointer;padding:18px 0;font:600 16px/1.35 Poppins;display:flex;justify-content:space-between;gap:12px;align-items:center}
+summary::-webkit-details-marker{display:none}
+summary::after{content:"+";width:28px;height:28px;border-radius:50%;background:var(--bg);display:grid;place-items:center;font-size:20px;color:var(--royal);flex:none;transition:transform .3s}
+details[open] summary::after{transform:rotate(45deg);background:var(--lime)}
+details p{padding:0 0 18px;color:var(--muted);font-size:15px}
+
+/* cta final */
+.final{background:var(--lime);color:var(--deep);border-radius:40px 40px 0 0;padding:70px 0 40px;text-align:center;position:relative;overflow:hidden}
+.final .big-ic{width:70px;margin:0 auto 18px;filter:brightness(0) saturate(100%) invert(9%) sepia(60%) saturate(4500%) hue-rotate(236deg)}
+.final h2{font-size:clamp(34px,9vw,58px)}
+.final p{max-width:480px;margin:0 auto 26px;font-size:17px;color:#0f206e}
+.final .btn-wa{font-size:17px;padding:20px 28px}
+.contacts{display:grid;gap:10px;margin:34px auto 0;max-width:420px;text-align:left}
+.contacts a{display:flex;align-items:center;gap:14px;background:rgba(2,17,89,.08);border-radius:18px;padding:14px 16px;font-weight:600}
+.contacts a i{width:42px;height:42px;border-radius:13px;background:var(--deep);display:grid;place-items:center;flex:none}
+.contacts a i svg{width:20px;height:20px;color:var(--lime)}
+.contacts small{display:block;font-size:12px;opacity:.65;font-weight:500}
+footer{background:var(--deep);color:rgba(255,255,255,.6);text-align:center;padding:30px 0 100px;font-size:13px}
+footer img{height:26px;margin:0 auto 12px}
+
+/* whatsapp flutuante */
+.wa-float{position:fixed;right:16px;bottom:18px;z-index:60;width:60px;height:60px;border-radius:50%;background:var(--wa);display:grid;place-items:center;box-shadow:0 12px 30px -8px rgba(0,0,0,.45)}
+.wa-float svg{width:32px;height:32px;color:#fff}
+.wa-float::before{content:"";position:absolute;inset:0;border-radius:50%;border:2px solid var(--wa);animation:pulse 2.2s infinite}
+@keyframes pulse{from{transform:scale(1);opacity:.8}to{transform:scale(1.6);opacity:0}}
+
+/* animação de entrada */
+.rv{opacity:0;transform:translateY(24px);transition:opacity .7s ease,transform .7s ease}
+.rv.in{opacity:1;transform:none}
+
+@media (min-width:860px){
+  section{padding:110px 0}
+  .hero{padding-top:60px}
+  .hero .wrap{grid-template-columns:1.1fr .9fr;align-items:end}
+  .hero .copy{padding-bottom:90px}
+  .cta-row .btn{flex:0 0 auto}
+  .bens{grid-template-columns:repeat(4,1fr);gap:16px}
+  .ben{padding:26px 22px}
+  .arrows{display:flex}
+  .card{flex-basis:calc((100% - 28px)/3)}
+  .rail{padding-left:0;padding-right:0;margin:0}
+  .dots{display:none}
+  .ba{margin:0 24px}
+  .ba .wrap{display:grid;grid-template-columns:.9fr 1.1fr;gap:50px;align-items:center}
+  .ba-box{margin-top:0}
+  .why{grid-template-columns:1fr 1fr;align-items:start}
+  .steps{grid-template-columns:repeat(3,1fr);gap:24px}
+  .step{grid-template-columns:1fr;padding:0}
+  .step:not(:last-child)::before{left:70px;right:-12px;top:28px;bottom:auto;width:auto;height:2px;background:repeating-linear-gradient(90deg,var(--royal) 0 6px,transparent 6px 12px)}
+  .van{grid-template-columns:1.15fr 1fr;align-items:center}.van img{height:100%;aspect-ratio:auto;min-height:380px}.van-bd{padding:40px}
+  .faq{grid-template-columns:1fr 1fr;align-items:start}
+  .contacts{grid-template-columns:1fr 1fr;max-width:640px}
+}
+@media (prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}.rv{opacity:1;transform:none}}
+</style>
+</head>
+<body>
+
+<header>
+  <div class="wrap nav">
+    <a href="#topo" class="brand" aria-label="Fresh e Clean"><img class="ic" src="img/simbolo.png" alt=""><img class="wm" src="img/logo-clara.png" alt="Fresh e Clean"></a>
+    <a class="btn btn-lime" href="https://wa.me/5512988555550?text=Ol%C3%A1%2C%20Fresh%20e%20Clean!%20Quero%20um%20or%C3%A7amento." target="_blank" rel="noopener">Orçamento</a>
+  </div>
+</header>
+
+<main id="topo">
+<section class="hero">
+  <div class="wrap">
+    <div class="copy">
+      <span class="loc"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s7-6.2 7-12a7 7 0 1 0-14 0c0 5.8 7 12 7 12z"/><circle cx="12" cy="10" r="2.5"/></svg>Pindamonhangaba, SP e região</span>
+      <h1>Seu estofado limpo, sua família <span class="hl">mais feliz.</span></h1>
+      <p class="sub">Limpeza, higienização e impermeabilização de sofás, colchões, cadeiras, poltronas, bancos de carro, tapetes, carpetes e cortinas. Eliminamos ácaros, fungos e bactérias, e vamos até você.</p>
+      <div class="cta-row">
+        <a class="btn btn-lime" href="https://wa.me/5512988555550?text=Ol%C3%A1%2C%20Fresh%20e%20Clean!%20Quero%20um%20or%C3%A7amento%20de%20higieniza%C3%A7%C3%A3o." target="_blank" rel="noopener"><svg viewBox="0 0 24 24" fill="currentColor"><use href="#wa"/></svg>Orçamento grátis</a>
+        <a class="btn btn-ghost" href="#servicos">Ver serviços</a>
+      </div>
+    </div>
+    <div class="hero-photo">
+      
+      <img src="img/capa.jpg" alt="Logo da Fresh e Clean Higienização de Estofados" width="840" height="1050">
+      <div class="chip c1"><i><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><path d="M12 3l1.8 4.6L18.5 9l-4.7 1.6L12 15l-1.8-4.4L5.5 9l4.7-1.4z"/><path d="M19 15l.8 2 2 .8-2 .8-.8 2-.8-2-2-.8 2-.8z"/></svg></i>Estofado<br>renovado</div>
+      <div class="chip c2"><i><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3l8 3v6c0 4.5-3.4 8.3-8 9-4.6-.7-8-4.5-8-9V6z"/><path d="M9 12l2 2 4-4"/></svg></i>Sem ácaros<br>e bactérias</div>
+    </div>
+  </div>
+</section>
+
+<div class="ticker" aria-hidden="true"><div>
+  <span>Sofás</span><span>Colchões</span><span>Bancos de carro</span><span>Cadeiras e poltronas</span><span>Tapetes e carpetes</span><span>Cortinas</span><span>Impermeabilização</span><span>Lavanderia</span><span>Elimina ácaros</span><span>Limpeza profunda</span>
+  <span>Sofás</span><span>Colchões</span><span>Bancos de carro</span><span>Cadeiras e poltronas</span><span>Tapetes e carpetes</span><span>Cortinas</span><span>Impermeabilização</span><span>Lavanderia</span><span>Elimina ácaros</span><span>Limpeza profunda</span>
+</div></div>
+
+<section id="beneficios">
+  <div class="wrap">
+    <span class="tag rv">Higienização profissional</span>
+    <h2 class="rv">Muito além de <em>tirar mancha</em></h2>
+    <p class="lead rv">A extração profunda puxa a sujeira que fica lá dentro da espuma, onde o aspirador e o pano não chegam.</p>
+    <div class="bens">
+      <div class="ben rv"><div class="ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="4"/><path d="M12 2v4M12 18v4M2 12h4M18 12h4M5 5l2.5 2.5M16.5 16.5L19 19M19 5l-2.5 2.5M7.5 16.5L5 19"/><path d="M4 20L20 4"/></svg></div><h3>Elimina ácaros</h3><p>Fungos e bactérias saem junto com a água suja.</p></div>
+      <div class="ben rv"><div class="ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3l8 3v6c0 4.5-3.4 8.3-8 9-4.6-.7-8-4.5-8-9V6z"/><path d="M12 9v6M9 12h6"/></svg></div><h3>Mais saúde</h3><p>Menos alergia, rinite e crise de espirro em casa.</p></div>
+      <div class="ben rv"><div class="ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 18v-5a3 3 0 0 1 3-3h10a3 3 0 0 1 3 3v5"/><path d="M2 18h20M6 10V8a2 2 0 0 1 2-2h8a2 2 0 0 1 2 2v2"/></svg></div><h3>Estofado renovado</h3><p>Cor de volta, tecido macio e proteção duradoura.</p></div>
+      <div class="ben rv"><div class="ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M11 20A7 7 0 0 1 4 13c0-5 4-9 16-9 0 12-4 16-9 16z"/><path d="M4 20c4-6 7-8 11-10"/></svg></div><h3>Ambiente agradável</h3><p>Sem cheiro de mofo, suor ou xixi de pet.</p></div>
+    </div>
+  </div>
+</section>
+
+<section id="servicos" style="padding-top:20px">
+  <div class="wrap">
+    <div class="svc-head">
+      <div>
+        <span class="tag rv">Serviços</span>
+        <h2 class="rv">O que a gente <em>higieniza</em></h2>
+      </div>
+      <div class="arrows"><button type="button" aria-label="Anterior" data-dir="-1"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><path d="M15 18l-6-6 6-6"/></svg></button><button type="button" aria-label="Próximo" data-dir="1"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><path d="M9 6l6 6-6 6"/></svg></button></div>
+    </div>
+    <div class="rail" id="rail">
+      <article class="card"><div class="ph"><img src="img/servico_1.jpg" alt="Higienização de sofá" loading="lazy"><span class="num">01</span></div><div class="bd"><h3>Sofás</h3><p>Retrátil, de canto, de tecido ou suede, limpos por dentro.</p><a href="https://wa.me/5512988555550?text=Ol%C3%A1!%20Quero%20or%C3%A7amento%20de%20higieniza%C3%A7%C3%A3o%20de%20sof%C3%A1." target="_blank" rel="noopener">Orçar sofá <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><path d="M5 12h14M13 6l6 6-6 6"/></svg></a></div></article>
+      <article class="card"><div class="ph"><img src="img/servico_2.jpg" alt="Higienização de cadeiras e poltronas" loading="lazy"><span class="num">02</span></div><div class="bd"><h3>Cadeiras e poltronas</h3><p>Cadeiras de jantar, de escritório e poltronas estofadas.</p><a href="https://wa.me/5512988555550?text=Ol%C3%A1!%20Quero%20or%C3%A7amento%20de%20higieniza%C3%A7%C3%A3o%20de%20cadeiras%20e%20poltronas." target="_blank" rel="noopener">Orçar cadeiras <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><path d="M5 12h14M13 6l6 6-6 6"/></svg></a></div></article>
+      <article class="card"><div class="ph"><img src="img/servico_3.jpg" alt="Higienização de colchão" loading="lazy"><span class="num">03</span></div><div class="bd"><h3>Colchões</h3><p>O lugar onde você descansa todos os dias, livre de ácaros.</p><a href="https://wa.me/5512988555550?text=Ol%C3%A1!%20Quero%20or%C3%A7amento%20de%20higieniza%C3%A7%C3%A3o%20de%20colch%C3%A3o." target="_blank" rel="noopener">Orçar colchão <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><path d="M5 12h14M13 6l6 6-6 6"/></svg></a></div></article>
+      <article class="card"><div class="ph"><img src="img/servico_4.jpg" alt="Higienização de banco de carro" loading="lazy"><span class="num">04</span></div><div class="bd"><h3>Bancos de carro</h3><p>Bancos e interior automotivo sem cheiro e sem manchas.</p><a href="https://wa.me/5512988555550?text=Ol%C3%A1!%20Quero%20or%C3%A7amento%20de%20higieniza%C3%A7%C3%A3o%20de%20banco%20de%20carro." target="_blank" rel="noopener">Orçar carro <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><path d="M5 12h14M13 6l6 6-6 6"/></svg></a></div></article>
+      <article class="card"><div class="ph"><img src="img/servico_5.jpg" alt="Higienização de tapetes, carpetes e cortinas" loading="lazy"><span class="num">05</span></div><div class="bd"><h3>Tapetes, carpetes e cortinas</h3><p>Limpeza profunda de tapetes, carpetes, cortinas e lavanderia.</p><a href="https://wa.me/5512988555550?text=Ol%C3%A1!%20Quero%20or%C3%A7amento%20para%20tapetes%2C%20carpetes%20e%20cortinas." target="_blank" rel="noopener">Orçar tapetes <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><path d="M5 12h14M13 6l6 6-6 6"/></svg></a></div></article>
+      <article class="card"><div class="ph"><img src="img/servico_6.jpg" alt="Impermeabilização de estofados" loading="lazy"><span class="num">06</span></div><div class="bd"><h3>Impermeabilização de estofados</h3><p>Camada protetora contra líquidos e manchas no dia a dia.</p><a href="https://wa.me/5512988555550?text=Ol%C3%A1!%20Quero%20or%C3%A7amento%20de%20impermeabiliza%C3%A7%C3%A3o%20de%20estofados." target="_blank" rel="noopener">Orçar proteção <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><path d="M5 12h14M13 6l6 6-6 6"/></svg></a></div></article>
+    </div>
+    <div class="dots" id="dots"><i class="on"></i><i></i><i></i><i></i><i></i><i></i></div>
+  </div>
+</section>
+
+<section class="ba" id="resultado">
+  <div class="wrap">
+    <div>
+      <span class="tag rv">Resultado</span>
+      <h2 class="rv">Toca e vê a diferença</h2>
+      <p class="lead rv">O mesmo estofado, antes e depois de uma visita da Fresh e Clean.</p>
+    </div>
+    <div class="rv">
+      <div class="ba-box" id="baBox">
+        <img src="img/antes.jpg" alt="Sofá antes da higienização">
+        <img class="after" src="img/depois.jpg" alt="Sofá depois da higienização">
+        <span class="ba-label" id="baLabel">Antes</span>
+      </div>
+      <div class="switch" id="sw">
+        <span class="pill"></span>
+        <button type="button" class="on" data-v="0">Antes</button>
+        <button type="button" data-v="1">Depois</button>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section>
+  <div class="wrap why">
+    <div>
+      <span class="tag rv">Por que higienizar</span>
+      <h2 class="rv">Seu sofá guarda <em>mais do que parece</em></h2>
+      <div class="why-card rv">
+        <h3>Calor + umidade = festa de ácaros</h3>
+        <p>Com o tempo, suor, poeira, restos de comida e pelos de pet vão parar dentro da espuma. Isso vira alimento para ácaros, fungos e bactérias, mesmo quando o tecido parece limpo.</p>
+      </div>
+    </div>
+    <ul class="list">
+      <li class="rv"><i><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12l5 5 9-10"/></svg></i><div><b>Tem criança ou pet em casa</b><span>Eles passam o dia no sofá e no tapete.</span></div></li>
+      <li class="rv"><i><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12l5 5 9-10"/></svg></i><div><b>Alguém tem rinite ou alergia</b><span>Ácaro é um dos maiores gatilhos.</span></div></li>
+      <li class="rv"><i><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12l5 5 9-10"/></svg></i><div><b>O estofado está com cheiro</b><span>Mofo, suor, xixi ou bebida derramada.</span></div></li>
+      <li class="rv"><i><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12l5 5 9-10"/></svg></i><div><b>Faz tempo desde a última limpeza</b><span>A higienização periódica mantém tudo saudável.</span></div></li>
+    </ul>
+  </div>
+</section>
+
+<section style="padding-top:0">
+  <div class="wrap">
+    <span class="tag rv">Como funciona</span>
+    <h2 class="rv">Simples, <em>em 3 passos</em></h2>
+    <div class="steps">
+      <div class="step rv"><div class="n">1</div><div><h3>Manda uma foto</h3><p>Pelo WhatsApp, mostre o estofado e diga onde você está.</p></div></div>
+      <div class="step rv"><div class="n">2</div><div><h3>Recebe o orçamento</h3><p>Valor combinado antes, sem compromisso, e já marcamos o dia.</p></div></div>
+      <div class="step rv"><div class="n">3</div><div><h3>A gente vai até você</h3><p>Higienizamos no local e você recebe dicas para a secagem.</p></div></div>
+    </div>
+  </div>
+</section>
+
+<section style="padding-top:0">
+  <div class="wrap">
+    <div class="van rv">
+      <img src="img/atendimento.jpg" alt="Veículo da Fresh e Clean em atendimento em Pindamonhangaba" loading="lazy">
+      <div class="van-bd">
+        <span class="tag">A gente vai até você</span>
+        <h3>Atendemos Pindamonhangaba, SP e região</h3>
+        <p>A equipe da Fresh e Clean chega no seu endereço com todo o equipamento para limpar, higienizar e impermeabilizar sem você precisar levar nada. Endereço: Belle fiore - Parque Esplanada II, Valparaíso de Goiás - GO, 72878-033.</p>
+        <a class="btn btn-wa" href="https://wa.me/5512988555550?text=Ol%C3%A1%2C%20Fresh%20e%20Clean!%20Voc%C3%AAs%20atendem%20no%20meu%20bairro%3F" target="_blank" rel="noopener"><svg viewBox="0 0 24 24" fill="currentColor"><use href="#wa"/></svg>Atende meu bairro?</a>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section style="padding-top:0" id="duvidas">
+  <div class="wrap">
+    <span class="tag rv">Dúvidas</span>
+    <h2 class="rv">Perguntas <em>frequentes</em></h2>
+    <div class="faq">
+      <details class="rv"><summary>Quanto tempo leva para secar?</summary><p>O tempo de secagem varia conforme o tipo de tecido, o clima e a ventilação do ambiente. No final do atendimento, passamos todas as dicas para secar mais rápido.</p></details>
+      <details class="rv"><summary>Preciso sair de casa?</summary><p>Não. O serviço é feito no seu endereço e você pode continuar sua rotina normalmente.</p></details>
+      <details class="rv"><summary>Tira mancha e cheiro de xixi de pet?</summary><p>Na maioria dos casos, sim. Manchas muito antigas podem clarear sem sair completamente, e a gente sempre analisa pela foto antes.</p></details>
+      <details class="rv"><summary>Como faço o orçamento?</summary><p>Mande uma foto pelo WhatsApp informando o tipo de estofado ou serviço desejado e o seu bairro. Respondemos sem compromisso.</p></details>
+      <details class="rv"><summary>Vocês fazem impermeabilização e lavagem de cortinas?</summary><p>Sim. Além de sofás, colchões, cadeiras, poltronas e bancos de carro, fazemos impermeabilização de estofados, tapetes, carpetes, cortinas e lavanderia.</p></details>
+      <details class="rv"><summary>Com que frequência devo higienizar?</summary><p>O ideal é manter uma rotina periódica de higienização, especialmente se houver pets, crianças pequenas ou alguém com alergias em casa.</p></details>
+    </div>
+  </div>
+</section>
+
+<section class="final">
+  <div class="wrap">
+    <img class="big-ic" src="img/simbolo.png" alt="">
+    <h2>Bora deixar tudo limpo?</h2>
+    <p>Manda uma foto do seu estofado e receba o orçamento agora, sem compromisso.</p>
+    <a class="btn btn-wa" href="https://wa.me/5512988555550?text=Ol%C3%A1%2C%20Fresh%20e%20Clean!%20Quero%20um%20or%C3%A7amento." target="_blank" rel="noopener"><svg viewBox="0 0 24 24" fill="currentColor"><use href="#wa"/></svg>Chamar no WhatsApp</a>
+    <div class="contacts">
+      <a href="https://wa.me/5512988555550?text=Ol%C3%A1%2C%20Fresh%20e%20Clean!%20Quero%20um%20or%C3%A7amento." target="_blank" rel="noopener"><i><svg viewBox="0 0 24 24" fill="currentColor"><use href="#wa"/></svg></i><span><small>WhatsApp</small>(12) 98855-5550</span></a>
+      <a href="https://www.google.com/maps/search/?api=1&query=Belle+fiore+-+Parque+Esplanada+II%2C+Valpara%C3%ADso+de+Goi%C3%A1s+-+GO%2C+72878-033" target="_blank" rel="noopener"><i><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s7-6.2 7-12a7 7 0 1 0-14 0c0 5.8 7 12 7 12z"/><circle cx="12" cy="10" r="2.5"/></svg></i><span><small>Endereço</small>Belle fiore - Parque Esplanada II, Valparaíso de Goiás - GO, 72878-033</span></a>
+    </div>
+  </div>
+</section>
+</main>
+
+<footer>
+  <img src="img/logo-clara.png" alt="Fresh e Clean">
+  <div>Higienização e Impermeabilização de Estofados · Pindamonhangaba, SP</div>
+  <div>© <span id="y">2026</span> Fresh e Clean. Todos os direitos reservados.<div class="nitro-credit" style="margin:22px auto 0;max-width:360px;display:flex;align-items:center;justify-content:space-between;gap:12px;padding:10px 10px 10px 12px;border-radius:16px;background:rgba(128,128,128,.10);border:1px solid rgba(128,128,128,.22);text-align:left;font-family:inherit"><a href="https://www.instagram.com/agencia.nitro/" target="_blank" rel="noopener" style="display:flex;align-items:center;gap:10px;color:inherit;text-decoration:none;min-width:0"><img src="data:image/png;base64,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" alt="Agência Nitro" width="36" height="36" style="width:36px;height:36px;border-radius:50%;flex:none;margin:0;box-shadow:0 4px 12px rgba(225,0,20,.35)"><span style="display:block;line-height:1.2"><span style="display:block;font-size:10.5px;opacity:.7;letter-spacing:.04em">Site desenvolvido por</span><b style="display:block;font-size:14px">Agência Nitro</b></span></a><a href="https://www.instagram.com/agencia.nitro/" target="_blank" rel="noopener" aria-label="Instagram da Agência Nitro" style="display:inline-flex;align-items:center;gap:6px;flex:none;padding:9px 12px;border-radius:12px;background:linear-gradient(45deg,#f9a03f,#e1306c 50%,#833ab4);color:#fff;font-size:12.5px;font-weight:700;text-decoration:none;white-space:nowrap"><svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="2.2" style="flex:none"><rect x="3" y="3" width="18" height="18" rx="5"/><circle cx="12" cy="12" r="4"/><circle cx="17.5" cy="6.5" r="1.2" fill="currentColor" stroke="none"/></svg>@agencia.nitro</a></div></div>
+</footer>
+
+<a class="wa-float" href="https://wa.me/5512988555550?text=Ol%C3%A1%2C%20Fresh%20e%20Clean!%20Quero%20um%20or%C3%A7amento." target="_blank" rel="noopener" aria-label="Falar no WhatsApp"><svg viewBox="0 0 24 24" fill="currentColor"><use href="#wa"/></svg></a>
+
+<svg width="0" height="0" style="position:absolute"><symbol id="wa" viewBox="0 0 24 24"><path d="M17.5 14.4c-.3-.1-1.8-.9-2-1-.3-.1-.5-.1-.7.1-.2.3-.8 1-.9 1.2-.2.2-.3.2-.6.1-.3-.1-1.3-.5-2.4-1.5-.9-.8-1.5-1.8-1.7-2.1-.2-.3 0-.5.1-.6l.4-.5c.2-.2.2-.3.3-.5.1-.2 0-.4 0-.5l-.9-2.2c-.2-.6-.5-.5-.7-.5h-.6c-.2 0-.5.1-.8.4-.3.3-1 1-1 2.5s1.1 2.9 1.2 3.1c.1.2 2.1 3.2 5.1 4.5.7.3 1.3.5 1.7.6.7.2 1.4.2 1.9.1.6-.1 1.8-.7 2-1.4.2-.7.2-1.3.2-1.4-.1-.2-.3-.3-.6-.4zM12 21.8c-1.8 0-3.5-.5-5-1.4l-.4-.2-3.7 1 1-3.6-.2-.4C2.7 15.6 2.2 13.8 2.2 12 2.2 6.6 6.6 2.2 12 2.2c2.6 0 5.1 1 6.9 2.9 1.8 1.8 2.9 4.3 2.9 6.9 0 5.4-4.4 9.8-9.8 9.8zm8.4-18.2C18.2 1.3 15.2 0 12 0 5.4 0 .1 5.3.1 11.9c0 2.1.6 4.2 1.6 6L0 24l6.3-1.6c1.8 1 3.8 1.5 5.7 1.5 6.6 0 11.9-5.3 11.9-11.9 0-3.2-1.2-6.2-3.5-8.4z"/></symbol></svg>
+
+<script>
+document.getElementById('y').textContent=new Date().getFullYear();
+// entrada
+var io=new IntersectionObserver(function(es){es.forEach(function(e){if(e.isIntersecting){e.target.classList.add('in');io.unobserve(e.target)}})},{threshold:.12});
+document.querySelectorAll('.rv').forEach(function(el){io.observe(el)});
+// carrossel
+var rail=document.getElementById('rail'),dots=[].slice.call(document.querySelectorAll('#dots i'));
+rail.addEventListener('scroll',function(){var c=rail.children[0],w=c.offsetWidth+14,i=Math.round(rail.scrollLeft/w);dots.forEach(function(d,k){d.classList.toggle('on',k===Math.min(i,dots.length-1))})},{passive:true});
+document.querySelectorAll('.arrows button').forEach(function(b){b.onclick=function(){rail.scrollBy({left:(rail.children[0].offsetWidth+14)*b.dataset.dir,behavior:'smooth'})}});
+// antes/depois
+var sw=document.getElementById('sw'),box=document.getElementById('baBox'),lab=document.getElementById('baLabel'),btns=sw.querySelectorAll('button'),auto;
+function setBA(v){box.classList.toggle('show-after',v);sw.classList.toggle('after',v);btns[0].classList.toggle('on',!v);btns[1].classList.toggle('on',v);lab.innerHTML=v?'<b>Depois</b>':'Antes'}
+btns.forEach(function(b){b.onclick=function(){clearInterval(auto);setBA(b.dataset.v==='1')}});
+box.onclick=function(){clearInterval(auto);setBA(!box.classList.contains('show-after'))};
+new IntersectionObserver(function(es,o){if(es[0].isIntersecting){var s=false;auto=setInterval(function(){s=!s;setBA(s)},2200);o.disconnect()}},{threshold:.5}).observe(box);
+</script>
+</body>
+</html>

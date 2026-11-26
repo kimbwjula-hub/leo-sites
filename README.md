@@ -13,3 +13,4 @@ Um site por pasta. Cada pasta é publicada em `/<nome-da-pasta>/`.
 - `gadara/` — Gadara Móveis, Vitória da Conquista-BA (gadaramoveis.pages.dev) · loja com catálogo editável (KV gadara-catalogo + ADMIN_PASS)
 - `nitro/` — Nitro · página do site grátis (sitegratis.agencianitro.com.br · seusitegratuito.pages.dev)
 - `agencianitro/` — Agência Nitro · site institucional (agencianitro.com.br · agencianitro.pages.dev)
+- `freshclean/` — Fresh e Clean, Pindamonhangaba-SP (freshclean.pages.dev)
