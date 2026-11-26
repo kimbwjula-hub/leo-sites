@@ -293,6 +293,8 @@ function finish(c) {
   Object.keys(c).forEach(function (k) { c[k] = String(c[k] == null ? "" : c[k]).trim(); });
   if (c.reviews && !c.reviews_count && /^\d+([.,]\d+)?$/.test(c.reviews)) { c.reviews_count = c.reviews; c.reviews = ""; }
   if (!c.phone && c.wa) { /* mantém wa como contato */ }
+  if (/^\d+\.\d+$/.test(c.rating || "")) c.rating = c.rating.replace(".", ",");
+  if (/^\d+\.0+$/.test(c.reviews_count || "")) c.reviews_count = c.reviews_count.split(".")[0];
   cityFromAddress(c);
   return c;
 }
@@ -689,8 +691,81 @@ function sec(t, cls) { return '<div class="sec ' + (cls || "") + '">' + t + "</d
 
 function importBox() {
   return '<textarea class="paste" id="paste" placeholder="Cole a lista de empresas (planilha, Google Maps ou uma por linha)"></textarea><div class="err" id="ierr"></div>' +
-    '<div class="row2"><button class="btn" data-a="clip">Colar</button><button class="btn go" data-a="import">Adicionar</button></div>';
+    '<div class="row2"><button class="btn" data-a="clip">Colar</button><label class="btn">Planilha<input type="file" class="xfile" accept=".xlsx,.csv,.tsv,.txt,text/csv,application/vnd.openxmlformats-officedocument.spreadsheetml.sheet" hidden></label><button class="btn go" data-a="import">Adicionar</button></div>';
 }
+// ---------- ler planilha (.xlsx ou .csv) ----------
+function u16(b, o) { return b[o] | (b[o + 1] << 8); }
+function u32(b, o) { return (b[o] | (b[o + 1] << 8) | (b[o + 2] << 16) | (b[o + 3] << 24)) >>> 0; }
+async function unzip(buf, want) {
+  var b = new Uint8Array(buf), e = b.length - 22;
+  while (e >= 0 && u32(b, e) !== 0x06054b50) e--;
+  if (e < 0) throw new Error("zip");
+  var n = u16(b, e + 10), p = u32(b, e + 16), out = {};
+  for (var i = 0; i < n; i++) {
+    var meth = u16(b, p + 10), csz = u32(b, p + 20), nl = u16(b, p + 28), xl = u16(b, p + 30), cl = u16(b, p + 32), lo = u32(b, p + 42);
+    var name = new TextDecoder().decode(b.subarray(p + 46, p + 46 + nl));
+    p += 46 + nl + xl + cl;
+    if (!want(name)) continue;
+    var ds = lo + 30 + u16(b, lo + 26) + u16(b, lo + 28), raw = b.subarray(ds, ds + csz), data;
+    if (meth === 0) data = raw;
+    else if (meth === 8) data = new Uint8Array(await new Response(new Blob([raw]).stream().pipeThrough(new DecompressionStream("deflate-raw"))).arrayBuffer());
+    else continue;
+    out[name] = new TextDecoder().decode(data);
+  }
+  return out;
+}
+function colIdx(ref) { var m = /^([A-Z]+)/.exec(ref || ""), n = 0; if (!m) return -1; for (var i = 0; i < m[1].length; i++) n = n * 26 + m[1].charCodeAt(i) - 64; return n - 1; }
+async function xlsxToTsv(buf) {
+  var f = await unzip(buf, function (n) { return n === "xl/sharedStrings.xml" || n === "xl/workbook.xml" || n === "xl/_rels/workbook.xml.rels" || /^xl\/worksheets\/sheet\d+\.xml$/.test(n); });
+  var P = new DOMParser(), ss = [];
+  if (f["xl/sharedStrings.xml"]) [].forEach.call(P.parseFromString(f["xl/sharedStrings.xml"], "application/xml").getElementsByTagName("si"), function (si) { var t = ""; [].forEach.call(si.getElementsByTagName("t"), function (x) { t += x.textContent; }); ss.push(t); });
+  var sheet = null;
+  try {
+    var wb = P.parseFromString(f["xl/workbook.xml"], "application/xml"), first = wb.getElementsByTagName("sheet")[0];
+    var rid = first.getAttribute("r:id") || first.getAttributeNS("http://schemas.openxmlformats.org/officeDocument/2006/relationships", "id");
+    var rels = P.parseFromString(f["xl/_rels/workbook.xml.rels"], "application/xml").getElementsByTagName("Relationship");
+    [].forEach.call(rels, function (r) { if (r.getAttribute("Id") === rid) sheet = "xl/" + r.getAttribute("Target").replace(/^\/?xl\//, "").replace(/^\//, ""); });
+  } catch (e) {}
+  if (!sheet || !f[sheet]) sheet = Object.keys(f).filter(function (n) { return /worksheets\/sheet/.test(n); }).sort()[0];
+  if (!sheet) throw new Error("planilha");
+  var rows = [];
+  [].forEach.call(P.parseFromString(f[sheet], "application/xml").getElementsByTagName("row"), function (r) {
+    var line = [];
+    [].forEach.call(r.getElementsByTagName("c"), function (c, k) {
+      var t = c.getAttribute("t"), v = c.getElementsByTagName("v")[0], val = "";
+      if (t === "s") val = v ? ss[+v.textContent] || "" : "";
+      else if (t === "inlineStr") { [].forEach.call(c.getElementsByTagName("t"), function (x) { val += x.textContent; }); }
+      else if (t === "b") val = v && v.textContent === "1" ? "sim" : "";
+      else val = v ? v.textContent : "";
+      if (/^\d+\.\d+$/.test(val) && val.length > 6) val = String(Math.round(+val * 100) / 100);
+      var ci = colIdx(c.getAttribute("r")); if (ci < 0) ci = k;
+      line[ci] = String(val).replace(/[\t\r\n]+/g, " ").replace(/"/g, "”").trim();
+    });
+    for (var i = 0; i < line.length; i++) if (line[i] == null) line[i] = "";
+    if (line.join("").trim()) rows.push(line.join("\t"));
+  });
+  return rows.join("\n");
+}
+async function fileToText(file) {
+  var buf = await file.arrayBuffer(), b = new Uint8Array(buf);
+  if (b[0] === 0x50 && b[1] === 0x4b) return xlsxToTsv(buf);
+  var t = new TextDecoder("utf-8").decode(buf);
+  if (t.indexOf("\ufffd") >= 0) t = new TextDecoder("windows-1252").decode(buf);
+  return t;
+}
+document.addEventListener("change", async function (e) {
+  var inp = e.target.closest && e.target.closest(".xfile"); if (!inp || !inp.files[0]) return;
+  var file = inp.files[0], scope = inp.closest(".sh") || document, ta = $("#paste", scope), er = $("#ierr", scope);
+  inp.value = "";
+  try {
+    if (/\.xls$/i.test(file.name)) throw new Error("xls");
+    var t = await fileToText(file);
+    ta.value = t;
+    if (doImport(scope)) { if (!$("#sheet").hidden) closeSheet(); else render(); }
+  } catch (err) {
+    er.textContent = String(err && err.message) === "xls" ? "Esse é o Excel antigo (.xls). Salve como .xlsx ou .csv e tente de novo." : "Não consegui ler esse arquivo. Envie .xlsx ou .csv.";
+  }
+});
 function dayBar(o) {
   var goal = +ST.settings.goal || 30;
   return '<button class="day" data-a="goal">Hoje: <b class="num' + (o.today >= goal ? " hit" : "") + '">' + o.today + "/" + goal + "</b> chamadas · <b>" + o.intToday + "</b> " + (o.intToday === 1 ? "interessado" : "interessados") + " · <b>" + o.saleToday + "</b> " + (o.saleToday === 1 ? "venda" : "vendas") + "</button>";
@@ -926,9 +1001,10 @@ function extractPrompt(cities, qty) {
     "",
     "Quero até " + qty + " empresas. Priorize, nesta ordem: 1) quem NÃO tem site próprio; 2) quem tem mais avaliações no Google; 3) quem tem nota maior. Ignore empresas fechadas permanentemente, franquias grandes e anúncios repetidos.",
     "",
-    "ENTREGA: responda SÓ com um bloco de código, sem texto antes ou depois. A primeira linha é exatamente este cabeçalho:",
-    XP_HEAD,
-    "Depois, uma empresa por linha, com os campos separados por ponto e vírgula (;), na mesma ordem do cabeçalho.",
+    "ENTREGA: um arquivo de planilha .xlsx para download (se não conseguir gerar arquivo, um .csv separado por ponto e vírgula, ou, em último caso, o mesmo conteúdo num bloco de código).",
+    "Só uma aba. A linha 1 é o cabeçalho, com estas 13 colunas, exatamente com estes nomes e nesta ordem:",
+    XP_HEAD.split(";").join(" | "),
+    "Da linha 2 em diante, uma empresa por linha. Sem linhas em branco, sem títulos, sem totais, sem células mescladas.",
     "",
     "REGRAS DE CADA CAMPO:",
     "- Empresa: nome como aparece no Google Maps.",
@@ -943,14 +1019,14 @@ function extractPrompt(cities, qty) {
     "- Descrição: 1 frase com os serviços que a empresa oferece, tirada do perfil ou das fotos.",
     "- Avaliações: até 3 trechos curtos de avaliações reais de clientes, separados por \" | \".",
     "",
-    "PROIBIDO: inventar dado. Se não achar, deixe o campo vazio, mas mantenha o ; no lugar. Não use ; dentro dos campos (troque por vírgula). Não repita empresa nem número. Não numere as linhas.",
+    "PROIBIDO: inventar dado. Se não achar, deixe a célula vazia. Não use ; dentro das células (troque por vírgula). Não repita empresa nem número. Não numere as linhas. Telefones como TEXTO (não como número).",
     "",
-    "Se a lista for longa e você precisar parar, termine a linha atual e escreva fora do bloco: CONTINUA. Quando eu disser \"continue\", siga do ponto onde parou, sem repetir o cabeçalho."
+    "Se não couber tudo de uma vez, entregue a primeira planilha e avise CONTINUA. Quando eu disser \"continue\", gere outra planilha igual (com o cabeçalho) só com as empresas novas."
   ].join("\n");
 }
 function xpSheet() {
   var last = ST.settings.xp_cities || "", q = ST.settings.xp_qty || 50;
-  sheet("<h3>Prompt de extração</h3><p>Cole numa IA que pesquisa na internet (ChatGPT, Gemini, Perplexity). Ela devolve a lista pronta e você cola em <b>+ Empresas</b>.</p>" +
+  sheet("<h3>Prompt de extração</h3><p>Cole numa IA que pesquisa na internet (ChatGPT, Gemini, Perplexity). Ela devolve uma planilha; você toca em <b>+ Empresas → Planilha</b> e escolhe o arquivo.</p>" +
     '<span class="lbl">Cidades</span><textarea class="msg" id="xpC" placeholder="Ex.: Salvador, Feira de Santana, Vitória da Conquista - BA" style="min-height:70px">' + esc(last) + "</textarea>" +
     '<span class="lbl">Quantas empresas</span><div class="chips">' + [30, 50, 100].map(function (v) { return '<button data-q="' + v + '"' + (v === +q ? ' style="background:var(--g);color:#fff;border-color:var(--g)"' : "") + ">" + v + "</button>"; }).join("") + "</div>" +
     '<div class="row2"><button class="btn go" id="xpCopy">Copiar prompt</button></div><div class="err" id="xpE"></div>', function (s) {
@@ -960,7 +1036,7 @@ function xpSheet() {
       if (!c) { $("#xpE", s).textContent = "Escreva pelo menos uma cidade."; $("#xpC", s).focus(); return; }
       saveSettings({ xp_cities: c, xp_qty: q });
       copyText(extractPrompt(c, q)); closeSheet();
-      toast("Prompt copiado. Cole na IA e depois cole a resposta em + Empresas.", 6000);
+      toast("Prompt copiado. Cole na IA. Depois: + Empresas → Planilha.", 6000);
     };
   });
 }
