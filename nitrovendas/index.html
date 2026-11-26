@@ -1065,7 +1065,7 @@ function xDelay(sec) { sec = +sec || 0; if (sec && sec % 3600 === 0) return [sec
 function xStatus() {
   var el = $("#xeSt"); if (!el) return;
   var e = XS.e, t = Date.now() / 1000, h = "";
-  if (!e || !e.alive) h = '<span class="bad">A extensão ainda não conectou. Atualize a extensão no PC (versão 1.2.0).</span>';
+  if (!e || !e.alive) h = '<span class="bad">A extensão ainda não conectou. Recarregue a extensão no PC (versão 1.3.0) e abra o WhatsApp Web.</span>';
   else {
     var on = t - e.alive < 120;
     h += on ? '<span class="ok">● Extensão ligada</span>' : '<span class="bad">● Extensão desligada desde ' + esc(dateBR(e.alive)) + " " + esc(hhmm(e.alive)) + "</span>";
@@ -1153,7 +1153,7 @@ function extSheet() {
   var pend = xPendList();
   var h = '<h3>Extensão do WhatsApp</h3><div class="xe">' +
     '<div class="st" id="xeSt"></div><div class="bar"><button class="btn pri" id="xeRun" data-op="start">▶ Iniciar disparo</button><button class="btn" id="xeScan">🔄 Conferir conversas</button></div><div class="msg" id="xeMsg"></div>';
-  if (!XS.e || !XS.e.cfg) h += '<p class="sub">Assim que a extensão 1.2.0 ligar no PC, as configurações aparecem aqui.</p>';
+  if (!XS.e || !XS.e.cfg) h += '<p class="sub">Assim que a extensão 1.3.0 ligar no PC, as configurações aparecem aqui.</p>';
   else {
     h += "<h4>Ritmo do disparo</h4>" +
       '<div class="row"><label>Mensagens por rodada</label><input type="number" id="xPR" min="1" value="' + (c.perRound || 5) + '"></div>' +
