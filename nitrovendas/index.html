@@ -132,7 +132,7 @@ textarea.paste:focus{border-color:var(--g)}
 .xr{display:flex;align-items:center;gap:14px;padding:10px 16px;min-height:56px;border-bottom:1px solid var(--line)}
 .xr:last-child{border-bottom:0}.xr .ic{width:24px;text-align:center;color:var(--mut);font-size:19px;flex:none}
 .xr .tx{flex:1;min-width:0}.xr .tx b{display:block;font-weight:400;font-size:16px;color:var(--ink)}.xr .tx small{display:block;font-size:13px;color:var(--mut);margin-top:2px}
-.xr input[type=number],.xr input[type=time]{width:74px;height:36px;border:0;border-bottom:2px solid var(--g);background:none;font-size:16px;text-align:center;color:var(--ink);outline:none}
+.xr input[type=time]{width:104px!important}.xr input[type=number],.xr input[type=time]{width:74px;height:36px;border:0;border-bottom:2px solid var(--g);background:none;font-size:16px;text-align:center;color:var(--ink);outline:none}
 .xr .to{color:var(--mut);font-size:14px}
 .sw{position:relative;width:40px;height:22px;flex:none}.sw input{opacity:0;width:0;height:0}.sw i{position:absolute;inset:0;border-radius:11px;background:#c4ccd0;transition:.2s}
 .sw i:before{content:"";position:absolute;width:18px;height:18px;left:2px;top:2px;border-radius:50%;background:#fff;box-shadow:0 1px 2px rgba(0,0,0,.3);transition:.2s}
@@ -1142,6 +1142,43 @@ function xStepsHtml() {
     } else inner = '<textarea data-i="' + i + '" data-f="text" placeholder="Digite a mensagem">' + esc(p.text || "") + "</textarea>";
     return pill + '<div class="xbub">' + inner + '<div class="ft"><span class="n">' + (i + 1) + "ª mensagem</span><button data-mv=\"-1\" data-i=\"" + i + '">↑</button><button data-mv="1" data-i="' + i + '">↓</button><button data-rm="' + i + '">🗑</button><span>✓✓</span></div></div>';
   }).join("");
+}
+var XPART = 1400000;
+async function xUpMedia(box, i, dataUrl, name) {
+  xReadSteps(box);
+  var p = XS.cfg.funnel.steps[i]; if (!p) return;
+  var id = Date.now().toString(36) + Math.random().toString(36).slice(2, 6), n = Math.ceil(dataUrl.length / XPART);
+  XS.uploading = (XS.uploading || 0) + 1;
+  var lab = $("#xf" + i, box); if (lab) lab.innerHTML = '<span class="warn">Enviando arquivo… 0/' + n + "</span>";
+  try {
+    for (var k = 0; k < n; k++) { await xApi("PUT", "media/" + id + "/" + k, { d: dataUrl.slice(k * XPART, (k + 1) * XPART) }); if (lab) lab.innerHTML = '<span class="warn">Enviando arquivo… ' + (k + 1) + "/" + n + "</span>"; }
+    var mm = /^data:([^;,]+)/.exec(dataUrl);
+    await xApi("PUT", "media/" + id, { parts: n, name: name, mime: mm ? mm[1] : "" });
+    p.mediaId = id; p.fileName = name; p._new = true; p.up = true; XS.mcache = XS.mcache || {}; XS.mcache[id] = dataUrl;
+    box.innerHTML = xStepsHtml(); toast("Arquivo enviado. Toque em Salvar.");
+  } catch (err) { if (lab) lab.innerHTML = '<span class="bad">Falhou: ' + esc(err.message) + "</span>"; }
+  XS.uploading--;
+}
+async function xGetMedia(id) {
+  XS.mcache = XS.mcache || {}; if (XS.mcache[id]) return XS.mcache[id];
+  var meta = await xApi("GET", "media/" + id), out = "";
+  for (var k = 0; k < meta.parts; k++) out += (await xApi("GET", "media/" + id + "/" + k)).d;
+  XS.mcache[id] = out; return out;
+}
+function xReadSteps(root) {
+  var st = (XS.cfg.funnel || {}).steps || [];
+  if (!root) return;
+  root.querySelectorAll("[data-f]").forEach(function (el) {
+    var p = st[+el.dataset.i]; if (!p) return;
+    if (el.dataset.f === "text") p.text = el.value;
+    if (el.dataset.f === "dv") p._v = +el.value || 0;
+    if (el.dataset.f === "du") p._u = el.value;
+  });
+  st.forEach(function (p) { if (p._v != null) { p.delaySec = p._v * (p._u === "h" ? 3600 : p._u === "m" ? 60 : 1); delete p._v; delete p._u; } });
+}
+function xPendList() {
+  return ST.companies.filter(function (c) { return c.stage === "contato" && mine(c) && c.funnel !== "andamento" && c.funnel !== "concluido"; })
+    .sort(function (a, b) { return (b.replied ? 1 : 0) - (a.replied ? 1 : 0) || (b.replied || 0) - (a.replied || 0); });
 }
 function xRow(ic, title, sub, right) { return '<div class="xr"><span class="ic">' + ic + '</span><div class="tx"><b>' + title + "</b>" + (sub ? "<small>" + sub + "</small>" : "") + "</div>" + (right || "") + "</div>"; }
 function xSw(id, on) { return '<label class="sw"><input type="checkbox" id="' + id + '"' + (on ? " checked" : "") + "><i></i></label>"; }
