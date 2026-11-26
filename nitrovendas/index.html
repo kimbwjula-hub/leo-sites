@@ -454,34 +454,29 @@ function genericPrompt() {
   return s.split("{{link_whatsapp}}").join("o Link do WhatsApp que veio na mensagem").split("{{nome}}").join("o nome da empresa");
 }var NICHES = {
   estofado: {
-    icon: "🛋️", short: "Estofados", name: "Limpeza e higienização de estofados",
+    icon: "🛋️", short: "Estofados", name: "Limpeza e higienização de estofados", svc: "limpeza de estofados",
     services: "Higienização de sofá, colchão, banco de carro, cadeiras e poltronas, tapetes e carpetes, impermeabilização de estofados",
-    wa_site: "Oi! O site da {{nome}} ficou pronto 😊 Posso te mostrar?",
+    wa_site: "Olá. O site da {{nome}} ficou pronto. Posso te mostrar?",
     wa_follow: "Oi! Conseguiu ver minha mensagem? O site da {{nome}} está pronto, quero te mostrar."
   },
   solar: {
-    icon: "☀️", short: "Energia solar", name: "Energia solar",
+    icon: "☀️", short: "Energia solar", name: "Energia solar", svc: "instalação de energia solar",
     services: "Projeto e instalação de energia solar residencial, comercial e rural, homologação na concessionária, manutenção e limpeza de placas, financiamento",
-    wa_site: "Oi! O site da {{nome}} ficou pronto 😊 Posso te mostrar?",
+    wa_site: "Olá. O site da {{nome}} ficou pronto. Posso te mostrar?",
     wa_follow: "Oi! Conseguiu ver minha mensagem? O site da {{nome}} está pronto, quero te mostrar."
   }
 };
 var GREETS = [
-  "{{saud}}! Tudo bem? Aqui é da {{nome}}?",
-  "Oi, {{saud}}! Falo com a {{nome}}?",
-  "{{saud}}! Esse número é da {{nome}}?",
-  "Olá, {{saud}}! Por gentileza, aqui é a {{nome}}?",
-  "Oi! {{saud}} 😊 É da {{nome}}?",
-  "{{saud}}, tudo certo? Esse WhatsApp é da {{nome}}?",
-  "Olá! {{saud}}. Estou falando com a {{nome}}?",
-  "Oi, {{saud}}! Aqui é o contato da {{nome}}?",
-  "{{saud}}! Tudo bom? É da {{nome}}, né?",
-  "Opa, {{saud}}! Aqui é a {{nome}}?"
+  "{{saud}}, tudo bem? Vocês trabalham com {{servico}}?",
+  "{{saud}}. Vocês fazem {{servico}}?",
+  "Olá, {{saud}}. Vocês trabalham com {{servico}}?",
+  "{{saud}}, tudo bem? Vocês ainda fazem {{servico}}?",
+  "{{saud}}. Por favor, vocês trabalham com {{servico}}?",
+  "Olá, {{saud}}, tudo bem? Vocês fazem {{servico}}?"
 ];
 var REGREETS = [
-  "Oi, {{saud}}! Passando de novo por aqui 😊 É da {{nome}}?",
-  "{{saud}}! Conseguiu ver minha mensagem? Aqui é da {{nome}}?",
-  "Oi! Só confirmando: esse número é da {{nome}}?"
+  "{{saud}}. Só confirmando: vocês trabalham com {{servico}}?",
+  "{{saud}}, tudo bem? Vocês ainda fazem {{servico}}?"
 ];
 function saud() { var h = new Date().getHours(); return h < 12 ? "Bom dia" : h < 18 ? "Boa tarde" : "Boa noite"; }
 function hashOf(s) { var h = 0; s = String(s); for (var i = 0; i < s.length; i++) h = (h * 31 + s.charCodeAt(i)) | 0; return Math.abs(h); }
@@ -498,7 +493,7 @@ function greeting(c, again) {
   var L = again ? greetList("regreets", REGREETS) : greetList("greets", GREETS);
   var t = L[(hashOf(c.id) + (c.tries || 0)) % L.length];
   var g = saud(); t = t.replace(/^\{\{saud\}\}/, g).split("{{saud}}").join(g.toLowerCase());
-  return fill(t, { nome: cleanName(c.name), link_site: c.link || "", cidade: c.city || "" }).out;
+  return fill(t, { nome: cleanName(c.name), link_site: c.link || "", cidade: c.city || "", servico: N().svc || "" }).out;
 }
 function ago(t) { if (!t) return ""; var m = Math.round((Date.now() / 1000 - t) / 60); if (m < 60) return "há " + Math.max(m, 1) + " min"; var h = Math.round(m / 60); if (h < 24) return "há " + h + " h"; var d = Math.round(h / 24); return "há " + d + (d === 1 ? " dia" : " dias"); }
 function N() { return NICHES[ST.niche] || NICHES.estofado; }
@@ -1145,7 +1140,7 @@ async function downloadPrompt() {
 function msgSheet() {
   var n = N(), key = function (k) { return ST.niche + "_" + k; };
   var F = [["wa_site", "Avisar que o site ficou pronto"], ["wa_follow", "Insistir depois do site pronto"]];
-  sheet("<h3>Mensagens</h3><p>{{nome}} = nome da empresa · {{link_site}} = link do site · {{saud}} = bom dia/boa tarde/boa noite</p>" +
+  sheet("<h3>Mensagens</h3><p>{{saud}} = bom dia/boa tarde/boa noite · {{servico}} = serviço do nicho · {{nome}} = nome da empresa · {{link_site}} = link do site</p>" +
     '<span class="lbl">Saudações (uma por linha · cada empresa recebe uma diferente)</span><textarea class="msg" data-g="greets" style="min-height:190px">' + esc(greetList("greets", GREETS).join("\n")) + "</textarea>" +
     '<span class="lbl">Insistir</span><textarea class="msg" data-g="regreets">' + esc(greetList("regreets", REGREETS).join("\n")) + "</textarea>" +
     F.map(function (f) { return '<span class="lbl">' + f[1] + '</span><textarea class="msg" data-k="' + f[0] + '">' + esc((ST.settings[key(f[0])] || "").trim() || n[f[0]]) + "</textarea>"; }).join("") +
