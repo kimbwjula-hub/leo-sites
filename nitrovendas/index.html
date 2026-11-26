@@ -1,0 +1,984 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="robots" content="noindex,nofollow">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#ffffff">
+<title>Nitro Vendas</title>
+<style>
+:root{--g:#008069;--g2:#25d366;--gd:#005c4b;--ink:#111b21;--mut:#667781;--line:#e9edef;--bg:#fff;--chat:#efeae2;--out:#d9fdd3;--red:#d93025;--amb:#c26c00}
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+html,body{margin:0;background:var(--bg);color:var(--ink);font:15px/1.35 -apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif}
+button,input,textarea{font:inherit;color:inherit}
+button{cursor:pointer;border:0;background:none;padding:0}
+a{color:inherit;text-decoration:none}
+[hidden]{display:none!important}
+.num{font-variant-numeric:tabular-nums}
+.center{min-height:100vh;display:grid;place-items:center;padding:24px;color:var(--mut)}
+/* escolher nicho */
+.pick{max-width:520px;margin:0 auto}
+.pick h1{margin:0;background:var(--g);color:#fff;font-size:19px;font-weight:600;padding:calc(16px + env(safe-area-inset-top)) 16px 16px}
+.pick>p{margin:0;padding:14px 16px 6px;color:var(--mut);font-size:13.5px}
+.niche{display:block;width:100%;text-align:left;padding:14px 16px;border-bottom:1px solid var(--line)}
+.niche b{display:block;font-size:16px;font-weight:600}.niche small{color:var(--mut);font-size:13.5px}
+.niche.on b{color:var(--g)}
+.logo,.em,.chev,.saving{display:none}
+/* topo verde + abas */
+.top{position:sticky;top:0;z-index:20;background:var(--g);color:#fff;padding-top:env(safe-area-inset-top)}
+.tb{display:flex;align-items:center;height:54px;padding:0 6px 0 16px}
+.pill{font-size:19px;font-weight:600;color:#fff}
+.pill:after{content:" ▾";font-size:13px;opacity:.8}
+.icb{margin-left:auto;width:44px;height:44px;color:#fff;font-size:22px;line-height:44px;text-align:center}
+.nav{display:flex}
+.nav button{flex:1 1 auto;padding:0 6px;height:44px;color:rgba(255,255,255,.75);font-size:14px;font-weight:600;border-bottom:3px solid transparent;display:flex;align-items:center;justify-content:center;gap:5px;white-space:nowrap}
+.nav button svg{display:none}
+.nav button.on{color:#fff;border-bottom-color:#fff}
+.nav .bd{min-width:18px;height:18px;padding:0 5px;border-radius:9px;background:#fff;color:var(--g);font-size:11px;font-weight:700;display:inline-grid;place-items:center;letter-spacing:0}
+main{max-width:640px;margin:0 auto;padding-bottom:calc(30px + env(safe-area-inset-bottom))}
+/* faixa do dia / avisos */
+.day{display:block;width:100%;text-align:left;padding:10px 16px;font-size:13px;color:var(--mut);background:#f7f8fa;border-bottom:1px solid var(--line)}
+.day b{color:var(--ink)}.day .hit{color:var(--g)}
+.note{display:flex;align-items:center;gap:10px;padding:10px 16px;background:#fff8e6;border-bottom:1px solid var(--line);font-size:13.5px}
+.note .btn{margin-left:auto}
+.sec{padding:14px 16px 6px;font-size:12.5px;font-weight:700;color:var(--g);text-transform:uppercase;letter-spacing:.3px}
+.sec.r{color:var(--red)}.sec.a{color:var(--amb)}
+/* linha de conversa */
+.chat{display:flex;align-items:center;gap:12px;width:100%;padding:0 16px;text-align:left;cursor:pointer;background:var(--bg)}
+.chat:active{background:#f0f2f5}
+.av{width:48px;height:48px;border-radius:50%;flex:none;display:grid;place-items:center;color:#fff;font-weight:700;font-size:17px}
+.cb{flex:1;min-width:0;padding:12px 0;border-bottom:1px solid var(--line)}
+.l1,.l2{display:flex;align-items:center;gap:8px}
+.l1 b{flex:1;min-width:0;font-size:16px;font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.tm{font-size:12px;color:var(--mut);white-space:nowrap}
+.tm.r{color:var(--red)}.tm.g{color:var(--g2);font-weight:600}
+.l2{margin-top:2px}
+.l2 span{flex:1;min-width:0;font-size:14px;color:var(--mut);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.l2 .r{color:var(--red)}.l2 .a{color:var(--amb)}.l2 .g{color:var(--g)}
+.bdg{min-width:20px;height:20px;padding:0 6px;border-radius:10px;background:var(--g2);color:#fff;font-size:11.5px;font-weight:700;font-style:normal;display:grid;place-items:center}
+.money{font-weight:700;color:var(--g);font-size:15px;white-space:nowrap}
+.srch{display:block;width:calc(100% - 24px);margin:10px 12px 4px;height:38px;padding:0 14px;border:0;border-radius:19px;background:#f0f2f5;outline:none}
+/* fila = conversa */
+.fhead{display:flex;align-items:center;gap:12px;padding:10px 16px;border-bottom:1px solid var(--line)}
+.fhead .nm{flex:1;min-width:0}
+.fhead b{display:block;font-size:16px;font-weight:600}
+.meta{display:block;color:var(--mut);font-size:13px}
+.fchat{background:var(--chat);padding:18px 12px 16px;min-height:150px;display:flex;flex-direction:column;justify-content:flex-end}
+.bub{align-self:flex-end;max-width:86%;background:var(--out);border-radius:8px 0 8px 8px;padding:7px 10px 6px;font-size:15px;box-shadow:0 1px .5px rgba(11,20,26,.13)}
+.bub small{display:block;text-align:right;font-size:11px;color:var(--mut);margin-top:2px}
+.fact{padding:12px 16px}
+.next{padding:0 16px 14px;color:var(--mut);font-size:13px}
+.links{display:flex;justify-content:center;gap:28px;margin-top:10px}
+.txt{color:var(--mut);font-size:14px;padding:6px 0}
+/* botões */
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:8px;height:40px;padding:0 16px;border-radius:20px;border:1px solid var(--line);font-weight:600;font-size:14px;white-space:nowrap;background:var(--bg);color:var(--g)}
+.btn svg{width:18px;height:18px}
+.btn.go,.btn.wa,.btn.ok,.btn.pri{background:var(--g);border-color:var(--g);color:#fff}
+.btn.big{width:100%;height:48px;font-size:15.5px;border-radius:24px}
+.btn[disabled]{opacity:.4;pointer-events:none}
+.link{color:#fff;font-weight:600}
+/* vazio e importar */
+.empty{padding:28px 20px;text-align:center;color:var(--mut)}
+.empty h3{margin:0 0 6px;font-size:16px;color:var(--ink);font-weight:600}
+.empty p{margin:0 0 14px}
+textarea.paste{width:100%;min-height:150px;padding:12px;border:1px solid var(--line);border-radius:10px;outline:none;font-size:14px;resize:vertical;text-align:left}
+textarea.paste:focus{border-color:var(--g)}
+.row2{display:flex;gap:8px;margin-top:10px}.row2 .btn{flex:1}
+.err{color:var(--red);font-size:13px;margin-top:6px}
+.addbar{display:flex;justify-content:flex-end;padding:8px 16px 0}
+.addbar button{color:var(--g);font-weight:600;font-size:14px}
+/* vendas */
+.tbl{width:100%;border-collapse:collapse}
+.tbl td{padding:11px 16px;border-bottom:1px solid var(--line);font-size:14.5px}
+.tbl td:last-child{text-align:right;font-weight:700}
+/* folha (perfil da empresa) */
+.sheet{position:fixed;inset:0;z-index:50;background:rgba(11,20,26,.4);display:flex;align-items:flex-end;justify-content:center}
+.sh{background:var(--bg);width:100%;max-width:560px;border-radius:14px 14px 0 0;padding:0 0 calc(10px + env(safe-area-inset-bottom));max-height:92vh;overflow:auto}
+.grab{width:36px;height:4px;border-radius:2px;background:#d1d7db;margin:8px auto 0}
+.ph{display:flex;align-items:center;gap:12px;padding:12px 16px 14px;border-bottom:8px solid #f0f2f5}
+.ph b{display:block;font-size:18px;font-weight:600}
+.sh>h3{margin:0;padding:14px 16px 4px;font-size:17px;font-weight:600}
+.sh>p,.sh .sub{margin:0;padding:0 16px 12px;color:var(--mut);font-size:13.5px}
+.act{display:flex;align-items:center;gap:14px;width:100%;padding:14px 16px;text-align:left;font-size:15.5px;border-bottom:1px solid var(--line)}
+.act i{font-style:normal;width:24px;text-align:center;color:var(--g);font-size:18px}
+.act small{display:block;color:var(--mut);font-size:12.5px}
+.act.main{color:var(--g);font-weight:600}
+.act.red,.act.red i{color:var(--red)}
+.stepbox{padding:12px 16px;border-bottom:1px solid var(--line)}
+.stepbox .lb{font-size:12.5px;color:var(--mut);margin-bottom:6px}
+.inrow{display:flex;gap:8px}
+.inp{flex:1;min-width:0;height:40px;padding:0 12px;border:1px solid var(--line);border-radius:20px;outline:none;background:#f0f2f5}
+.inp:focus{border-color:var(--g);background:#fff}
+.mi{display:flex;align-items:center;gap:14px;width:100%;text-align:left;padding:14px 16px;border-bottom:1px solid var(--line);font-size:15.5px}
+.mi:last-child{border-bottom:0}
+.mi i{display:none}
+.mi.red{color:var(--red)}
+.chips{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;padding:4px 16px 10px}
+.chips button{height:44px;border:1px solid var(--line);border-radius:22px;font-weight:700;color:var(--g)}
+.sh .inp.full,#val{display:block;width:calc(100% - 32px);margin:0 16px;flex:none}
+.sh .row2,.sh .err{padding:0 16px}
+.lbl{display:block;font-weight:600;font-size:13px;color:var(--g);margin:14px 16px 6px}
+.sh textarea.msg{display:block;width:calc(100% - 32px);margin:0 16px;min-height:90px;padding:10px;border:1px solid var(--line);border-radius:10px;outline:none;font-size:14px}
+.sh .paste{margin:0 16px;width:calc(100% - 32px)}
+.toast{position:fixed;left:12px;right:12px;bottom:calc(16px + env(safe-area-inset-bottom));z-index:60;max-width:520px;margin:0 auto;background:#3b4a54;color:#fff;padding:12px 14px;border-radius:8px;font-size:14px;display:flex;align-items:center;gap:10px}
+.toast span{flex:1}.tu{color:#53e6a2;font-weight:700}
+</style>
+</head>
+<body>
+<div id="boot" class="center"><p>Carregando…</p></div>
+
+<div id="pick" class="pick" hidden>
+  <div class="logo">N</div>
+  <h1>Nitro Vendas</h1>
+  <p>Escolha o nicho que você vai prospectar</p>
+  <button class="niche" data-n="estofado"><span><b>Limpeza de estofados</b><small>Sofás, colchões, bancos de carro</small></span><span class="chev">›</span></button>
+  <button class="niche" data-n="solar"><span><b>Energia solar</b><small>Instalação e manutenção de placas</small></span><span class="chev">›</span></button>
+</div>
+
+<div id="app" hidden>
+  <header class="top">
+    <div class="tb"><button class="pill" id="nicheBtn"></button><button class="icb" id="setBtn" aria-label="Ajustes">⋮</button></div>
+    <nav class="nav" id="nav"><button data-tab="prospect">Fila<span class="bd" hidden></span></button><button data-tab="replies">Chamados<span class="bd" hidden></span></button><button data-tab="sites">Interessados<span class="bd" hidden></span></button><button data-tab="sales">Vendas</button></nav>
+  </header>
+  <span id="saving" class="saving"></span>
+  <main id="view"></main>
+
+</div>
+
+<div id="sheet" class="sheet" hidden><div class="sh" id="sh"></div></div>
+<div id="toast" class="toast" hidden></div>
+<script>
+/* Nitro Vendas — camada de dados para Cloudflare (substitui o banco do artefato) */
+(function () {
+  var LS = function (k, v) { try { if (v === undefined) return localStorage.getItem(k); if (v === null) localStorage.removeItem(k); else localStorage.setItem(k, v); } catch (e) { return null; } };
+  var m = /[#&]k=([a-z0-9]{24,64})/.exec(location.hash);
+  if (m) { LS("nitro_key", m[1]); history.replaceState(null, "", location.pathname); }
+  var KEY = LS("nitro_key");
+  if (!KEY) { var a = new Uint8Array(20); crypto.getRandomValues(a); KEY = Array.prototype.map.call(a, function (x) { return ("0" + x.toString(36)).slice(-2); }).join("").slice(0, 32); while (KEY.length < 32) KEY += "a"; LS("nitro_key", KEY); }
+  window.NITRO_KEY = KEY;
+  var state = { main: {}, chunks: {} }, docSubs = [], colSubs = [], loaded = false;
+  try { var c = JSON.parse(LS("nitro_cache_" + KEY) || "null"); if (c && c.main) state = c; } catch (e) {}
+  function cache() { try { LS("nitro_cache_" + KEY, JSON.stringify(state)); } catch (e) {} }
+  function api(method, path, body) {
+    return fetch("/api/" + path, { method: method, headers: { "x-key": KEY, "content-type": "application/json" }, body: body == null ? undefined : JSON.stringify(body), cache: "no-store" })
+      .then(function (r) { return r.json().catch(function () { return {}; }).then(function (j) { if (!r.ok) { var e = new Error(j.error || "http"); e.code = j.error === "tamanho" ? "quota_exceeded" : "unavailable"; throw e; } return j; }); });
+  }
+  function clone(o) { return JSON.parse(JSON.stringify(o)); }
+  function emitDoc(fromCache) { var snap = { exists: true, data: function () { return clone(state.main); }, metadata: { fromCache: !!fromCache } }; docSubs.forEach(function (f) { f(snap); }); }
+  function emitCol(fromCache) {
+    var docs = Object.keys(state.chunks).map(function (id) { return { id: id, data: function () { return clone(state.chunks[id]); } }; });
+    var snap = { docs: docs, metadata: { fromCache: !!fromCache } }; colSubs.forEach(function (f) { f(snap); });
+  }
+  var pend = 0;
+  function pull() {
+    if (pend) return Promise.resolve();
+    return api("GET", "state").then(function (s) { if (pend) return; state = { main: s.main || {}, chunks: s.chunks || {} }; loaded = true; cache(); emitDoc(false); emitCol(false); });
+  }
+  function retry(fn) { var n = 0; return (function go() { return fn().catch(function (e) { if (++n < 3 && e.code !== "quota_exceeded") return new Promise(function (r) { setTimeout(r, 800 * n); }).then(go); throw e; }); })(); }
+  function track(p) { pend++; return p.then(function (x) { pend--; return x; }, function (e) { pend--; throw e; }); }
+  var chunksCol = {
+    doc: function (id) {
+      return {
+        set: function (v) { state.chunks[id] = clone(v); cache(); return track(retry(function () { return api("PUT", "chunk/" + id, v); })); },
+        delete: function () { delete state.chunks[id]; cache(); return track(retry(function () { return api("DELETE", "chunk/" + id); })); }
+      };
+    },
+    onSnapshot: function (cb, err) {
+      colSubs.push(cb);
+      setTimeout(function () { if (Object.keys(state.chunks).length || state.main.niche) emitCol(true); }, 0);
+      pull().catch(function () { if (!loaded) { emitCol(false); emitDoc(false); } });
+      return function () {};
+    }
+  };
+  var base = {
+    collection: function () { return chunksCol; },
+    set: function (patch) { Object.assign(state.main, clone(patch)); cache(); return track(retry(function () { return api("PUT", "main", patch); })); },
+    onSnapshot: function (cb) { docSubs.push(cb); setTimeout(function () { emitDoc(true); }, 0); return function () {}; }
+  };
+  var db = { doc: function () { return base; } };
+  var user = { id: function () { return Promise.resolve(KEY); } };
+  var downloads = {
+    save: function (o) {
+      var b = new Blob([o.data], { type: /\.csv$/.test(o.filename) ? "text/csv;charset=utf-8" : "text/plain;charset=utf-8" });
+      var a = document.createElement("a"); a.href = URL.createObjectURL(b); a.download = o.filename; document.body.appendChild(a); a.click();
+      setTimeout(function () { URL.revokeObjectURL(a.href); a.remove(); }, 1000); return Promise.resolve();
+    }
+  };
+  window.claude = { use: function (n) { return Promise.resolve(n === "db" ? db : n === "user" ? user : n === "downloads" ? downloads : null); } };
+  setInterval(function () { if (document.visibilityState === "visible") pull().catch(function () {}); }, 30000);
+  document.addEventListener("visibilitychange", function () { if (document.visibilityState === "visible") pull().catch(function () {}); });
+})();
+</script>
+<script>
+"use strict";
+{
+var $ = function (s, r) { return (r || document).querySelector(s); };
+var $$ = function (s, r) { return [].slice.call((r || document).querySelectorAll(s)); };
+function esc(s) { return String(s == null ? "" : s).replace(/[&<>"']/g, function (c) { return { "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]; }); }
+function brl(v) { return new Intl.NumberFormat("pt-BR", { style: "currency", currency: "BRL" }).format(v || 0); }
+// ---------- telefone e WhatsApp ----------
+function digits(s) { return String(s || "").replace(/\D/g, ""); }
+function localNum(s) { var d = digits(s); if (d.indexOf("55") === 0 && d.length >= 12) d = d.slice(2); return d.replace(/^0+/, ""); }
+function fmtPhone(s) {
+  var d = localNum(s);
+  if (d.length === 11) return "(" + d.slice(0, 2) + ") " + d.slice(2, 7) + "-" + d.slice(7);
+  if (d.length === 10) return "(" + d.slice(0, 2) + ") " + d.slice(2, 6) + "-" + d.slice(6);
+  return String(s || "");
+}
+function waInfo(c) {
+  var raw = c.wa || c.phone;
+  if (!raw || !digits(raw)) return { ok: false, why: "Sem telefone" };
+  var d = localNum(raw);
+  if (d.length === 11 && d[2] === "9") return { ok: true, num: "55" + d };
+  if (d.length === 10) {
+    if ("6789".indexOf(d[2]) >= 0) return { ok: true, num: "55" + d.slice(0, 2) + "9" + d.slice(2) };
+    return { ok: false, why: "Telefone fixo: este número não tem WhatsApp" };
+  }
+  if (d.length === 8 || d.length === 9) return { ok: false, why: "Número sem DDD: não dá para abrir o WhatsApp" };
+  return { ok: false, why: "Número incompleto: não dá para abrir o WhatsApp" };
+}
+function fill(t, v) {
+  var empty = {}, unknown = {};
+  var out = String(t || "").replace(/\{\{\s*([a-zA-Z_]+)\s*\}\}/g, function (m, k) {
+    k = k.toLowerCase();
+    if (!(k in v)) { unknown[k] = 1; return m; }
+    var val = String(v[k] == null ? "" : v[k]).trim();
+    if (!val) empty[k] = 1;
+    return val;
+  });
+  return { out: out, empty: Object.keys(empty), unknown: Object.keys(unknown) };
+}
+var WA_ICON = '<svg viewBox="0 0 24 24" fill="currentColor"><path d="M17.5 14.4c-.3-.1-1.8-.9-2-1-.3-.1-.5-.1-.7.1-.2.3-.8 1-.9 1.2-.2.2-.3.2-.6.1-.3-.1-1.3-.5-2.4-1.5-.9-.8-1.5-1.8-1.7-2.1-.2-.3 0-.5.1-.6l.4-.5c.2-.2.2-.3.3-.5.1-.2 0-.4 0-.5l-.9-2.2c-.2-.6-.5-.5-.7-.5h-.6c-.2 0-.5.1-.8.4-.3.3-1 1-1 2.5s1.1 2.9 1.2 3.1c.1.2 2.1 3.2 5.1 4.5 2.5 1 3 .8 3.6.7.6-.1 1.8-.7 2-1.4.2-.7.2-1.3.2-1.4-.1-.1-.3-.2-.6-.3zM12 2a10 10 0 0 0-8.6 15.1L2 22l5-1.3A10 10 0 1 0 12 2zm0 18.2c-1.6 0-3.1-.4-4.4-1.2l-.3-.2-3 .8.8-2.9-.2-.3A8.2 8.2 0 1 1 12 20.2z"/></svg>';
+// ---------- leitura da lista colada ----------
+function normKey(s) { return String(s || "").toLowerCase().normalize("NFD").replace(/[̀-ͯ]/g, "").replace(/[^a-z0-9]/g, ""); }
+var HEAD = {
+  nome: "name", empresa: "name", nomedaempresa: "name", title: "name", name: "name", razaosocial: "name", nomefantasia: "name", estabelecimento: "name", negocio: "name", cliente: "name", empresas: "name",
+  categoria: "category", category: "category", categoryname: "category", categories: "category", tipo: "category", tipodenegocio: "category", segmento: "category", ramo: "category",
+  telefone: "phone", phone: "phone", fone: "phone", tel: "phone", celular: "phone", contato: "phone", phoneunformatted: "phone", numero: "phone", telefone1: "phone", phonenumber: "phone", telefones: "phone",
+  whatsapp: "wa", whats: "wa", zap: "wa", wpp: "wa",
+  endereco: "address", address: "address", rua: "address", logradouro: "address", street: "address", enderecocompleto: "address",
+  cidade: "city", city: "city", municipio: "city",
+  estado: "state", state: "state", uf: "state",
+  nota: "rating", rating: "rating", totalscore: "rating", avaliacao: "rating", estrelas: "rating", score: "rating", stars: "rating",
+  totalavaliacoes: "reviews_count", reviewscount: "reviews_count", qtdavaliacoes: "reviews_count", numerodeavaliacoes: "reviews_count", quantidadedeavaliacoes: "reviews_count", totalreviews: "reviews_count", qtdeavaliacoes: "reviews_count",
+  avaliacoes: "reviews", reviews: "reviews", comentarios: "reviews", textodasavaliacoes: "reviews",
+  horario: "hours", horarios: "hours", hours: "hours", openinghours: "hours", funcionamento: "hours", horariodefuncionamento: "hours",
+  descricao: "description", description: "description", sobre: "description", about: "description",
+  site: "site_current", website: "site_current", url: "site_current", siteatual: "site_current", web: "site_current",
+  nicho: "niche", niche: "niche"
+};
+function parseDelimited(text, del) {
+  var rows = [], row = [], cur = "", q = false, i = 0, start = true;
+  for (; i < text.length; i++) {
+    var ch = text[i];
+    if (q) {
+      if (ch === '"') { if (text[i + 1] === '"') { cur += '"'; i++; } else q = false; }
+      else cur += ch;
+    } else if (ch === '"' && start) { q = true; start = false; }
+    else if (ch === del) { row.push(cur.trim()); cur = ""; start = true; }
+    else if (ch === "\n") { row.push(cur.trim()); rows.push(row); row = []; cur = ""; start = true; }
+    else { cur += ch; if (ch !== " ") start = false; }
+  }
+  row.push(cur.trim()); rows.push(row);
+  return rows.filter(function (r) { return r.some(function (c) { return c; }); });
+}
+var PHONE_RE = /(\+?\(?\d[\d\s().-]{6,}\d)/;
+function isPhone(s) { var d = digits(s); return d.length >= 8 && d.length <= 14 && digits(s).length / String(s).replace(/\s/g, "").length > 0.6; }
+function cityFromAddress(c) {
+  if (c.city || !c.address) return;
+  var m = /,\s*([^,\d]+?)\s*-\s*([A-Z]{2})\b/.exec(c.address);
+  if (m) { c.city = m[1].trim(); if (!c.state) c.state = m[2]; }
+}
+function finish(c) {
+  Object.keys(c).forEach(function (k) { c[k] = String(c[k] == null ? "" : c[k]).trim(); });
+  if (c.reviews && !c.reviews_count && /^\d+([.,]\d+)?$/.test(c.reviews)) { c.reviews_count = c.reviews; c.reviews = ""; }
+  if (!c.phone && c.wa) { /* mantém wa como contato */ }
+  cityFromAddress(c);
+  return c;
+}
+function parseList(text) {
+  text = String(text || "").replace(/\r\n?/g, "\n").replace(/^﻿/, "");
+  var lines = text.split("\n").filter(function (l) { return l.trim(); });
+  if (!lines.length) return [];
+  var first = lines[0], del = null;
+  if (first.indexOf("\t") >= 0) del = "\t";
+  else if (first.indexOf(";") >= 0) del = ";";
+  else if (first.indexOf(",") >= 0) {
+    var hc = first.split(",").filter(function (c) { return HEAD[normKey(c)]; }).length;
+    if (hc >= 2) del = ",";
+  }
+  var out = [];
+  if (del) {
+    var rows = parseDelimited(text, del);
+    var head = rows[0].map(function (c) { return HEAD[normKey(c)] || null; });
+    var known = head.filter(Boolean).length;
+    var hasHeader = known >= 2 || (known >= 1 && !rows[0].some(isPhone));
+    if (hasHeader) {
+      rows.slice(1).forEach(function (r) {
+        var c = {};
+        head.forEach(function (f, i) { if (f && r[i] && !c[f]) c[f] = r[i]; });
+        if (c.name || c.phone || c.wa) out.push(finish(c));
+      });
+    } else {
+      rows.forEach(function (r) { out.push(finish(guessCells(r))); });
+    }
+  } else {
+    lines.forEach(function (l) { out.push(finish(guessLine(l))); });
+  }
+  return out.filter(function (c) { return c.name || c.phone || c.wa; });
+}
+function guessCells(cells) {
+  var c = {}, rest = [];
+  cells.forEach(function (v) {
+    if (!v) return;
+    if (!c.phone && isPhone(v)) c.phone = v;
+    else rest.push(v);
+  });
+  c.name = rest.shift() || "";
+  rest.forEach(function (v) {
+    if (!c.state && /^[A-Z]{2}$/.test(v)) c.state = v;
+    else if (!c.address && (/\d/.test(v) && v.length > 10 || /^(rua|av\.?|avenida|travessa|rod\.?|rodovia|praça|pça)\b/i.test(v))) c.address = v;
+    else if (!c.city && !/^\d/.test(v) && v.length < 60) c.city = v;
+    else if (!c.site_current && /^(https?:\/\/|www\.)/i.test(v)) c.site_current = v;
+  });
+  return c;
+}
+function guessLine(line) {
+  var c = {}, m = PHONE_RE.exec(line), rest = line;
+  if (m && digits(m[1]).length >= 8) { c.phone = m[1].trim(); rest = line.replace(m[1], " "); }
+  var parts = rest.split(/\s+[-–—|]\s+|\s*[|;,\t]\s*|\s+[-–—]$|^[-–—]\s+/).map(function (s) { return s.replace(/^[\s\-–—:]+|[\s\-–—:]+$/g, ""); }).filter(Boolean);
+  c.name = parts.shift() || "";
+  if (parts.length) {
+    var last = parts[parts.length - 1];
+    if (/^[A-Z]{2}$/.test(last)) { c.state = last; parts.pop(); last = parts[parts.length - 1]; }
+    if (last) {
+      var sm = /^(.*?)\s*[-/]\s*([A-Z]{2})$/.exec(last);
+      if (sm) { c.city = sm[1]; c.state = c.state || sm[2]; } else c.city = last;
+    }
+  }
+  return c;
+}
+
+// ---------- modal ----------
+function copyFrom(ta) {
+  var ok = false;
+  try { ta.focus(); ta.select(); ok = document.execCommand("copy"); } catch (e) {}
+  try { ta.setSelectionRange(0, 0); ta.scrollTop = 0; } catch (e) {}
+  if (navigator.clipboard && navigator.clipboard.writeText) navigator.clipboard.writeText(ta.value).catch(function () {});
+  return ok;
+}
+function copyText(t) {
+  var ta = document.createElement("textarea"); ta.value = t; ta.style.position = "fixed"; ta.style.opacity = "0";
+  document.body.appendChild(ta); ta.select(); try { document.execCommand("copy"); } catch (e) {}
+  document.body.removeChild(ta);
+  if (navigator.clipboard && navigator.clipboard.writeText) navigator.clipboard.writeText(t).catch(function () {});
+}
+
+
+// ---------- armazenamento (espaço privado do artefato) ----------
+var DB = null, BASE = null, CHUNKS = {}, OWNER = {}, PENDING = {}, WQ = {}, MAXB = 190000;
+var enc = new TextEncoder();
+function bytes(o) { return enc.encode(JSON.stringify(o)).length; }
+function rid(p) { return (p || "") + Date.now().toString(36) + Math.random().toString(36).slice(2, 8); }
+function chunkRef(id) { return BASE.collection("chunks").doc(id); }
+function rebuild() {
+  var all = [], own = {};
+  Object.keys(CHUNKS).forEach(function (cid) { CHUNKS[cid].items.forEach(function (c) { all.push(c); own[c.id] = cid; }); });
+  all.sort(function (a, b) { return (b.created || 0) - (a.created || 0); });
+  ST.companies = all; OWNER = own;
+}
+function setSaving() {
+  var n = Object.keys(PENDING).length, el = $("#saving");
+  if (el) el.textContent = n ? "Salvando…" : "Salvo";
+}
+function dbErr(e) {
+  var code = e && e.code;
+  if (code === "quota_exceeded") toast("O espaço de dados está cheio. Remova empresas antigas para continuar.");
+  else if (code === "invalid_argument") toast("Não foi possível salvar: você só pode ver esta página, não editar.");
+  else toast("Não foi possível salvar agora. Tente de novo.");
+}
+function saveChunk(cid) {
+  var w = WQ[cid] || (WQ[cid] = { run: false, dirty: false });
+  w.dirty = true; PENDING[cid] = 1; setSaving();
+  if (w.run) return;
+  w.run = true;
+  (function loop() {
+    if (!w.dirty) { w.run = false; delete PENDING[cid]; setSaving(); return; }
+    w.dirty = false;
+    var ch = CHUNKS[cid];
+    var p = (!ch || !ch.items.length) ? chunkRef(cid).delete().then(function () { delete CHUNKS[cid]; }) : chunkRef(cid).set({ items: ch.items });
+    p.catch(function (e) {
+      if (e && e.code === "unavailable") return new Promise(function (r) { setTimeout(r, 800 + Math.random() * 800); }).then(function () { w.dirty = true; });
+      dbErr(e);
+    }).then(loop);
+  })();
+}
+function touch(c) { c.updated = Math.floor(Date.now() / 1000); var cid = OWNER[c.id]; if (cid) saveChunk(cid); }
+function addCompanies(list) {
+  var cids = Object.keys(CHUNKS), cur = null, size = 0, changed = {};
+  for (var i = 0; i < cids.length; i++) { var s = bytes(CHUNKS[cids[i]].items); if (s < MAXB - 20000) { cur = cids[i]; size = s; break; } }
+  list.forEach(function (c) {
+    var b = bytes(c) + 2;
+    if (!cur || size + b > MAXB) { cur = rid("c"); CHUNKS[cur] = { items: [] }; size = 2; }
+    CHUNKS[cur].items.push(c); size += b; changed[cur] = 1;
+  });
+  rebuild();
+  Object.keys(changed).forEach(saveChunk);
+}
+function removeCompany(c) {
+  var cid = OWNER[c.id]; if (!cid) return;
+  CHUNKS[cid].items = CHUNKS[cid].items.filter(function (x) { return x.id !== c.id; });
+  rebuild(); saveChunk(cid);
+}
+function keyOf(c) {
+  var d = localNum(c.wa || c.phone || "");
+  if (d.length >= 8) return "p" + d.slice(-11);
+  return "n" + normKey(c.name) + "|" + normKey(c.city);
+}
+
+function parseMoney(s) {
+  s = String(s || "").replace(/[R$\s]/g, "");
+  if (!s) return 0;
+  if (s.indexOf(",") >= 0) s = s.replace(/\./g, "").replace(",", ".");
+  else if (/^\d{1,3}(\.\d{3})+$/.test(s)) s = s.replace(/\./g, "");
+  var v = parseFloat(s); return isFinite(v) ? Math.round(v * 100) / 100 : 0;
+}
+
+var FIELDS_MAX = { name: 300, category: 200, phone: 60, wa: 60, address: 400, city: 120, state: 60, rating: 20, reviews_count: 20, reviews: 8000, hours: 1500, description: 3000, site_current: 500 };
+var DEFAULT_PROMPT = "Você é um desenvolvedor front-end sênior. Vou te dar o CÓDIGO COMPLETO E EXATO de um site que já existe e funciona (o site da Limpteck, higienização de estofados). Sua tarefa é criar o site da empresa abaixo usando ESSE MESMO CÓDIGO como base: mesmo HTML, mesmo CSS, mesmo JavaScript, mesmas seções, mesmas medidas, mesmas animações. Você troca só o que este texto manda trocar.\n\nJunto com este arquivo eu anexei a LOGO da empresa e/ou uma FOTO (da pessoa/dono/profissional). Veja o que veio anexado antes de começar. Não existem fotos da empresa: VOCÊ GERA AS IMAGENS com a sua ferramenta de geração de imagens (Imagen / Gemini imagem). Cada foto do código vira uma imagem realista gerada por você, do nicho da empresa. A logo anexada vai nos lugares de logo, tratada (fundo certo e tamanho certo). A foto da pessoa, se vier, vai na capa. Regras no item 5.\n\nEntregue o site em HTML puro: um index.html (CSS e JS dentro dele) + a pasta img/ com as imagens que você gerou e a logo tratada. Sem frameworks, sem React, sem build, sem bibliotecas, sem imagens de bancos de fotos ou links externos.\n\n==================================================\n1. DADOS DA EMPRESA\n==================================================\nUse todos os dados preenchidos. Linha vazia = informação que não existe: ignore e NÃO invente.\n\nNome: {{nome}}\nNicho: {{nicho}}\nTipo de negócio: {{categoria}}\nDescrição: {{descricao}}\nTelefone: {{telefone}}\nWhatsApp: {{whatsapp}}\nLink do WhatsApp: {{link_whatsapp}}\nEndereço: {{endereco}}\nCidade: {{cidade}}\nEstado: {{estado}}\nHorário de funcionamento: {{horario}}\nNota no Google: {{nota}}\nQuantidade de avaliações: {{total_avaliacoes}}\nAvaliações de clientes (texto real): {{avaliacoes}}\nSite atual (se houver): {{site_atual}}\n\n==================================================\n2. O QUE MANTER IGUAL E O QUE TROCAR\n==================================================\nMANTER EXATAMENTE como no código do item 9:\n- Toda a estrutura HTML, a ordem das seções, as classes e os ids.\n- Todo o CSS: tamanhos, espaçamentos, cantos, sombras, fontes (Poppins e Manrope), animações, faixa inclinada, carrossel, chave Antes/Depois, passos com linha pontilhada, perguntas que abrem, bloco final, botão flutuante, responsivo e o @media de 860px.\n- Todo o JavaScript (ano automático, animação de entrada, carrossel com bolinhas e setas, antes/depois automático e por toque).\n- O crédito \"Site desenvolvido por Agência Nitro\" no rodapé, com a imagem dele (já está no código, não mexa).\n\nTROCAR:\n- As cores: só os valores das variáveis no :root (--royal, --royal-2, --deep, --lime, --lime-2, --bg, --ink, --muted, --line). Mantenha --wa e --r. Tire a paleta da logo (item 4). Troque também \u003cmeta name=\"theme-color\">.\n- Todos os textos, para a empresa e o nicho dela (mesmo tamanho e formato dos textos originais).\n- Todos os links de WhatsApp e Instagram.\n- Os marcadores de imagem (LOGO_ICONE, LOGO_NOME_CLARA, FOTO_..., FAVICON_SVG), seguindo o item 5.\n- \u003ctitle>, meta description, og:title, og:description e os textos alt.\n\n==================================================\n3. REGRAS QUE NÃO PODEM SER QUEBRADAS\n==================================================\n3.1 Nunca invente números, anos de mercado, quantidade de clientes, garantias, prazos, preços, porcentagens, prêmios ou nomes de pessoas.\n3.2 Os números da capa (div.proof, no original \"+1.200 trabalhos postados\" e \"+2.400 seguidores\") só existem se houver dado real: use \"Nota X no Google\" e \"Y avaliações\". Sem esses dados, apague a div.proof inteira.\n3.3 Avaliações: se houver texto real em \"Avaliações de clientes\", use 1 ou 2 frases curtas dele, assinadas \"Cliente no Google\", dentro do card escuro da seção \"Por que\" (no lugar do texto do .why-card). Sem avaliações, não crie depoimento.\n3.4 Endereço e horário só aparecem se estiverem preenchidos (coloque na seção de atendimento e como cartão extra em .contacts).\n3.5 Se não houver WhatsApp mas houver telefone, troque os links por tel: com \"Ligar agora\". Nunca deixe botão sem destino.\n3.6 Se o Instagram da empresa não for informado, remova o cartão de Instagram de .contacts (não deixe o @limp.teck).\n3.7 No fim, NÃO pode sobrar no arquivo: \"Limpteck\", \"limp.teck\", \"Vitória da Conquista\", \"5577988056186\", \"(77) 98805-6186\", \"Limpeza Inteligente\" (exceto se for a mesma empresa).\n3.8 Português do Brasil, tom simpático e profissional, \"você\". Nada de lorem ipsum ou colchetes.\n\n==================================================\n4. SERVIÇOS DO NICHO\n==================================================\nO site original tem 6 cards (Sofás, Cadeiras, Camas box e colchões, Interior de carros, Cabine de caminhão, Tapetes e carpetes), a faixa que rola, 4 benefícios, a seção \"Por que higienizar\", 3 passos e 6 perguntas.\nSe os dados citarem serviços, use-os. Se não, crie os serviços típicos do nicho (4 a 6; apague cards e bolinhas .dots que sobrarem). Referência:\n- Estofados: sofás; cadeiras e poltronas; colchões e camas box; bancos e interior de carros; tapetes e carpetes; impermeabilização.\n- Lava-jato / estética automotiva: lavagem simples; lavagem completa; higienização interna; polimento; enceramento; limpeza de motor.\n- Dentista: avaliação e limpeza; clareamento; restaurações; canal; aparelho; implantes e próteses.\n- Salão de beleza: corte; escova e penteado; coloração e mechas; tratamentos capilares; manicure e pedicure; sobrancelhas.\n- Barbearia: corte; barba; corte + barba; pigmentação; sobrancelha; tratamento capilar.\n- Clínica de estética: limpeza de pele; tratamentos faciais; drenagem; massagem modeladora; depilação; protocolos corporais.\n- Energia solar: projeto; instalação de painéis; homologação; limpeza de placas; manutenção; sistemas para empresas e rurais.\n- Oficina mecânica: revisão; troca de óleo; freios; suspensão; injeção eletrônica; diagnóstico.\n- Ar-condicionado: instalação; limpeza e higienização; manutenção preventiva; conserto; carga de gás.\n- Eletricista: instalações; troca de fiação; quadros de energia; tomadas e iluminação; manutenção.\n- Encanador / desentupidora: desentupimento; caça-vazamento; instalação hidráulica; limpeza de caixa d'água.\n- Dedetização: dedetização; desratização; descupinização; escorpiões; sanitização.\n- Pet shop / veterinária: banho e tosa; consultas; vacinação; produtos e rações; hospedagem.\n- Academia: musculação; aulas coletivas; avaliação física; treino personalizado.\n- Restaurante / lanchonete / padaria: especialidades; prato do dia; encomendas; delivery e retirada.\n- Advocacia: áreas de atuação comuns; consultas; acompanhamento de processos.\n- Contabilidade: abertura de empresa; contabilidade mensal; folha; imposto de renda; MEI.\nOutro nicho: mesma lógica, os serviços que um cliente comum espera.\nReescreva também, para o nicho: faixa que rola, 4 benefícios, \"Por que [fazer o serviço]\" com 4 situações, 3 passos e 6 perguntas frequentes (respostas honestas, sem prazo ou preço inventado). Cada link de card abre o WhatsApp com mensagem citando o serviço.\n\n==================================================\n5. LOGO E SUBSTITUIÇÃO DAS FOTOS\n==================================================\n5.1 LOGO (a imagem anexada): trate antes de usar.\n- Remova o fundo (deixe transparente). Se a logo tiver fundo branco/colorido que não combina com o lugar onde vai, tire. Corte as sobras vazias em volta.\n- Se estiver pequena, borrada ou torta, melhore/recrie fielmente (mesmas letras, mesmo símbolo, mesmas cores; NÃO invente letras nem troque o desenho).\n- Gere: logo-clara.png (versão para fundo escuro: cabeçalho, rodapé e capa), logo.png (versão normal) e simbolo.png (só o símbolo, se existir). Salve em img/.\n- Tamanho certo: no cabeçalho altura ~40px, no rodapé ~44px, nunca esticada (use height fixa e width:auto / object-fit:contain).\n5.2 Paleta: da logo tire --royal (principal), --royal-2 (12% mais clara), --deep (bem escura), --lime (destaque vibrante, com bom contraste com --deep), --lime-2 (destaque um pouco mais escuro), --bg (quase branco tingido), --ink, --muted, --line. Logo de uma cor só: crie o destaque em contraste harmônico.\n5.3 IMAGENS — VOCÊ GERA com a ferramenta de geração de imagem. NADA de ilustração SVG, desenho plano, ícone ou elemento gráfico no lugar das fotos: são FOTOS realistas geradas por IA.\nEstilo de todas: fotografia profissional realista, luz natural, cores vivas combinando com a paleta, nítida, sem texto escrito, sem marca d'água, sem logotipos de outras empresas, pessoas brasileiras quando aparecerem. Salve cada uma em img/ (formato .jpg ou .webp, leve) e troque o marcador pelo caminho do arquivo.\n- LOGO_ICONE → img/simbolo.png (ou img/logo.png pequena). Na .final o CSS aplica um filter para escurecer: se ficar feio, gere uma versão escura do símbolo.\n- LOGO_NOME_CLARA → img/logo-clara.png.\n- FAVICON_SVG → img/simbolo.png (ou a logo recortada quadrada).\n- FOTO_CAPA (proporção 4:5, a imagem grande da parte inicial do site, dentro da moldura em arco) → depende do que eu anexei:\n  a) Anexei FOTO DA PESSOA (com ou sem logo): a capa é ESSA FOTO da pessoa. Não gere outra pessoa, não troque o rosto, não coloque logo na roupa dela. Só melhore (luz, nitidez, recorte 4:5 centralizado no rosto/corpo, sem esticar). Se também veio logo, a logo vai só no cabeçalho, rodapé e demais lugares de logo.\n  b) Anexei SÓ A LOGO: a capa é a LOGO. Gere uma imagem de fundo bonita e profissional (degradê/textura nas cores da paleta, luz suave, sem pessoas, sem texto) e coloque a logo tratada (sem fundo, versão que contrasta) grande e centralizada por cima, com respiro nas bordas e sombra suave. Salve como img/capa.jpg.\n  c) Não anexei nada: gere uma foto realista do serviço principal do nicho, sem pessoas.\n- FOTO_SERVICO_1 a 6 (4:3) → uma foto gerada para CADA serviço do card (ex.: sofá limpo, banco de carro higienizado, colchão, cadeiras, tapete, tecido com gotas de impermeabilização). SEM PESSOAS: nenhuma pessoa, mão, rosto ou corpo nessas imagens. Mostre só o objeto/resultado/equipamento do serviço, bem fotografado.\n- FOTO_ANTES e FOTO_DEPOIS (3:2) → SEM PESSOAS. Gere a MESMA cena/objeto duas vezes, mesmo ângulo: \"antes\" sujo/gasto/com problema e \"depois\" limpo/renovado/resolvido. Se o nicho não tiver antes/depois (ex.: advocacia, contabilidade), troque o título por \"Antes e depois de falar com a gente\" e gere duas imagens sem pessoas (ex.: mesa bagunçada com papéis → mesa organizada), mantendo a chave Antes/Depois funcionando.\n- FOTO_ATENDIMENTO (3:4) → foto do veículo de serviço/atendimento do nicho (van, carro ou fachada) nas cores da empresa, com a logo aplicada na lateral/fachada, em rua de cidade brasileira.\n- Se a sua ferramenta realmente não conseguir gerar alguma imagem, avise no fim e deixe o \u003cimg> com o caminho img/NOME.jpg certo para eu colocar depois. NÃO troque por SVG.\n5.4 Nada esticado, pixelado, cortado de forma estranha ou com fundo quadriculado.\n\n==================================================\n6. WHATSAPP\n==================================================\nBase: {{link_whatsapp}} + ?text= com mensagem codificada (encodeURIComponent). Troque em TODOS os lugares do código (cabeçalho, capa, cada card, atendimento, bloco final, contatos e botão flutuante). Mensagens educadas e com o nome da empresa, por exemplo \"Olá, {{nome}}! Quero um orçamento.\" e \"Olá! Quero orçamento de [serviço].\".\n\n==================================================\n7. CELULAR\n==================================================\nO código já é responsivo. Depois das trocas, confira em 360, 390 e 414 px: nada vaza para o lado, título da capa sem palavra quebrada, imagens proporcionais, sem distorção.\n\n==================================================\n8. CONFERÊNCIA ANTES DE ENTREGAR\n==================================================\n[ ] Código base mantido (estrutura, CSS, JS); só trocou o que o item 2 manda.\n[ ] Nenhum dado inventado; seções sem dado removidas.\n[ ] Nada sobrou da Limpteck (item 3.7).\n[ ] Logo nítida, sem fundo indesejado, sem letras trocadas.\n[ ] Todas as fotos geradas por IA (realistas, do nicho, mesmo estilo), salvas em img/, nenhuma ilustração SVG no lugar de foto. Logo sem fundo e no tamanho certo. Capa = foto da pessoa (se anexada) ou a logo em destaque. Fotos de serviços e antes/depois SEM pessoas.\n[ ] Todos os botões levam ao contato certo.\n[ ] Quantidade de cards = quantidade de bolinhas .dots.\n[ ] Crédito da Agência Nitro intacto.\nEntregue o index.html completo e, depois, uma lista curta do que você criou sem dado da empresa (ex.: serviços deduzidos do nicho).\n\n==================================================\n9. CÓDIGO COMPLETO DO SITE MODELO (LIMPTECK) — USE COMO BASE EXATA\n==================================================\n\u003c!DOCTYPE html>\n\u003chtml lang=\"pt-BR\">\n\u003chead>\n\u003cmeta charset=\"utf-8\">\n\u003cmeta name=\"viewport\" content=\"width=device-width, initial-scale=1, viewport-fit=cover\">\n\u003ctitle>Limpteck · Higienização de Estofados em Vitória da Conquista\u003c/title>\n\u003cmeta name=\"description\" content=\"Higienização de sofás, cadeiras, camas box, colchões e interior de carros e caminhões em Vitória da Conquista e região. Elimina ácaros, fungos e bactérias. Orçamento pelo WhatsApp.\">\n\u003cmeta name=\"theme-color\" content=\"#1b26a8\">\n\u003clink rel=\"icon\" href=\"FAVICON_SVG\">\n\u003cmeta property=\"og:title\" content=\"Limpteck · Limpeza Inteligente\">\n\u003cmeta property=\"og:description\" content=\"Seu estofado limpo, sua família mais feliz. Higienização em Vitória da Conquista e região.\">\n\u003clink rel=\"preconnect\" href=\"https://fonts.googleapis.com\">\u003clink rel=\"preconnect\" href=\"https://fonts.gstatic.com\" crossorigin>\n\u003clink href=\"https://fonts.googleapis.com/css2?family=Poppins:wght@500;600;700;800&family=Manrope:wght@400;500;600;700&display=swap\" rel=\"stylesheet\">\n\u003cstyle>\n:root{--royal:#1b26a8;--royal-2:#2633c9;--deep:#0c1260;--lime:#dcff2e;--lime-2:#c6ec00;--bg:#f4f6ff;--ink:#0e1240;--muted:#5a6085;--line:#dfe3f5;--wa:#1fb85a;--r:22px}\n*{box-sizing:border-box;margin:0;padding:0}\nhtml{overflow-x:hidden;scroll-behavior:smooth;-webkit-text-size-adjust:100%}\nbody{font-family:Manrope,system-ui,sans-serif;background:var(--bg);color:var(--ink);line-height:1.55;overflow-x:hidden}\nimg{display:block;max-width:100%}\na{color:inherit;text-decoration:none}\nh1,h2,h3{font-family:Poppins,sans-serif;line-height:1.08;letter-spacing:-.02em}\n.wrap{width:min(1120px,100% - 40px);margin-inline:auto}\n.tag{display:inline-flex;align-items:center;gap:8px;font:600 12px/1 Poppins;letter-spacing:.14em;text-transform:uppercase;color:var(--royal)}\n.tag::before{content:\"\";width:18px;height:3px;border-radius:3px;background:var(--lime-2)}\nh2{font-size:clamp(30px,7.4vw,46px);font-weight:800;margin:12px 0 14px}\nh2 em{font-style:normal;background:linear-gradient(transparent 58%,var(--lime) 58% 92%,transparent 92%);padding:0 4px}\n.lead{color:var(--muted);font-size:17px;max-width:560px}\nsection{padding:76px 0}\n\n/* botões */\n.btn{display:inline-flex;align-items:center;justify-content:center;gap:10px;font:700 16px/1 Poppins;padding:18px 24px;border-radius:999px;transition:transform .2s,box-shadow .2s}\n.btn:active{transform:scale(.97)}\n.btn svg{width:22px;height:22px;flex:none}\n.btn-lime{background:var(--lime);color:var(--deep);box-shadow:0 10px 30px -8px rgba(220,255,46,.6)}\n.btn-lime:hover{transform:translateY(-2px)}\n.btn-ghost{border:2px solid rgba(255,255,255,.28);color:#fff}\n.btn-wa{background:var(--wa);color:#fff;box-shadow:0 12px 30px -10px rgba(31,184,90,.7)}\n\n/* header */\nheader{position:sticky;top:0;z-index:50;background:rgba(27,38,168,.92);backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px)}\n.nav{display:flex;align-items:center;justify-content:space-between;height:66px}\n.brand{display:flex;align-items:center;gap:10px}\n.brand .ic{height:34px;width:auto}\n.brand .wm{height:22px;width:auto}\n.nav .btn{padding:11px 16px;font-size:14px}\n\n/* hero */\n.hero{background:radial-gradient(120% 80% at 90% 10%,var(--royal-2),var(--royal) 45%,var(--deep));color:#fff;padding:34px 0 0;border-radius:0 0 40px 40px;position:relative;overflow:hidden}\n.hero::after{content:\"\";position:absolute;inset:0;background-image:radial-gradient(rgba(255,255,255,.08) 1px,transparent 1px);background-size:22px 22px;mask:linear-gradient(#000,transparent 70%);pointer-events:none}\n.hero .wrap{position:relative;z-index:1;display:grid;gap:30px}\n.loc{display:inline-flex;align-items:center;gap:8px;background:rgba(255,255,255,.1);border:1px solid rgba(255,255,255,.18);padding:8px 14px;border-radius:999px;font-size:13px;font-weight:600;width:max-content}\n.loc svg{width:16px;height:16px;color:var(--lime)}\n.hero h1{font-size:clamp(40px,11vw,70px);font-weight:800;margin:18px 0 16px}\n.hero h1 .hl{color:var(--lime)}\n.hero p.sub{font-size:17px;color:rgba(255,255,255,.82);max-width:470px}\n.cta-row{display:flex;flex-wrap:wrap;gap:12px;margin-top:26px}\n.cta-row .btn{flex:1 1 auto}\n.proof{display:flex;gap:22px;margin-top:26px;font-size:13px;color:rgba(255,255,255,.75)}\n.proof b{display:block;font:800 24px/1 Poppins;color:#fff;margin-bottom:4px}\n.hero-photo{position:relative;align-self:end;margin:0 auto 48px;width:min(400px,92%)}\n.hero-photo .blob{position:absolute;left:50%;bottom:0;width:92%;aspect-ratio:1;transform:translateX(-50%);border-radius:50%;background:var(--lime);box-shadow:0 0 0 14px rgba(220,255,46,.18),0 0 0 30px rgba(220,255,46,.07)}\n.hero-photo img{position:relative;width:100%;height:auto;aspect-ratio:4/5;object-fit:cover;object-position:50% 0;border-radius:999px 999px 30px 30px;border:6px solid var(--lime);box-shadow:0 30px 60px -20px rgba(0,0,0,.55),0 0 0 14px rgba(220,255,46,.14)}\n.hero-photo .chip{position:absolute;background:#fff;color:var(--ink);border-radius:16px;padding:10px 14px;font:600 13px/1.25 Manrope,system-ui,sans-serif;box-shadow:0 14px 30px -12px rgba(0,0,0,.45);display:flex;gap:9px;align-items:center}\n.hero-photo .chip i{width:30px;height:30px;border-radius:10px;background:var(--royal);display:grid;place-items:center;flex:none}\n.hero-photo .chip i svg{width:17px;height:17px;color:var(--lime)}\n.chip.c1{left:-14px;top:30%}.chip.c2{right:-14px;top:74%}\n\n/* faixa */\n.ticker{background:var(--lime);color:var(--deep);overflow:hidden;transform:rotate(-2deg);margin:-14px -10px 0;position:relative;z-index:3}\n.ticker div{display:flex;gap:34px;white-space:nowrap;padding:14px 0;font:700 15px/1 Poppins;text-transform:uppercase;letter-spacing:.04em;animation:tk 26s linear infinite;width:max-content}\n.ticker span::after{content:\"✦\";margin-left:34px}\n@keyframes tk{to{transform:translateX(-50%)}}\n\n/* benefícios */\n.bens{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-top:30px}\n.ben{background:#fff;border:1px solid var(--line);border-radius:var(--r);padding:20px 16px}\n.ben .ico{width:46px;height:46px;border-radius:14px;background:var(--royal);display:grid;place-items:center;margin-bottom:14px}\n.ben .ico svg{width:24px;height:24px;color:var(--lime)}\n.ben h3{font-size:16px;font-weight:700;margin-bottom:5px}\n.ben p{font-size:13.5px;color:var(--muted);line-height:1.45}\n\n/* serviços carrossel */\n.svc-head{display:flex;align-items:end;justify-content:space-between;gap:16px}\n.arrows{display:none;gap:8px}\n.arrows button{width:46px;height:46px;border-radius:50%;border:1.5px solid var(--line);background:#fff;cursor:pointer;display:grid;place-items:center}\n.arrows svg{width:20px;height:20px}\n.rail{display:flex;gap:14px;overflow-x:auto;scroll-snap-type:x mandatory;scroll-padding-inline:20px;padding:26px 20px 10px;margin:0 -20px;scrollbar-width:none}\n.rail::-webkit-scrollbar{display:none}\n.card{flex:0 0 78%;max-width:340px;scroll-snap-align:start;background:#fff;border-radius:26px;overflow:hidden;border:1px solid var(--line);display:flex;flex-direction:column}\n.card .ph{position:relative}\n.card .ph img{width:100%;height:auto;aspect-ratio:4/3;object-fit:cover}\n.card .num{position:absolute;top:12px;left:12px;background:var(--lime);color:var(--deep);font:800 13px/1 Poppins;padding:7px 10px;border-radius:999px}\n.card .bd{padding:18px 18px 20px;display:flex;flex-direction:column;flex:1}\n.card h3{font-size:20px;font-weight:700}\n.card p{color:var(--muted);font-size:14.5px;margin:6px 0 16px;flex:1}\n.card a{display:inline-flex;align-items:center;gap:8px;font:700 14px/1 Poppins;color:var(--royal)}\n.card a svg{width:18px;height:18px;transition:transform .2s}\n.card a:hover svg{transform:translateX(4px)}\n.dots{display:flex;justify-content:center;gap:6px;margin-top:12px}\n.dots i{width:7px;height:7px;border-radius:9px;background:var(--line);transition:all .3s}\n.dots i.on{width:22px;background:var(--royal)}\n\n/* antes depois */\n.ba{background:var(--deep);color:#fff;border-radius:40px;margin:0 10px;padding:66px 0}\n.ba .tag{color:var(--lime)}\n.ba .lead{color:rgba(255,255,255,.72)}\n.ba-box{position:relative;margin-top:28px;border-radius:26px;overflow:hidden;aspect-ratio:3/2;background:#000}\n.ba-box img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;transition:opacity .6s ease}\n.ba-box .after{opacity:0}\n.ba-box.show-after .after{opacity:1}\n.ba-label{position:absolute;top:14px;left:14px;z-index:2;background:rgba(12,18,96,.75);backdrop-filter:blur(6px);padding:7px 12px;border-radius:999px;font:700 12px/1 Poppins;letter-spacing:.1em;text-transform:uppercase}\n.ba-label b{color:var(--lime);font-weight:700}\n.switch{display:grid;grid-template-columns:1fr 1fr;background:rgba(255,255,255,.08);border-radius:999px;padding:5px;margin-top:16px;position:relative}\n.switch button{position:relative;z-index:1;border:0;background:none;color:#fff;font:700 15px/1 Poppins;padding:15px;border-radius:999px;cursor:pointer;transition:color .3s}\n.switch .pill{position:absolute;top:5px;bottom:5px;left:5px;width:calc(50% - 5px);background:var(--lime);border-radius:999px;transition:transform .4s cubic-bezier(.6,.2,.2,1)}\n.switch.after .pill{transform:translateX(100%)}\n.switch button.on{color:var(--deep)}\n\n/* por que */\n.why{display:grid;gap:26px}\n.why-card{background:linear-gradient(135deg,var(--royal),var(--royal-2));color:#fff;border-radius:28px;padding:28px 24px;position:relative;overflow:hidden}\n.why-card::before{content:\"\";position:absolute;right:-60px;top:-60px;width:180px;height:180px;border-radius:50%;background:var(--lime);opacity:.16}\n.why-card h3{font-size:22px;margin-bottom:10px}\n.why-card p{color:rgba(255,255,255,.8);font-size:15px}\n.list{display:grid;gap:12px;margin-top:6px}\n.list li{list-style:none;display:flex;gap:12px;align-items:flex-start;background:#fff;border:1px solid var(--line);border-radius:18px;padding:15px}\n.list li i{width:26px;height:26px;border-radius:50%;background:var(--lime);display:grid;place-items:center;flex:none;margin-top:1px}\n.list li i svg{width:15px;height:15px;color:var(--deep)}\n.list b{display:block;font-family:Poppins;font-weight:600}\n.list span{font-size:14px;color:var(--muted)}\n\n/* passos */\n.steps{display:grid;gap:0;margin-top:30px;position:relative}\n.step{display:grid;grid-template-columns:58px 1fr;gap:16px;padding-bottom:26px;position:relative}\n.step:not(:last-child)::before{content:\"\";position:absolute;left:28px;top:58px;bottom:0;width:2px;background:repeating-linear-gradient(var(--royal) 0 6px,transparent 6px 12px);opacity:.35}\n.step .n{width:58px;height:58px;border-radius:18px;background:var(--royal);color:var(--lime);font:800 24px/58px Poppins;text-align:center}\n.step h3{font-size:19px;margin:6px 0 4px}\n.step p{color:var(--muted);font-size:15px}\n\n/* área */\n.area{background:#fff;border:1px solid var(--line);border-radius:28px;padding:26px 22px;display:grid;gap:18px;align-items:center}\n.area .pin{width:64px;height:64px;border-radius:20px;background:var(--lime);display:grid;place-items:center}\n.area .pin svg{width:32px;height:32px;color:var(--deep)}\n.area h3{font-size:24px}\n.area p{color:var(--muted)}\n\n/* van */\n.van{background:#fff;border:1px solid var(--line);border-radius:30px;overflow:hidden;display:grid}\n.van img{width:100%;height:auto;aspect-ratio:3/4;object-fit:cover;object-position:50% 50%}\n.van-bd{padding:24px 22px 26px}\n.van-bd h3{font-size:25px;margin:10px 0 8px}\n.van-bd p{color:var(--muted);margin-bottom:20px}\n/* faq */\n.faq{margin-top:26px;display:grid;gap:10px}\ndetails{background:#fff;border:1px solid var(--line);border-radius:18px;padding:0 18px;transition:background .2s}\ndetails[open]{background:#fff;box-shadow:0 14px 30px -20px rgba(27,38,168,.45)}\nsummary{list-style:none;cursor:pointer;padding:18px 0;font:600 16px/1.35 Poppins;display:flex;justify-content:space-between;gap:12px;align-items:center}\nsummary::-webkit-details-marker{display:none}\nsummary::after{content:\"+\";width:28px;height:28px;border-radius:50%;background:var(--bg);display:grid;place-items:center;font-size:20px;color:var(--royal);flex:none;transition:transform .3s}\ndetails[open] summary::after{transform:rotate(45deg);background:var(--lime)}\ndetails p{padding:0 0 18px;color:var(--muted);font-size:15px}\n\n/* cta final */\n.final{background:var(--lime);color:var(--deep);border-radius:40px 40px 0 0;padding:70px 0 40px;text-align:center;position:relative;overflow:hidden}\n.final .big-ic{width:70px;margin:0 auto 18px;filter:brightness(0) saturate(100%) invert(9%) sepia(60%) saturate(4500%) hue-rotate(236deg)}\n.final h2{font-size:clamp(34px,9vw,58px)}\n.final p{max-width:480px;margin:0 auto 26px;font-size:17px;color:#2a3070}\n.final .btn-wa{font-size:17px;padding:20px 28px}\n.contacts{display:grid;gap:10px;margin:34px auto 0;max-width:420px;text-align:left}\n.contacts a{display:flex;align-items:center;gap:14px;background:rgba(12,18,96,.08);border-radius:18px;padding:14px 16px;font-weight:600}\n.contacts a i{width:42px;height:42px;border-radius:13px;background:var(--deep);display:grid;place-items:center;flex:none}\n.contacts a i svg{width:20px;height:20px;color:var(--lime)}\n.contacts small{display:block;font-size:12px;opacity:.65;font-weight:500}\nfooter{background:var(--deep);color:rgba(255,255,255,.6);text-align:center;padding:30px 0 100px;font-size:13px}\nfooter img{height:26px;margin:0 auto 12px}\n\n/* whatsapp flutuante */\n.wa-float{position:fixed;right:16px;bottom:18px;z-index:60;width:60px;height:60px;border-radius:50%;background:var(--wa);display:grid;place-items:center;box-shadow:0 12px 30px -8px rgba(0,0,0,.45)}\n.wa-float svg{width:32px;height:32px;color:#fff}\n.wa-float::before{content:\"\";position:absolute;inset:0;border-radius:50%;border:2px solid var(--wa);animation:pulse 2.2s infinite}\n@keyframes pulse{from{transform:scale(1);opacity:.8}to{transform:scale(1.6);opacity:0}}\n\n/* animação de entrada */\n.rv{opacity:0;transform:translateY(24px);transition:opacity .7s ease,transform .7s ease}\n.rv.in{opacity:1;transform:none}\n\n@media (min-width:860px){\n  section{padding:110px 0}\n  .hero{padding-top:60px}\n  .hero .wrap{grid-template-columns:1.1fr .9fr;align-items:end}\n  .hero .copy{padding-bottom:90px}\n  .cta-row .btn{flex:0 0 auto}\n  .bens{grid-template-columns:repeat(4,1fr);gap:16px}\n  .ben{padding:26px 22px}\n  .arrows{display:flex}\n  .card{flex-basis:calc((100% - 28px)/3)}\n  .rail{padding-left:0;padding-right:0;margin:0}\n  .dots{display:none}\n  .ba{margin:0 24px}\n  .ba .wrap{display:grid;grid-template-columns:.9fr 1.1fr;gap:50px;align-items:center}\n  .ba-box{margin-top:0}\n  .why{grid-template-columns:1fr 1fr;align-items:start}\n  .steps{grid-template-columns:repeat(3,1fr);gap:24px}\n  .step{grid-template-columns:1fr;padding:0}\n  .step:not(:last-child)::before{left:70px;right:-12px;top:28px;bottom:auto;width:auto;height:2px;background:repeating-linear-gradient(90deg,var(--royal) 0 6px,transparent 6px 12px)}\n  .van{grid-template-columns:1.15fr 1fr;align-items:center}.van img{height:100%;aspect-ratio:auto;min-height:380px}.van-bd{padding:40px}\n  .faq{grid-template-columns:1fr 1fr;align-items:start}\n  .contacts{grid-template-columns:1fr 1fr;max-width:640px}\n}\n@media (prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}.rv{opacity:1;transform:none}}\n\u003c/style>\n\u003c/head>\n\u003cbody>\n\n\u003cheader>\n  \u003cdiv class=\"wrap nav\">\n    \u003ca href=\"#topo\" class=\"brand\" aria-label=\"Limpteck\">\u003cimg class=\"ic\" src=\"LOGO_ICONE\" alt=\"\">\u003cimg class=\"wm\" src=\"LOGO_NOME_CLARA\" alt=\"Limpteck\">\u003c/a>\n    \u003ca class=\"btn btn-lime\" href=\"https://wa.me/5577988056186?text=Ol%C3%A1%2C%20Limpteck!%20Quero%20um%20or%C3%A7amento.\" target=\"_blank\" rel=\"noopener\">Orçamento\u003c/a>\n  \u003c/div>\n\u003c/header>\n\n\u003cmain id=\"topo\">\n\u003csection class=\"hero\">\n  \u003cdiv class=\"wrap\">\n    \u003cdiv class=\"copy\">\n      \u003cspan class=\"loc\">\u003csvg viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2.2\" stroke-linecap=\"round\" stroke-linejoin=\"round\">\u003cpath d=\"M12 22s7-6.2 7-12a7 7 0 1 0-14 0c0 5.8 7 12 7 12z\"/>\u003ccircle cx=\"12\" cy=\"10\" r=\"2.5\"/>\u003c/svg>Vitória da Conquista e região\u003c/span>\n      \u003ch1>Seu estofado limpo, sua família \u003cspan class=\"hl\">mais feliz.\u003c/span>\u003c/h1>\n      \u003cp class=\"sub\">Higienização profissional de sofás, cadeiras, camas box, tapetes e do interior de carros e caminhões. Eliminamos ácaros, fungos e bactérias, e vamos até você.\u003c/p>\n      \u003cdiv class=\"cta-row\">\n        \u003ca class=\"btn btn-lime\" href=\"https://wa.me/5577988056186?text=Ol%C3%A1%2C%20Limpteck!%20Quero%20um%20or%C3%A7amento%20de%20higieniza%C3%A7%C3%A3o.\" target=\"_blank\" rel=\"noopener\">\u003csvg viewBox=\"0 0 24 24\" fill=\"currentColor\">\u003cuse href=\"#wa\"/>\u003c/svg>Orçamento grátis\u003c/a>\n        \u003ca class=\"btn btn-ghost\" href=\"#servicos\">Ver serviços\u003c/a>\n      \u003c/div>\n      \u003cdiv class=\"proof\">\n        \u003cdiv>\u003cb>+1.200\u003c/b>trabalhos postados\u003c/div>\n        \u003cdiv>\u003cb>+2.400\u003c/b>seguidores no Insta\u003c/div>\n      \u003c/div>\n    \u003c/div>\n    \u003cdiv class=\"hero-photo\">\n      \n      \u003cimg src=\"FOTO_CAPA\" alt=\"Profissional da Limpteck\" width=\"840\" height=\"1050\">\n      \u003cdiv class=\"chip c1\">\u003ci>\u003csvg viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2.2\" stroke-linecap=\"round\">\u003cpath d=\"M12 3l1.8 4.6L18.5 9l-4.7 1.6L12 15l-1.8-4.4L5.5 9l4.7-1.4z\"/>\u003cpath d=\"M19 15l.8 2 2 .8-2 .8-.8 2-.8-2-2-.8 2-.8z\"/>\u003c/svg>\u003c/i>Estofado\u003cbr>renovado\u003c/div>\n      \u003cdiv class=\"chip c2\">\u003ci>\u003csvg viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2.2\" stroke-linecap=\"round\" stroke-linejoin=\"round\">\u003cpath d=\"M12 3l8 3v6c0 4.5-3.4 8.3-8 9-4.6-.7-8-4.5-8-9V6z\"/>\u003cpath d=\"M9 12l2 2 4-4\"/>\u003c/svg>\u003c/i>Sem ácaros\u003cbr>e bactérias\u003c/div>\n    \u003c/div>\n  \u003c/div>\n\u003c/section>\n\n\u003cdiv class=\"ticker\" aria-hidden=\"true\">\u003cdiv>\n  \u003cspan>Sofás\u003c/span>\u003cspan>Cadeiras\u003c/span>\u003cspan>Camas box\u003c/span>\u003cspan>Colchões\u003c/span>\u003cspan>Tapetes\u003c/span>\u003cspan>Carpetes\u003c/span>\u003cspan>Carros\u003c/span>\u003cspan>Caminhões\u003c/span>\u003cspan>Elimina ácaros\u003c/span>\u003cspan>Secagem rápida\u003c/span>\n  \u003cspan>Sofás\u003c/span>\u003cspan>Cadeiras\u003c/span>\u003cspan>Camas box\u003c/span>\u003cspan>Colchões\u003c/span>\u003cspan>Tapetes\u003c/span>\u003cspan>Carpetes\u003c/span>\u003cspan>Carros\u003c/span>\u003cspan>Caminhões\u003c/span>\u003cspan>Elimina ácaros\u003c/span>\u003cspan>Secagem rápida\u003c/span>\n\u003c/div>\u003c/div>\n\n\u003csection id=\"beneficios\">\n  \u003cdiv class=\"wrap\">\n    \u003cspan class=\"tag rv\">Limpeza inteligente\u003c/span>\n    \u003ch2 class=\"rv\">Muito além de \u003cem>tirar mancha\u003c/em>\u003c/h2>\n    \u003cp class=\"lead rv\">A extração profunda puxa a sujeira que fica lá dentro da espuma, onde o aspirador e o pano não chegam.\u003c/p>\n    \u003cdiv class=\"bens\">\n      \u003cdiv class=\"ben rv\">\u003cdiv class=\"ico\">\u003csvg viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\" stroke-linecap=\"round\">\u003ccircle cx=\"12\" cy=\"12\" r=\"4\"/>\u003cpath d=\"M12 2v4M12 18v4M2 12h4M18 12h4M5 5l2.5 2.5M16.5 16.5L19 19M19 5l-2.5 2.5M7.5 16.5L5 19\"/>\u003cpath d=\"M4 20L20 4\"/>\u003c/svg>\u003c/div>\u003ch3>Elimina ácaros\u003c/h3>\u003cp>Fungos e bactérias saem junto com a água suja.\u003c/p>\u003c/div>\n      \u003cdiv class=\"ben rv\">\u003cdiv class=\"ico\">\u003csvg viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\">\u003cpath d=\"M12 3l8 3v6c0 4.5-3.4 8.3-8 9-4.6-.7-8-4.5-8-9V6z\"/>\u003cpath d=\"M12 9v6M9 12h6\"/>\u003c/svg>\u003c/div>\u003ch3>Mais saúde\u003c/h3>\u003cp>Menos alergia, rinite e crise de espirro em casa.\u003c/p>\u003c/div>\n      \u003cdiv class=\"ben rv\">\u003cdiv class=\"ico\">\u003csvg viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\">\u003cpath d=\"M4 18v-5a3 3 0 0 1 3-3h10a3 3 0 0 1 3 3v5\"/>\u003cpath d=\"M2 18h20M6 10V8a2 2 0 0 1 2-2h8a2 2 0 0 1 2 2v2\"/>\u003c/svg>\u003c/div>\u003ch3>Estofado renovado\u003c/h3>\u003cp>Cor de volta, tecido macio e cara de novo.\u003c/p>\u003c/div>\n      \u003cdiv class=\"ben rv\">\u003cdiv class=\"ico\">\u003csvg viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\">\u003cpath d=\"M11 20A7 7 0 0 1 4 13c0-5 4-9 16-9 0 12-4 16-9 16z\"/>\u003cpath d=\"M4 20c4-6 7-8 11-10\"/>\u003c/svg>\u003c/div>\u003ch3>Ambiente agradável\u003c/h3>\u003cp>Sem cheiro de mofo, suor ou xixi de pet.\u003c/p>\u003c/div>\n    \u003c/div>\n  \u003c/div>\n\u003c/section>\n\n\u003csection id=\"servicos\" style=\"padding-top:20px\">\n  \u003cdiv class=\"wrap\">\n    \u003cdiv class=\"svc-head\">\n      \u003cdiv>\n        \u003cspan class=\"tag rv\">Serviços\u003c/span>\n        \u003ch2 class=\"rv\">O que a gente \u003cem>higieniza\u003c/em>\u003c/h2>\n      \u003c/div>\n      \u003cdiv class=\"arrows\">\u003cbutton type=\"button\" aria-label=\"Anterior\" data-dir=\"-1\">\u003csvg viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2.4\" stroke-linecap=\"round\">\u003cpath d=\"M15 18l-6-6 6-6\"/>\u003c/svg>\u003c/button>\u003cbutton type=\"button\" aria-label=\"Próximo\" data-dir=\"1\">\u003csvg viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2.4\" stroke-linecap=\"round\">\u003cpath d=\"M9 6l6 6-6 6\"/>\u003c/svg>\u003c/button>\u003c/div>\n    \u003c/div>\n    \u003cdiv class=\"rail\" id=\"rail\">\n      \u003carticle class=\"card\">\u003cdiv class=\"ph\">\u003cimg src=\"FOTO_SERVICO_1\" alt=\"Higienização de sofá\" loading=\"lazy\">\u003cspan class=\"num\">01\u003c/span>\u003c/div>\u003cdiv class=\"bd\">\u003ch3>Sofás\u003c/h3>\u003cp>Retrátil, de canto, de 2 ou 3 lugares, de tecido ou suede.\u003c/p>\u003ca href=\"https://wa.me/5577988056186?text=Ol%C3%A1!%20Quero%20or%C3%A7amento%20para%20higienizar%20meu%20sof%C3%A1.\" target=\"_blank\" rel=\"noopener\">Orçar sofá \u003csvg viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2.4\" stroke-linecap=\"round\">\u003cpath d=\"M5 12h14M13 6l6 6-6 6\"/>\u003c/svg>\u003c/a>\u003c/div>\u003c/article>\n      \u003carticle class=\"card\">\u003cdiv class=\"ph\">\u003cimg src=\"FOTO_SERVICO_2\" alt=\"Higienização de cadeiras\" loading=\"lazy\">\u003cspan class=\"num\">02\u003c/span>\u003c/div>\u003cdiv class=\"bd\">\u003ch3>Cadeiras\u003c/h3>\u003cp>Cadeiras de jantar, de escritório e poltronas.\u003c/p>\u003ca href=\"https://wa.me/5577988056186?text=Ol%C3%A1!%20Quero%20or%C3%A7amento%20para%20higienizar%20cadeiras.\" target=\"_blank\" rel=\"noopener\">Orçar cadeiras \u003csvg viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2.4\" stroke-linecap=\"round\">\u003cpath d=\"M5 12h14M13 6l6 6-6 6\"/>\u003c/svg>\u003c/a>\u003c/div>\u003c/article>\n      \u003carticle class=\"card\">\u003cdiv class=\"ph\">\u003cimg src=\"FOTO_SERVICO_3\" alt=\"Higienização de cama box e colchão\" loading=\"lazy\">\u003cspan class=\"num\">03\u003c/span>\u003c/div>\u003cdiv class=\"bd\">\u003ch3>Camas box e colchões\u003c/h3>\u003cp>O lugar onde você passa um terço da vida, sem ácaros.\u003c/p>\u003ca href=\"https://wa.me/5577988056186?text=Ol%C3%A1!%20Quero%20or%C3%A7amento%20para%20higienizar%20cama%20box%2Fcolch%C3%A3o.\" target=\"_blank\" rel=\"noopener\">Orçar cama \u003csvg viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2.4\" stroke-linecap=\"round\">\u003cpath d=\"M5 12h14M13 6l6 6-6 6\"/>\u003c/svg>\u003c/a>\u003c/div>\u003c/article>\n      \u003carticle class=\"card\">\u003cdiv class=\"ph\">\u003cimg src=\"FOTO_SERVICO_4\" alt=\"Higienização interna de carro\" loading=\"lazy\">\u003cspan class=\"num\">04\u003c/span>\u003c/div>\u003cdiv class=\"bd\">\u003ch3>Interior de carros\u003c/h3>\u003cp>Bancos, carpete, teto e portas sem cheiro e sem manchas.\u003c/p>\u003ca href=\"https://wa.me/5577988056186?text=Ol%C3%A1!%20Quero%20or%C3%A7amento%20para%20higienizar%20meu%20carro.\" target=\"_blank\" rel=\"noopener\">Orçar carro \u003csvg viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2.4\" stroke-linecap=\"round\">\u003cpath d=\"M5 12h14M13 6l6 6-6 6\"/>\u003c/svg>\u003c/a>\u003c/div>\u003c/article>\n      \u003carticle class=\"card\">\u003cdiv class=\"ph\">\u003cimg src=\"FOTO_SERVICO_5\" alt=\"Higienização de cabine de caminhão\" loading=\"lazy\">\u003cspan class=\"num\">05\u003c/span>\u003c/div>\u003cdiv class=\"bd\">\u003ch3>Cabine de caminhão\u003c/h3>\u003cp>Bancos, cama e forro da cabine. Para quem vive na estrada.\u003c/p>\u003ca href=\"https://wa.me/5577988056186?text=Ol%C3%A1!%20Quero%20or%C3%A7amento%20para%20higienizar%20a%20cabine%20do%20caminh%C3%A3o.\" target=\"_blank\" rel=\"noopener\">Orçar caminhão \u003csvg viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2.4\" stroke-linecap=\"round\">\u003cpath d=\"M5 12h14M13 6l6 6-6 6\"/>\u003c/svg>\u003c/a>\u003c/div>\u003c/article>\n      \u003carticle class=\"card\">\u003cdiv class=\"ph\">\u003cimg src=\"FOTO_SERVICO_6\" alt=\"Higienização de tapete\" loading=\"lazy\">\u003cspan class=\"num\">06\u003c/span>\u003c/div>\u003cdiv class=\"bd\">\u003ch3>Tapetes e carpetes\u003c/h3>\u003cp>Felpudos, persas ou carpete do escritório, limpos por dentro.\u003c/p>\u003ca href=\"https://wa.me/5577988056186?text=Ol%C3%A1!%20Quero%20or%C3%A7amento%20para%20higienizar%20tapete%2Fcarpete.\" target=\"_blank\" rel=\"noopener\">Orçar tapete \u003csvg viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2.4\" stroke-linecap=\"round\">\u003cpath d=\"M5 12h14M13 6l6 6-6 6\"/>\u003c/svg>\u003c/a>\u003c/div>\u003c/article>\n    \u003c/div>\n    \u003cdiv class=\"dots\" id=\"dots\">\u003ci class=\"on\">\u003c/i>\u003ci>\u003c/i>\u003ci>\u003c/i>\u003ci>\u003c/i>\u003ci>\u003c/i>\u003ci>\u003c/i>\u003c/div>\n  \u003c/div>\n\u003c/section>\n\n\u003csection class=\"ba\" id=\"resultado\">\n  \u003cdiv class=\"wrap\">\n    \u003cdiv>\n      \u003cspan class=\"tag rv\">Resultado\u003c/span>\n      \u003ch2 class=\"rv\">Toca e vê a diferença\u003c/h2>\n      \u003cp class=\"lead rv\">O mesmo estofado, antes e depois de uma visita da Limpteck.\u003c/p>\n    \u003c/div>\n    \u003cdiv class=\"rv\">\n      \u003cdiv class=\"ba-box\" id=\"baBox\">\n        \u003cimg src=\"FOTO_ANTES\" alt=\"Sofá antes da higienização\">\n        \u003cimg class=\"after\" src=\"FOTO_DEPOIS\" alt=\"Sofá depois da higienização\">\n        \u003cspan class=\"ba-label\" id=\"baLabel\">Antes\u003c/span>\n      \u003c/div>\n      \u003cdiv class=\"switch\" id=\"sw\">\n        \u003cspan class=\"pill\">\u003c/span>\n        \u003cbutton type=\"button\" class=\"on\" data-v=\"0\">Antes\u003c/button>\n        \u003cbutton type=\"button\" data-v=\"1\">Depois\u003c/button>\n      \u003c/div>\n    \u003c/div>\n  \u003c/div>\n\u003c/section>\n\n\u003csection>\n  \u003cdiv class=\"wrap why\">\n    \u003cdiv>\n      \u003cspan class=\"tag rv\">Por que higienizar\u003c/span>\n      \u003ch2 class=\"rv\">Seu sofá guarda \u003cem>mais do que parece\u003c/em>\u003c/h2>\n      \u003cdiv class=\"why-card rv\">\n        \u003ch3>Calor + umidade = festa de ácaros\u003c/h3>\n        \u003cp>Com o tempo, suor, poeira, restos de comida e pelos de pet vão parar dentro da espuma. Isso vira alimento para ácaros, fungos e bactérias, mesmo quando o tecido parece limpo.\u003c/p>\n      \u003c/div>\n    \u003c/div>\n    \u003cul class=\"list\">\n      \u003cli class=\"rv\">\u003ci>\u003csvg viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"3\" stroke-linecap=\"round\" stroke-linejoin=\"round\">\u003cpath d=\"M5 12l5 5 9-10\"/>\u003c/svg>\u003c/i>\u003cdiv>\u003cb>Tem criança ou pet em casa\u003c/b>\u003cspan>Eles passam o dia no sofá e no tapete.\u003c/span>\u003c/div>\u003c/li>\n      \u003cli class=\"rv\">\u003ci>\u003csvg viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"3\" stroke-linecap=\"round\" stroke-linejoin=\"round\">\u003cpath d=\"M5 12l5 5 9-10\"/>\u003c/svg>\u003c/i>\u003cdiv>\u003cb>Alguém tem rinite ou alergia\u003c/b>\u003cspan>Ácaro é um dos maiores gatilhos.\u003c/span>\u003c/div>\u003c/li>\n      \u003cli class=\"rv\">\u003ci>\u003csvg viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"3\" stroke-linecap=\"round\" stroke-linejoin=\"round\">\u003cpath d=\"M5 12l5 5 9-10\"/>\u003c/svg>\u003c/i>\u003cdiv>\u003cb>O estofado está com cheiro\u003c/b>\u003cspan>Mofo, suor, xixi ou bebida derramada.\u003c/span>\u003c/div>\u003c/li>\n      \u003cli class=\"rv\">\u003ci>\u003csvg viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"3\" stroke-linecap=\"round\" stroke-linejoin=\"round\">\u003cpath d=\"M5 12l5 5 9-10\"/>\u003c/svg>\u003c/i>\u003cdiv>\u003cb>Faz mais de 6 meses\u003c/b>\u003cspan>É o intervalo recomendado para manter tudo saudável.\u003c/span>\u003c/div>\u003c/li>\n    \u003c/ul>\n  \u003c/div>\n\u003c/section>\n\n\u003csection style=\"padding-top:0\">\n  \u003cdiv class=\"wrap\">\n    \u003cspan class=\"tag rv\">Como funciona\u003c/span>\n    \u003ch2 class=\"rv\">Simples, \u003cem>em 3 passos\u003c/em>\u003c/h2>\n    \u003cdiv class=\"steps\">\n      \u003cdiv class=\"step rv\">\u003cdiv class=\"n\">1\u003c/div>\u003cdiv>\u003ch3>Manda uma foto\u003c/h3>\u003cp>Pelo WhatsApp, mostre o estofado e diga onde você está.\u003c/p>\u003c/div>\u003c/div>\n      \u003cdiv class=\"step rv\">\u003cdiv class=\"n\">2\u003c/div>\u003cdiv>\u003ch3>Recebe o orçamento\u003c/h3>\u003cp>Valor na hora, sem compromisso, e já marcamos o dia.\u003c/p>\u003c/div>\u003c/div>\n      \u003cdiv class=\"step rv\">\u003cdiv class=\"n\">3\u003c/div>\u003cdiv>\u003ch3>A gente vai até você\u003c/h3>\u003cp>Higienizamos no local e você recebe dicas para a secagem.\u003c/p>\u003c/div>\u003c/div>\n    \u003c/div>\n  \u003c/div>\n\u003c/section>\n\n\u003csection style=\"padding-top:0\">\n  \u003cdiv class=\"wrap\">\n    \u003cdiv class=\"van rv\">\n      \u003cimg src=\"FOTO_ATENDIMENTO\" alt=\"Van da Limpteck em atendimento em Vitória da Conquista\" loading=\"lazy\">\n      \u003cdiv class=\"van-bd\">\n        \u003cspan class=\"tag\">A gente vai até você\u003c/span>\n        \u003ch3>Atendemos Vitória da Conquista e região\u003c/h3>\n        \u003cp>A van da Limpteck chega no seu endereço com todo o equipamento. Você não precisa levar nada a lugar nenhum.\u003c/p>\n        \u003ca class=\"btn btn-wa\" href=\"https://wa.me/5577988056186?text=Ol%C3%A1!%20Voc%C3%AAs%20atendem%20no%20meu%20bairro%3F\" target=\"_blank\" rel=\"noopener\">\u003csvg viewBox=\"0 0 24 24\" fill=\"currentColor\">\u003cuse href=\"#wa\"/>\u003c/svg>Atende meu bairro?\u003c/a>\n      \u003c/div>\n    \u003c/div>\n  \u003c/div>\n\u003c/section>\n\n\u003csection style=\"padding-top:0\" id=\"duvidas\">\n  \u003cdiv class=\"wrap\">\n    \u003cspan class=\"tag rv\">Dúvidas\u003c/span>\n    \u003ch2 class=\"rv\">Perguntas \u003cem>frequentes\u003c/em>\u003c/h2>\n    \u003cdiv class=\"faq\">\n      \u003cdetails class=\"rv\">\u003csummary>Quanto tempo leva para secar?\u003c/summary>\u003cp>Em geral de 4 a 8 horas, dependendo do tecido, do clima e da ventilação do ambiente.\u003c/p>\u003c/details>\n      \u003cdetails class=\"rv\">\u003csummary>Preciso sair de casa?\u003c/summary>\u003cp>Não. O serviço é feito no seu endereço e você pode continuar sua rotina normalmente.\u003c/p>\u003c/details>\n      \u003cdetails class=\"rv\">\u003csummary>Tira mancha e cheiro de xixi de pet?\u003c/summary>\u003cp>Na maioria dos casos, sim. Manchas muito antigas podem clarear sem sair 100%, e a gente avisa antes pela foto.\u003c/p>\u003c/details>\n      \u003cdetails class=\"rv\">\u003csummary>Como faço o orçamento?\u003c/summary>\u003cp>Mande uma foto pelo WhatsApp com o tipo de estofado e o seu bairro. Respondemos com o valor sem compromisso.\u003c/p>\u003c/details>\n      \u003cdetails class=\"rv\">\u003csummary>Vocês higienizam caminhão?\u003c/summary>\u003cp>Sim. Bancos, cama, laterais e forro da cabine, com o mesmo processo de extração profunda.\u003c/p>\u003c/details>\n      \u003cdetails class=\"rv\">\u003csummary>Com que frequência devo higienizar?\u003c/summary>\u003cp>O ideal é a cada 6 meses, ou a cada 3 meses se tiver pet, criança pequena ou alguém com alergia.\u003c/p>\u003c/details>\n    \u003c/div>\n  \u003c/div>\n\u003c/section>\n\n\u003csection class=\"final\">\n  \u003cdiv class=\"wrap\">\n    \u003cimg class=\"big-ic\" src=\"LOGO_ICONE\" alt=\"\">\n    \u003ch2>Bora deixar tudo limpo?\u003c/h2>\n    \u003cp>Manda uma foto do seu estofado e receba o orçamento agora, sem compromisso.\u003c/p>\n    \u003ca class=\"btn btn-wa\" href=\"https://wa.me/5577988056186?text=Ol%C3%A1%2C%20Limpteck!%20Quero%20um%20or%C3%A7amento.\" target=\"_blank\" rel=\"noopener\">\u003csvg viewBox=\"0 0 24 24\" fill=\"currentColor\">\u003cuse href=\"#wa\"/>\u003c/svg>Chamar no WhatsApp\u003c/a>\n    \u003cdiv class=\"contacts\">\n      \u003ca href=\"https://wa.me/5577988056186\" target=\"_blank\" rel=\"noopener\">\u003ci>\u003csvg viewBox=\"0 0 24 24\" fill=\"currentColor\">\u003cuse href=\"#wa\"/>\u003c/svg>\u003c/i>\u003cspan>\u003csmall>WhatsApp\u003c/small>(77) 98805-6186\u003c/span>\u003c/a>\n      \u003ca href=\"https://www.instagram.com/limp.teck/\" target=\"_blank\" rel=\"noopener\">\u003ci>\u003csvg viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\">\u003crect x=\"3\" y=\"3\" width=\"18\" height=\"18\" rx=\"5\"/>\u003ccircle cx=\"12\" cy=\"12\" r=\"4\"/>\u003ccircle cx=\"17.5\" cy=\"6.5\" r=\"1\" fill=\"currentColor\"/>\u003c/svg>\u003c/i>\u003cspan>\u003csmall>Instagram\u003c/small>@limp.teck\u003c/span>\u003c/a>\n    \u003c/div>\n  \u003c/div>\n\u003c/section>\n\u003c/main>\n\n\u003cfooter>\n  \u003cimg src=\"LOGO_NOME_CLARA\" alt=\"Limpteck\">\n  \u003cdiv>Limpeza Inteligente · Vitória da Conquista, BA\u003c/div>\n  \u003cdiv>© \u003cspan id=\"y\">2026\u003c/span> Limpteck. Todos os direitos reservados.\u003cdiv class=\"nitro-credit\" style=\"margin:22px auto 0;max-width:360px;display:flex;align-items:center;justify-content:space-between;gap:12px;padding:10px 10px 10px 12px;border-radius:16px;background:rgba(128,128,128,.10);border:1px solid rgba(128,128,128,.22);text-align:left;font-family:inherit\">\u003ca href=\"https://www.instagram.com/agencia.nitro/\" target=\"_blank\" rel=\"noopener\" style=\"display:flex;align-items:center;gap:10px;color:inherit;text-decoration:none;min-width:0\">\u003cimg src=\"data:image/png;base64,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\" alt=\"Agência Nitro\" width=\"36\" height=\"36\" style=\"width:36px;height:36px;border-radius:50%;flex:none;margin:0;box-shadow:0 4px 12px rgba(225,0,20,.35)\">\u003cspan style=\"display:block;line-height:1.2\">\u003cspan style=\"display:block;font-size:10.5px;opacity:.7;letter-spacing:.04em\">Site desenvolvido por\u003c/span>\u003cb style=\"display:block;font-size:14px\">Agência Nitro\u003c/b>\u003c/span>\u003c/a>\u003ca href=\"https://www.instagram.com/agencia.nitro/\" target=\"_blank\" rel=\"noopener\" aria-label=\"Instagram da Agência Nitro\" style=\"display:inline-flex;align-items:center;gap:6px;flex:none;padding:9px 12px;border-radius:12px;background:linear-gradient(45deg,#f9a03f,#e1306c 50%,#833ab4);color:#fff;font-size:12.5px;font-weight:700;text-decoration:none;white-space:nowrap\">\u003csvg viewBox=\"0 0 24 24\" width=\"15\" height=\"15\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2.2\" style=\"flex:none\">\u003crect x=\"3\" y=\"3\" width=\"18\" height=\"18\" rx=\"5\"/>\u003ccircle cx=\"12\" cy=\"12\" r=\"4\"/>\u003ccircle cx=\"17.5\" cy=\"6.5\" r=\"1.2\" fill=\"currentColor\" stroke=\"none\"/>\u003c/svg>@agencia.nitro\u003c/a>\u003c/div>\u003c/div>\n\u003c/footer>\n\n\u003ca class=\"wa-float\" href=\"https://wa.me/5577988056186?text=Ol%C3%A1%2C%20Limpteck!%20Quero%20um%20or%C3%A7amento.\" target=\"_blank\" rel=\"noopener\" aria-label=\"Falar no WhatsApp\">\u003csvg viewBox=\"0 0 24 24\" fill=\"currentColor\">\u003cuse href=\"#wa\"/>\u003c/svg>\u003c/a>\n\n\u003csvg width=\"0\" height=\"0\" style=\"position:absolute\">\u003csymbol id=\"wa\" viewBox=\"0 0 24 24\">\u003cpath d=\"M17.5 14.4c-.3-.1-1.8-.9-2-1-.3-.1-.5-.1-.7.1-.2.3-.8 1-.9 1.2-.2.2-.3.2-.6.1-.3-.1-1.3-.5-2.4-1.5-.9-.8-1.5-1.8-1.7-2.1-.2-.3 0-.5.1-.6l.4-.5c.2-.2.2-.3.3-.5.1-.2 0-.4 0-.5l-.9-2.2c-.2-.6-.5-.5-.7-.5h-.6c-.2 0-.5.1-.8.4-.3.3-1 1-1 2.5s1.1 2.9 1.2 3.1c.1.2 2.1 3.2 5.1 4.5.7.3 1.3.5 1.7.6.7.2 1.4.2 1.9.1.6-.1 1.8-.7 2-1.4.2-.7.2-1.3.2-1.4-.1-.2-.3-.3-.6-.4zM12 21.8c-1.8 0-3.5-.5-5-1.4l-.4-.2-3.7 1 1-3.6-.2-.4C2.7 15.6 2.2 13.8 2.2 12 2.2 6.6 6.6 2.2 12 2.2c2.6 0 5.1 1 6.9 2.9 1.8 1.8 2.9 4.3 2.9 6.9 0 5.4-4.4 9.8-9.8 9.8zm8.4-18.2C18.2 1.3 15.2 0 12 0 5.4 0 .1 5.3.1 11.9c0 2.1.6 4.2 1.6 6L0 24l6.3-1.6c1.8 1 3.8 1.5 5.7 1.5 6.6 0 11.9-5.3 11.9-11.9 0-3.2-1.2-6.2-3.5-8.4z\"/>\u003c/symbol>\u003c/svg>\n\n\u003cscript>\ndocument.getElementById('y').textContent=new Date().getFullYear();\n// entrada\nvar io=new IntersectionObserver(function(es){es.forEach(function(e){if(e.isIntersecting){e.target.classList.add('in');io.unobserve(e.target)}})},{threshold:.12});\ndocument.querySelectorAll('.rv').forEach(function(el){io.observe(el)});\n// carrossel\nvar rail=document.getElementById('rail'),dots=[].slice.call(document.querySelectorAll('#dots i'));\nrail.addEventListener('scroll',function(){var c=rail.children[0],w=c.offsetWidth+14,i=Math.round(rail.scrollLeft/w);dots.forEach(function(d,k){d.classList.toggle('on',k===Math.min(i,dots.length-1))})},{passive:true});\ndocument.querySelectorAll('.arrows button').forEach(function(b){b.onclick=function(){rail.scrollBy({left:(rail.children[0].offsetWidth+14)*b.dataset.dir,behavior:'smooth'})}});\n// antes/depois\nvar sw=document.getElementById('sw'),box=document.getElementById('baBox'),lab=document.getElementById('baLabel'),btns=sw.querySelectorAll('button'),auto;\nfunction setBA(v){box.classList.toggle('show-after',v);sw.classList.toggle('after',v);btns[0].classList.toggle('on',!v);btns[1].classList.toggle('on',v);lab.innerHTML=v?'\u003cb>Depois\u003c/b>':'Antes'}\nbtns.forEach(function(b){b.onclick=function(){clearInterval(auto);setBA(b.dataset.v==='1')}});\nbox.onclick=function(){clearInterval(auto);setBA(!box.classList.contains('show-after'))};\nnew IntersectionObserver(function(es,o){if(es[0].isIntersecting){var s=false;auto=setInterval(function(){s=!s;setBA(s)},2200);o.disconnect()}},{threshold:.5}).observe(box);\n\u003c/script>\n\u003c/body>\n\u003c/html>";
+function genericPrompt() {
+  var s = DEFAULT_PROMPT, a = s.indexOf("Nome: {{nome}}"), k = "Site atual (se houver): {{site_atual}}", b = s.indexOf(k);
+  if (a >= 0 && b > a) s = s.slice(0, a) + "Os dados da empresa (nome, nicho, telefone, link do WhatsApp, endereço, cidade, horário, avaliações etc.) estão na MENSAGEM que enviei junto com este arquivo. Use todos eles." + s.slice(b + k.length);
+  return s.split("{{link_whatsapp}}").join("o Link do WhatsApp que veio na mensagem").split("{{nome}}").join("o nome da empresa");
+}var NICHES = {
+  estofado: {
+    icon: "🛋️", short: "Estofados", name: "Limpeza e higienização de estofados",
+    services: "Higienização de sofá, colchão, banco de carro, cadeiras e poltronas, tapetes e carpetes, impermeabilização de estofados",
+    wa_site: "Oi! O site da {{nome}} ficou pronto 😊 Posso te mostrar?",
+    wa_follow: "Oi! Conseguiu ver minha mensagem? O site da {{nome}} está pronto, quero te mostrar."
+  },
+  solar: {
+    icon: "☀️", short: "Energia solar", name: "Energia solar",
+    services: "Projeto e instalação de energia solar residencial, comercial e rural, homologação na concessionária, manutenção e limpeza de placas, financiamento",
+    wa_site: "Oi! O site da {{nome}} ficou pronto 😊 Posso te mostrar?",
+    wa_follow: "Oi! Conseguiu ver minha mensagem? O site da {{nome}} está pronto, quero te mostrar."
+  }
+};
+var GREETS = [
+  "{{saud}}! Tudo bem? Aqui é da {{nome}}?",
+  "Oi, {{saud}}! Falo com a {{nome}}?",
+  "{{saud}}! Esse número é da {{nome}}?",
+  "Olá, {{saud}}! Por gentileza, aqui é a {{nome}}?",
+  "Oi! {{saud}} 😊 É da {{nome}}?",
+  "{{saud}}, tudo certo? Esse WhatsApp é da {{nome}}?",
+  "Olá! {{saud}}. Estou falando com a {{nome}}?",
+  "Oi, {{saud}}! Aqui é o contato da {{nome}}?",
+  "{{saud}}! Tudo bom? É da {{nome}}, né?",
+  "Opa, {{saud}}! Aqui é a {{nome}}?"
+];
+var REGREETS = [
+  "Oi, {{saud}}! Passando de novo por aqui 😊 É da {{nome}}?",
+  "{{saud}}! Conseguiu ver minha mensagem? Aqui é da {{nome}}?",
+  "Oi! Só confirmando: esse número é da {{nome}}?"
+];
+function saud() { var h = new Date().getHours(); return h < 12 ? "Bom dia" : h < 18 ? "Boa tarde" : "Boa noite"; }
+function hashOf(s) { var h = 0; s = String(s); for (var i = 0; i < s.length; i++) h = (h * 31 + s.charCodeAt(i)) | 0; return Math.abs(h); }
+function greetList(k, def) { var t = (ST.settings[ST.niche + "_" + k] || "").split("\n").map(function (x) { return x.trim(); }).filter(Boolean); return t.length ? t : def; }
+function cleanName(n) {
+  n = String(n || "").replace(/\s*[-–|].*$/, "").replace(/\b(ltda|me|epp|eireli|s\/?a|mei|cnpj)\b\.?/gi, "").replace(/[,;]\s*$/, "").replace(/\s{2,}/g, " ").trim();
+  if (n && n === n.toUpperCase() && /[A-ZÁÂÃÀÉÊÍÓÔÕÚÇ]{4}/.test(n)) n = n.toLowerCase().replace(/(^|\s|')([a-zà-ÿ])/g, function (m, a, b) { return a + b.toUpperCase(); }).replace(/\b(Da|De|Do|Das|Dos|E)\b/g, function (x) { return x.toLowerCase(); });
+  var p = n.split(" ");
+  if (p.length > 4) n = p.slice(0, 4).join(" ");
+  return n || "sua empresa";
+}
+function dn(c) { return cleanName(c.name); }
+function greeting(c, again) {
+  var L = again ? greetList("regreets", REGREETS) : greetList("greets", GREETS);
+  var t = L[(hashOf(c.id) + (c.tries || 0)) % L.length];
+  var g = saud(); t = t.replace(/^\{\{saud\}\}/, g).split("{{saud}}").join(g.toLowerCase());
+  return fill(t, { nome: cleanName(c.name), link_site: c.link || "", cidade: c.city || "" }).out;
+}
+function ago(t) { if (!t) return ""; var m = Math.round((Date.now() / 1000 - t) / 60); if (m < 60) return "há " + Math.max(m, 1) + " min"; var h = Math.round(m / 60); if (h < 24) return "há " + h + " h"; var d = Math.round(h / 24); return "há " + d + (d === 1 ? " dia" : " dias"); }
+function N() { return NICHES[ST.niche] || NICHES.estofado; }
+function mine(c) { return (c.nicho || ST.niche) === ST.niche; }
+function byId(id) { for (var i = 0; i < ST.companies.length; i++) if (ST.companies[i].id === id) return ST.companies[i]; return null; }
+function vars(c) {
+  var w = waInfo(c);
+  return { nome: cleanName(c.name), link_site: c.link || "", cidade: c.city || "" };
+}
+function msgFor(c, kind) {
+  var t = (ST.settings[ST.niche + "_" + kind] || "").trim() || N()[kind];
+  var out = fill(t, vars(c)).out;
+  return out.replace(/\n{3,}/g, "\n\n").trim();
+}
+function waUrl(c, kind) { var w = waInfo(c); if (!w.ok) return ""; var t = kind === "greet" ? greeting(c) : kind === "regreet" ? greeting(c, true) : msgFor(c, kind); return "https://wa.me/" + w.num + "?text=" + encodeURIComponent(t); }
+
+// texto curto que vai para o AI Studio (o prompt grande vai no arquivo anexado)
+function aiText(c) {
+  var w = waInfo(c), n = N(), L = [];
+  var add = function (k, v) { v = String(v == null ? "" : v).trim(); if (v) L.push(k + ": " + v); };
+  add("Nome", c.name);
+  add("Nicho", n.name);
+  add("Tipo de negócio", c.category);
+  add("Serviços (use estes se a empresa não tiver lista própria)", n.services);
+  add("Descrição", c.description);
+  add("Telefone", c.phone ? fmtPhone(c.phone) : "");
+  add("WhatsApp", w.ok ? fmtPhone(w.num) : "");
+  add("Link do WhatsApp", w.ok ? "https://wa.me/" + w.num : "");
+  add("Endereço", c.address);
+  add("Cidade", c.city);
+  add("Estado", c.state);
+  add("Horário de funcionamento", c.hours);
+  add("Nota no Google", c.rating);
+  add("Quantidade de avaliações", c.reviews_count);
+  add("Avaliações de clientes (texto real)", c.reviews);
+  add("Site atual", c.site_current);
+  return "Crie o site da empresa abaixo seguindo EXATAMENTE as instruções e o código do arquivo anexado (prompt_site_limpteck.txt). Também anexei a logo e/ou a foto da pessoa (siga o item 5 do arquivo). Gere TODAS as fotos com a sua ferramenta de geração de imagem (nada de SVG no lugar de foto). Entregue o index.html e a pasta img/.\n\nDADOS DA EMPRESA\n" + L.join("\n");
+}
+var AI_URL = "https://aistudio.google.com/apps";
+var ST = { companies: [], settings: {}, niche: null, tab: "prospect", skip: {}, ready: false };
+var ICON = {
+  dots: '<svg viewBox="0 0 24 24" fill="currentColor"><circle cx="5" cy="12" r="2"/><circle cx="12" cy="12" r="2"/><circle cx="19" cy="12" r="2"/></svg>',
+  link: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M10 13a5 5 0 0 0 7.5.5l3-3a5 5 0 0 0-7-7l-1.7 1.7"/><path d="M14 11a5 5 0 0 0-7.5-.5l-3 3a5 5 0 0 0 7 7l1.7-1.7"/></svg>',
+  clip: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="8" y="2" width="8" height="4" rx="1"/><path d="M16 4h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2"/></svg>',
+  x: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><path d="M18 6 6 18M6 6l12 12"/></svg>'
+};
+function toast(t, ms, undoFn) {
+  var el = $("#toast");
+  el.innerHTML = "<span>" + esc(t) + "</span>" + (undoFn ? '<button class="tu">Desfazer</button>' : "");
+  if (undoFn) $(".tu", el).onclick = function () { el.hidden = true; undoFn(); };
+  el.hidden = false; clearTimeout(toast.t); toast.t = setTimeout(function () { el.hidden = true; }, ms || (undoFn ? 6000 : 3200));
+}
+var SNAPF = ["stage", "called", "sent", "wanted", "value", "paid", "tries", "contacted", "snooze", "link", "made"];
+function snap(c) { var o = { id: c.id }; SNAPF.forEach(function (k) { o[k] = c[k]; }); return o; }
+function undoer(before, msg) {
+  return function () { var c = byId(before.id); if (!c) return; SNAPF.forEach(function (k) { c[k] = before[k]; }); touch(c); render(); toast(msg || "Desfeito."); };
+}
+function now() { return Math.floor(Date.now() / 1000); }
+function isToday(t) { if (!t) return false; var d = new Date(t * 1000), n = new Date(); return d.toDateString() === n.toDateString(); }
+function dateBR(t) { return t ? new Date(t * 1000).toLocaleDateString("pt-BR", { day: "2-digit", month: "short" }) : ""; }
+function meta(c) {
+  var p = [];
+  if (c.city) p.push(c.city + (c.state ? "-" + c.state : ""));
+  var ph = c.phone || c.wa; if (ph) p.push(fmtPhone(ph));
+  if (c.rating) p.push("nota " + c.rating + (c.reviews_count ? " (" + c.reviews_count + ")" : ""));
+  return p.join(" · ");
+}
+function telNum(c) { var d = localNum(c.phone || c.wa || ""); return d.length >= 10 ? "+55" + d : ""; }
+function mapsUrl(c) { var q = [c.address, c.city, c.state].filter(Boolean).join(", ") || c.name; return "https://www.google.com/maps/search/?api=1&query=" + encodeURIComponent(q); }
+function move(c, stage) { c.stage = stage; if (stage !== "pagos") c.value = null; touch(c); }
+function normLink(v) { v = (v || "").trim(); if (v && !/^https?:\/\//i.test(v)) v = "https://" + v; return v; }
+function okLink(v) { return /^https?:\/\/[^\s.\/]+\.[^\s]+/i.test(v); }
+
+// ---------- listas ----------
+function L() {
+  var o = { leads: [], queue: [], noWa: 0, replies: [], snoozed: [], making: [], sent: [], sales: [], today: 0, intToday: 0, saleToday: 0, saleTodayV: 0, total: 0, chamadas: 0, ints: 0 };
+  var t = now();
+  ST.companies.forEach(function (c) {
+    if (c.stage === "pagos") { o.total += +c.value || 0; o.sales.push(c); if (isToday(c.paid || c.updated)) { o.saleToday++; o.saleTodayV += +c.value || 0; } }
+    if (!mine(c)) return;
+    if (c.tries) o.chamadas++;
+    if (c.wanted || c.stage === "feito" || c.stage === "pagamento" || c.stage === "pagos") o.ints++;
+    if (isToday(c.contacted)) o.today++;
+    if (isToday(c.wanted)) o.intToday++;
+    if (c.stage === "novos") { o.leads.push(c); if (waInfo(c).ok) o.queue.push(c); else o.noWa++; }
+    else if (c.stage === "contato") { if (c.snooze && c.snooze > t) o.snoozed.push(c); else o.replies.push(c); }
+    else if (c.stage === "feito") o.making.push(c);
+    else if (c.stage === "pagamento") o.sent.push(c);
+  });
+  var score = function (c) { return (c.site_current ? -500 : 0) + Math.min(+c.reviews_count || 0, 300) + (parseFloat(String(c.rating).replace(",", ".")) || 0) * 20; };
+  o.queue.sort(function (a, b) { return score(b) - score(a); });
+  var fresh = o.queue.filter(function (c) { return !ST.skip[c.id]; });
+  if (!fresh.length && o.queue.length) { ST.skip = {}; fresh = o.queue; }
+  o.queue = fresh.concat(o.queue.filter(function (c) { return ST.skip[c.id]; }));
+  o.replies.sort(function (a, b) { return (a.contacted || 0) - (b.contacted || 0); });
+  o.making.sort(function (a, b) { return (b.updated || 0) - (a.updated || 0); });
+  o.sent.sort(function (a, b) { return (b.updated || 0) - (a.updated || 0); });
+  o.sales.sort(function (a, b) { return (b.paid || b.updated || 0) - (a.paid || a.updated || 0); });
+  return o;
+}
+
+// ---------- início ----------
+function show(id) { ["boot", "pick", "app"].forEach(function (x) { $("#" + x).hidden = x !== id; }); }
+function boot(t) { $("#boot").innerHTML = "<p>" + esc(t) + "</p>"; show("boot"); }
+function saveSettings(p) { Object.keys(p).forEach(function (k) { ST.settings[k] = p[k]; }); BASE.set(p, { merge: true }).catch(dbErr); }
+function busyUI() { var a = document.activeElement; return !$("#sheet").hidden || (a && (a.tagName === "INPUT" || a.tagName === "TEXTAREA")); }
+(async function () {
+  var timer = setTimeout(function () { if (!ST.ready) boot("Não foi possível carregar agora. Feche e abra de novo."); }, 12000);
+  try {
+    var user = await claude.use("user"); DB = await claude.use("db");
+    var uid = user ? await user.id() : null;
+    if (!DB || !uid) { clearTimeout(timer); boot("Abra esta página no Claude com a sua conta."); return; }
+    BASE = DB.doc("data/users/" + uid + "/main");
+    var got = { c: false, m: false };
+    var ready = function () {
+      if (ST.ready || !got.c || !got.m) return;
+      ST.ready = true; clearTimeout(timer);
+      if (!ST.niche) { show("pick"); return; }
+      var o = L(); ST.tab = o.making.length ? "sites" : o.replies.length && !o.queue.length ? "replies" : "prospect";
+      show("app"); render();
+    };
+    BASE.collection("chunks").onSnapshot(function (snap) {
+      var seen = {};
+      snap.docs.forEach(function (d) { seen[d.id] = 1; if (!PENDING[d.id]) CHUNKS[d.id] = { items: JSON.parse(JSON.stringify(d.data().items || [])) }; });
+      Object.keys(CHUNKS).forEach(function (id) { if (!seen[id] && !PENDING[id]) delete CHUNKS[id]; });
+      rebuild();
+      if (!snap.metadata.fromCache) got.c = true;
+      ready();
+      if (ST.ready && ST.niche && !busyUI()) render();
+    }, function () { boot("Não foi possível carregar seus dados. Feche e abra de novo."); });
+    BASE.onSnapshot(function (d) {
+      var x = d.exists ? d.data() : {};
+      ST.settings = JSON.parse(JSON.stringify(x || {}));
+      if (!ST.niche && NICHES[x.niche]) ST.niche = x.niche;
+      if (!d.metadata.fromCache) got.m = true;
+      ready();
+    }, function () {});
+  } catch (e) { clearTimeout(timer); boot("Não foi possível carregar agora."); }
+})();
+
+// ---------- nicho ----------
+$("#pick").addEventListener("click", function (e) {
+  var b = e.target.closest("[data-n]"); if (!b) return;
+  ST.niche = b.dataset.n; saveSettings({ niche: ST.niche }); ST.skip = {}; ST.tab = "prospect";
+  show("app"); render(); window.scrollTo(0, 0);
+});
+$("#nicheBtn").onclick = function () { $$(".niche").forEach(function (b) { b.classList.toggle("on", b.dataset.n === ST.niche); }); show("pick"); };
+
+// ---------- render ----------
+function render() {
+  var o = L(), n = N();
+  if (ST.tab !== "replies") ST.q = "";
+  $("#nicheBtn").textContent = n.short;
+  var bd = { prospect: o.queue.length, replies: o.replies.length, sites: o.making.length + o.sent.length };
+  $$("#nav button").forEach(function (b) {
+    b.classList.toggle("on", b.dataset.tab === ST.tab);
+    var s = $(".bd", b); if (!s) return;
+    var v = bd[b.dataset.tab]; s.hidden = !v; s.textContent = v > 99 ? "99+" : v;
+  });
+  var v = $("#view");
+  if (ST.tab === "prospect") v.innerHTML = vProspect(o);
+  else if (ST.tab === "replies") v.innerHTML = vReplies(o);
+  else if (ST.tab === "sites") v.innerHTML = vSites(o);
+  else v.innerHTML = vSales(o);
+}
+document.addEventListener("input", function (e) { if (e.target.id === "q") { ST.q = e.target.value; var el = $("#view"), sc = el.querySelector(".list"); if (sc) { var o = L(); el.innerHTML = vReplies(o); var i = $("#q"); if (i) { i.focus(); i.setSelectionRange(i.value.length, i.value.length); } } } });
+$("#nav").onclick = function (e) { var b = e.target.closest("[data-tab]"); if (!b) return; ST.tab = b.dataset.tab; render(); window.scrollTo(0, 0); };
+
+function head() { return ""; }
+function waBtn(c, kind, label, cls) { return '<a class="btn wa ' + (cls || "") + '" data-a="wa" data-k="' + kind + '" data-id="' + esc(c.id) + '" href="' + esc(waUrl(c, kind)) + '" target="_blank" rel="noopener">' + WA_ICON + (label || "") + "</a>"; }
+function dots(c) { return ""; }
+function city(c) { return [c.city, c.state].filter(Boolean).join("-"); }
+var AVC = ["#00a884", "#53bdeb", "#e5a50a", "#f15c6d", "#7f66ff", "#02a698", "#ff8f2b", "#1fa855", "#d65db1", "#5e8de6"];
+function av(c, size) {
+  var p = dn(c).split(/\s+/).filter(function (x) { return /\w/.test(x); });
+  var ini = ((p[0] || "?").charAt(0) + (p[1] ? p[1].charAt(0) : "")).toUpperCase();
+  return '<span class="av" style="background:' + AVC[hashOf(c.id) % AVC.length] + (size ? ";width:" + size + "px;height:" + size + "px;font-size:" + Math.round(size * .36) + "px" : "") + '">' + esc(ini) + "</span>";
+}
+function hhmm(t) {
+  if (!t) return "";
+  var d = new Date(t * 1000), n = new Date(), y = new Date(); y.setDate(n.getDate() - 1);
+  if (d.toDateString() === n.toDateString()) return d.toLocaleTimeString("pt-BR", { hour: "2-digit", minute: "2-digit" });
+  if (d.toDateString() === y.toDateString()) return "Ontem";
+  return d.toLocaleDateString("pt-BR", { day: "2-digit", month: "2-digit" });
+}
+function chatRow(c, l2, tm, tmCls, badge) {
+  return '<button class="chat" data-a="open" data-id="' + esc(c.id) + '">' + av(c) + '<span class="cb"><span class="l1"><b>' + esc(dn(c)) + '</b><span class="tm ' + (tmCls || "") + '">' + tm + '</span></span><span class="l2">' + l2 + (badge ? '<i class="bdg">' + badge + "</i>" : "") + "</span></span></button>";
+}
+function sec(t, cls) { return '<div class="sec ' + (cls || "") + '">' + t + "</div>"; }
+
+function importBox() {
+  return '<textarea class="paste" id="paste" placeholder="Cole a lista de empresas (planilha, Google Maps ou uma por linha)"></textarea><div class="err" id="ierr"></div>' +
+    '<div class="row2"><button class="btn" data-a="clip">Colar</button><button class="btn go" data-a="import">Adicionar</button></div>';
+}
+function dayBar(o) {
+  var goal = +ST.settings.goal || 30;
+  return '<button class="day" data-a="goal">Hoje: <b class="num' + (o.today >= goal ? " hit" : "") + '">' + o.today + "/" + goal + "</b> chamadas · <b>" + o.intToday + "</b> " + (o.intToday === 1 ? "interessado" : "interessados") + " · <b>" + o.saleToday + "</b> " + (o.saleToday === 1 ? "venda" : "vendas") + "</button>";
+}
+function vProspect(o) {
+  if (!o.leads.length) return '<div class="empty"><h3>Lista vazia</h3><p>Cole as empresas para começar. Repetidas são ignoradas.</p>' + importBox() + "</div>";
+  var h = dayBar(o);
+  if (!o.queue.length) return h + '<div class="empty"><h3>Fila zerada</h3><p>' + (o.noWa ? o.noWa + " empresa(s) sem WhatsApp ficaram de fora." : "Adicione mais empresas.") + '</p><button class="btn go" data-a="add">Adicionar empresas</button></div>';
+  var c = o.queue[0], nx = o.queue[1];
+  var hr = new Date().toLocaleTimeString("pt-BR", { hour: "2-digit", minute: "2-digit" });
+  h += '<div class="fhead">' + av(c, 42) + '<div class="nm"><b>' + esc(dn(c)) + '</b><span class="meta">' + esc(meta(c)) + "</span></div></div>" +
+    '<div class="fchat"><div class="bub">' + esc(greeting(c)) + "<small>" + hr + "</small></div></div>" +
+    '<div class="fact">' + waBtn(c, "greet", " Enviar no WhatsApp", "big") +
+    '<div class="links"><button class="txt" data-a="skip" data-id="' + esc(c.id) + '">Pular</button><button class="txt" data-a="nowa" data-id="' + esc(c.id) + '">Número errado</button><button class="txt" data-a="add">+ Empresas</button></div></div>';
+  h += '<div class="next">' + o.queue.length + " na fila" + (nx ? " · próxima: " + esc(dn(nx)) : "") + "</div>";
+  return h;
+}
+function vReplies(o) {
+  var h = "";
+  if (!o.replies.length) return '<div class="empty"><h3>Ninguém esperando resposta</h3><p>Quem você chamar na Fila aparece aqui.' + (o.snoozed.length ? "<br>" + o.snoozed.length + " agendado(s) para depois." : "") + "</p></div>";
+  if (o.replies.length > 8) h += '<input class="srch" id="q" type="search" placeholder="Pesquisar" value="' + esc(ST.q || "") + '">';
+  var q = normKey(ST.q || ""), list = o.replies, t = now();
+  if (q) list = list.filter(function (c) { return normKey(c.name + " " + c.city).indexOf(q) >= 0; });
+  var old = list.filter(function (c) { return t - (c.contacted || c.updated || t) >= 86400; });
+  var rec = list.filter(function (c) { return t - (c.contacted || c.updated || t) < 86400; });
+  var row = function (c) {
+    var tries = c.tries || 1, late = t - (c.contacted || c.updated || t) >= 86400;
+    var l2 = tries >= 3 ? '<span class="r">3 tentativas sem resposta</span>' : late ? '<span class="r">Sem resposta ' + ago(c.contacted || c.updated) + "</span>" : "<span>✓✓ " + esc(city(c) || "Aguardando resposta") + "</span>";
+    return chatRow(c, l2, hhmm(c.contacted || c.updated), late ? "r" : "", tries > 1 ? tries + "x" : "");
+  };
+  h += '<div class="list">';
+  if (rec.length) h += sec("Recentes · " + rec.length) + rec.map(row).join("");
+  if (old.length) h += sec("Sem resposta há mais de 1 dia · " + old.length, "r") + old.map(row).join("");
+  if (o.snoozed.length) h += '<div class="next" style="padding-top:12px">' + o.snoozed.length + " agendado(s) para depois</div>";
+  return h + "</div>";
+}
+function vSites(o) {
+  var h = "", t = now();
+  if (!ST.settings.dl) h += '<div class="note">Baixe o arquivo do prompt uma vez.<button class="btn" data-a="dl">Baixar</button></div>';
+  if (!o.making.length && !o.sent.length) return h + '<div class="empty"><h3>Nenhum interessado</h3><p>Quando a empresa topar, abra ela em Chamados e toque em Quer site.</p></div>';
+  h += '<div class="list">';
+  if (o.sent.length) h += sec("Site pronto · " + o.sent.length) + o.sent.map(function (c) {
+    return chatRow(c, '<span class="g">Site pronto · avisar e fechar</span>', hhmm(c.sent || c.updated), "g", "✓");
+  }).join("");
+  if (o.making.length) h += sec("Fazer site · " + o.making.length, "a") + o.making.map(function (c) {
+    var stale = t - (c.wanted || c.updated || t) > 172800;
+    return chatRow(c, stale ? '<span class="r">Parado ' + ago(c.wanted || c.updated) + "</span>" : '<span class="a">' + (c.made ? "Texto copiado · falta o link" : "Fazer o site") + "</span>", hhmm(c.wanted || c.updated), stale ? "r" : "");
+  }).join("");
+  return h + "</div>";
+}
+function vSales(o) {
+  var month = 0, m = new Date().getMonth(), y = new Date().getFullYear();
+  o.sales.forEach(function (c) { var d = new Date((c.paid || c.updated) * 1000); if (d.getMonth() === m && d.getFullYear() === y) month += +c.value || 0; });
+  var h = '<table class="tbl num"><tr><td>Total vendido</td><td style="color:var(--g)">' + brl(o.total) + "</td></tr><tr><td>Este mês</td><td>" + brl(month) + "</td></tr><tr><td>Vendas</td><td>" + o.sales.length + "</td></tr><tr><td>Ticket médio</td><td>" + brl(o.sales.length ? o.total / o.sales.length : 0) + "</td></tr>";
+  if (o.chamadas) h += "<tr><td>Chamada → interesse</td><td>" + Math.round(o.ints / o.chamadas * 100) + "%</td></tr><tr><td>Interesse → venda</td><td>" + (o.ints ? Math.round(o.sales.length / o.ints * 100) : 0) + "%</td></tr>";
+  h += "</table>";
+  if (!o.sales.length) return h + '<div class="empty"><p>Nenhuma venda ainda.</p></div>';
+  return h + sec("Vendas · " + o.sales.length) + o.sales.map(function (c) {
+    return chatRow(c, "<span>" + esc([city(c), dateBR(c.paid || c.updated)].filter(Boolean).join(" · ")) + "</span>", '<span class="money">' + brl(c.value) + "</span>", "");
+  }).join("");
+}
+
+// ----- perfil da empresa (toque na linha) -----
+function openCompany(c) {
+  var w = waInfo(c), id = esc(c.id);
+  var h = '<div class="grab"></div><div class="ph">' + av(c, 52) + '<div><b>' + esc(dn(c)) + '</b><span class="meta">' + esc(meta(c)) + "</span></div></div>";
+  var A = function (cls, icon, label, sub, attrs) { return '<a class="act ' + cls + '" ' + attrs + "><i>" + icon + "</i><span>" + label + (sub ? "<small>" + sub + "</small>" : "") + "</span></a>"; };
+  var B = function (cls, icon, label, sub, attrs) { return '<button class="act ' + cls + '" ' + attrs + "><i>" + icon + "</i><span>" + label + (sub ? "<small>" + sub + "</small>" : "") + "</span></button>"; };
+  var chat = w.ok ? A("", "💬", "Abrir conversa", "", 'href="https://wa.me/' + w.num + '" target="_blank" rel="noopener"') : "";
+  if (c.stage === "contato") {
+    h += A("main", "✓", "Quer site", "Copia o texto do site e abre o AI Studio", 'data-a="want" data-id="' + id + '" href="' + AI_URL + '" target="_blank" rel="noopener"');
+    if (w.ok && (c.tries || 1) < 3) h += A("", "↻", "Insistir", "Manda outra saudação", 'data-a="wa" data-k="regreet" data-id="' + id + '" href="' + esc(waUrl(c, "regreet")) + '" target="_blank" rel="noopener"');
+    h += chat + B("", "⏰", "Chamar depois", "Some daqui e volta na data", 'data-a="laterMenu" data-id="' + id + '"');
+    h += B("red", "✕", "Não quis", "Arquiva a empresa", 'data-a="no" data-id="' + id + '"');
+  } else if (c.stage === "feito") {
+    h += '<div class="stepbox"><div class="lb">1. Gerar o site</div><a class="btn go big" data-a="ai" data-id="' + id + '" href="' + AI_URL + '" target="_blank" rel="noopener">' + (c.made ? "Copiar texto de novo e abrir AI Studio" : "Copiar texto e abrir AI Studio") + "</a></div>";
+    h += '<div class="stepbox"><div class="lb">2. Colar o link do site publicado</div><div class="inrow"><input class="inp" data-link="' + id + '" type="url" inputmode="url" enterkeyhint="done" placeholder="https://..." value="' + esc(c.link) + '"><button class="btn" data-a="paste" data-id="' + id + '">Colar</button></div></div>';
+    h += chat;
+  } else if (c.stage === "pagamento") {
+    if (w.ok) h += A("main", "💬", "Avisar que o site ficou pronto", "Abre o WhatsApp com a mensagem", 'data-a="wa" data-k="wa_site" data-id="' + id + '" href="' + esc(waUrl(c, "wa_site")) + '" target="_blank" rel="noopener"');
+    h += B("main", "$", "Fechou", "Registrar o valor da venda", 'data-a="paid" data-id="' + id + '"');
+    if (/^https?:\/\//i.test(c.link || "")) h += A("", "↗", "Abrir o site", esc(c.link.replace(/^https?:\/\//, "")), 'href="' + esc(c.link) + '" target="_blank" rel="noopener"');
+    h += chat;
+  } else if (c.stage === "pagos") {
+    h += '<div class="stepbox"><div class="lb">Venda</div><b class="money" style="font-size:20px">' + brl(c.value) + '</b> <span class="meta" style="display:inline">· ' + esc(dateBR(c.paid || c.updated)) + "</span></div>";
+    if (/^https?:\/\//i.test(c.link || "")) h += A("", "↗", "Abrir o site", "", 'href="' + esc(c.link) + '" target="_blank" rel="noopener"');
+    h += chat;
+  }
+  h += B("", "⋯", "Mais opções", "", 'data-a="more" data-id="' + id + '"');
+  $("#toast").hidden = true; $("#sh").innerHTML = h; $("#sheet").hidden = false;
+}
+
+// ---------- ações ----------
+function importText(text) {
+  var items = parseList(text);
+  if (!items.length) return null;
+  var keys = {}; ST.companies.forEach(function (c) { keys[c.k || keyOf(c)] = 1; });
+  var t = now(), add = [], skip = 0;
+  items.forEach(function (raw, i) {
+    var c = {};
+    Object.keys(FIELDS_MAX).forEach(function (f) { c[f] = String(raw[f] || "").trim().slice(0, FIELDS_MAX[f]); });
+    if (!c.name) c.name = "Empresa sem nome";
+    c.k = keyOf(c);
+    if (keys[c.k]) { skip++; return; }
+    keys[c.k] = 1;
+    c.id = rid("e"); c.nicho = ST.niche; c.stage = "novos"; c.link = ""; c.value = null; c.created = t * 1000 + (items.length - i); c.updated = t;
+    add.push(c);
+  });
+  if (add.length) addCompanies(add);
+  return { add: add.length, skip: skip };
+}
+function doImport(scope) {
+  var ta = $("#paste", scope), r = importText(ta.value);
+  if (!r) { $("#ierr", scope).textContent = "Não encontrei empresas no texto."; return false; }
+  toast(r.add + " empresa(s) adicionada(s)" + (r.skip ? " · " + r.skip + " repetida(s)" : ""));
+  ST.tab = "prospect"; return true;
+}
+function readClip(cb) {
+  if (navigator.clipboard && navigator.clipboard.readText) navigator.clipboard.readText().then(cb, function () { cb(null); });
+  else cb(null);
+}
+document.addEventListener("click", function (e) {
+  var g = e.target.closest("[data-go]"); if (g) { ST.tab = g.dataset.go; render(); window.scrollTo(0, 0); return; }
+  var b = e.target.closest("[data-a]"); if (!b) return;
+  var a = b.dataset.a, c = b.dataset.id ? byId(b.dataset.id) : null, scope = b.closest(".sh") || b.closest(".card") || document, inSh = !!b.closest(".sh");
+  if (a === "import") { if (doImport(scope)) { if (!$("#sheet").hidden) closeSheet(); else render(); } return; }
+  if (a === "clip") { readClip(function (t) { var ta = $("#paste", scope); if (t) ta.value = t; else { ta.focus(); toast("Toque e segure no campo e escolha Colar."); } }); return; }
+  if (a === "add") { addSheet(); return; }
+  if (a === "dl") { downloadPrompt(); return; }
+  if (a === "goal") { goalSheet(); return; }
+  if (!c) return;
+  if (a === "open") { openCompany(c); return; }
+  if (a === "laterMenu") { sheet("<h3>Chamar depois</h3><p>" + esc(dn(c)) + " sai dos chamados e volta sozinha na data.</p>" + [1, 3, 7].map(function (d) { return '<button class="mi" data-a="later" data-d="' + d + '" data-id="' + esc(c.id) + '">' + (d === 1 ? "Amanhã" : "Em " + d + " dias") + "</button>"; }).join("")); return; }
+  if (a === "wa") {
+    var k = b.dataset.k; b.href = waUrl(c, k);
+    if (k === "greet" || k === "regreet") {
+      c.tries = (c.tries || 0) + 1; c.contacted = now();
+      if (c.stage === "novos") c.stage = "contato";
+      touch(c); setTimeout(render, 350);
+    }
+    if (inSh) setTimeout(closeSheet, 300);
+  } else if (a === "skip") { ST.skip[c.id] = 1; render(); }
+  else if (a === "nowa") { var b4 = snap(c); move(c, "perdido"); render(); toast("Removida da fila.", 0, undoer(b4, "De volta na fila.")); }
+  else if (a === "want") {
+    copyText(aiText(c)); c.made = 1; c.wanted = now(); move(c, "feito");
+    toast("Interessado. Texto copiado: no AI Studio anexe o arquivo do prompt e a logo, cole e envie.", 6500);
+    if (inSh) setTimeout(closeSheet, 300); else setTimeout(render, 350);
+  } else if (a === "no") {
+    if (!b.dataset.sure) { b.dataset.sure = 1; if (inSh) b.querySelector("span").textContent = "Toque de novo para arquivar"; else { b.classList.remove("ic"); b.textContent = "Não quis?"; } return; }
+    var bn = snap(c); move(c, "perdido"); if (inSh) closeSheet(); else render(); toast("Arquivada.", 0, undoer(bn, "De volta nos chamados."));
+  } else if (a === "ai") {
+    copyText(aiText(c)); if (!c.made) { c.made = 1; touch(c); }
+    toast("Texto copiado! Anexe o arquivo do prompt e a logo, cole e envie.", 6000);
+    setTimeout(render, 350);
+  } else if (a === "paste") {
+    var li = b.parentNode.querySelector("[data-link]");
+    readClip(function (t) {
+      var u = (t || "").trim().split(/\s+/).filter(function (x) { return /\.\w/.test(x); })[0];
+      if (!u) { li.focus(); toast("Toque e segure no campo e escolha Colar."); return; }
+      li.value = normLink(u); saveLink(li);
+    });
+  } else if (a === "call") {
+    c.called = now(); touch(c); setTimeout(render, 600);
+  } else if (a === "later") {
+    var d = +b.dataset.d, cc = byId(b.dataset.id);
+    cc.snooze = now() + d * 86400; touch(cc); closeSheet();
+    toast("Volta para os chamados em " + (d === 1 ? "1 dia" : d + " dias") + ".");
+  } else if (a === "paid") paySheet(c);
+  else if (a === "more") moreSheet(c);
+});
+function saveLink(i) {
+  var c = byId(i.dataset.link), v = normLink(i.value); if (!c) return;
+  if (v && !okLink(v)) { toast("Esse link não parece válido."); return; }
+  i.value = v;
+  if (v === (c.link || "")) return;
+  c.link = v; touch(c);
+  i.parentNode.classList.toggle("done", okLink(v));
+  if (okLink(v) && c.stage === "feito") { c.sent = now(); move(c, "pagamento"); if (!$("#sheet").hidden) closeSheet(); else render(); toast("Site pronto. Está em Interessados > Site pronto."); }
+}
+document.addEventListener("change", function (e) { var i = e.target.closest("[data-link]"); if (i) saveLink(i); });
+document.addEventListener("keydown", function (e) { var i = e.target.closest && e.target.closest("[data-link]"); if (i && e.key === "Enter") { e.preventDefault(); i.blur(); } });
+document.addEventListener("visibilitychange", function () { if (document.visibilityState === "visible" && ST.ready && ST.niche && !busyUI()) render(); });
+
+// ---------- folhas ----------
+function sheet(html, init) { $("#toast").hidden = true; $("#sh").innerHTML = '<div class="grab"></div>' + html; $("#sheet").hidden = false; if (init) init($("#sh")); }
+function closeSheet() { $("#sheet").hidden = true; $("#sh").innerHTML = ""; render(); }
+$("#sheet").addEventListener("click", function (e) { if (e.target.id === "sheet" || e.target.closest("[data-close]")) closeSheet(); });
+function addSheet() {
+  sheet("<h3>Adicionar empresas</h3><p>Entram na fila de " + esc(N().short) + ". Repetidas são ignoradas.</p>" + importBox(), function (s) {
+    readClip(function (t) { if (t && t.split("\n").length > 1 && /\d{4}/.test(t) && !$("#paste", s).value) $("#paste", s).value = t; });
+  });
+}
+function paySheet(c) {
+  var vals = [297, 397, 497, 597, 697, 997], last = ST.settings.last_price;
+  sheet("<h3>Fechou com " + esc(dn(c)) + "</h3><p>Quanto você recebeu?</p><div class=\"chips\">" + vals.map(function (v) { return '<button class="num" data-v="' + v + '">' + v + "</button>"; }).join("") +
+    '</div><input class="inp num" id="val" inputmode="decimal" placeholder="Outro valor (R$)" value="' + (last && vals.indexOf(last) < 0 ? String(last).replace(".", ",") : "") + '"><div class="err" id="perr"></div><div class="row2"><button class="btn" data-close>Cancelar</button><button class="btn ok" id="pOk">Registrar</button></div>', function (s) {
+    var done = function (v) {
+      if (!(v > 0) || v > 1e8) { $("#perr", s).textContent = "Digite o valor."; return; }
+      c.stage = "pagos"; c.value = v; c.paid = now(); touch(c); saveSettings({ last_price: v });
+      ST.tab = "sales"; closeSheet(); window.scrollTo(0, 0); toast("Venda de " + brl(v) + " registrada!");
+    };
+    $(".chips", s).onclick = function (e) { var b = e.target.closest("[data-v]"); if (b) done(+b.dataset.v); };
+    $("#pOk", s).onclick = function () { done(parseMoney($("#val", s).value)); };
+    $("#val", s).onkeydown = function (e) { if (e.key === "Enter") done(parseMoney(this.value)); };
+  });
+}
+var BACK = { contato: ["novos", "Voltar para a fila"], feito: ["contato", "Voltar para Chamados"], pagamento: ["feito", "Voltar para fazer o site"], pagos: ["pagamento", "Desfazer venda"] };
+function telLink(c) { var t = telNum(c); return t ? '<a class="mi" href="tel:' + t + '"><i>📞</i>Ligar</a>' : ""; }
+function moreSheet(c) {
+  var w = waInfo(c), h = "<h3>" + esc(dn(c)) + '</h3><p class="sub">' + esc(meta(c) || "Sem contato") + "</p>";
+  if (c.stage === "feito" || c.stage === "pagamento") h += '<button class="mi" data-m="copy"><i>📋</i>Copiar texto do site</button>';
+  if (BACK[c.stage]) h += '<button class="mi" data-m="back"><i>↩️</i>' + BACK[c.stage][1] + "</button>";
+  h += '<button class="mi red" data-m="del"><i>🗑️</i>Remover</button>';
+  sheet(h, function (s) {
+    s.onclick = function (e) {
+      var b = e.target.closest("[data-m]"); if (!b) return;
+      var m = b.dataset.m;
+      if (m === "copy") { copyText(aiText(c)); closeSheet(); toast("Texto copiado."); }
+      else if (m === "later") { sheet("<h3>Chamar depois</h3><p>" + esc(cleanName(c.name)) + " sai dos chamados e volta sozinha.</p>" + [1, 3, 7].map(function (d) { return '<button class="mi" data-a="later" data-d="' + d + '" data-id="' + esc(c.id) + '"><i>⏰</i>' + (d === 1 ? "Amanhã" : "Em " + d + " dias") + "</button>"; }).join("")); }
+      else if (m === "back") { if (c.stage === "pagos" && !b.dataset.sure) { b.dataset.sure = 1; b.lastChild.textContent = "Toque de novo para desfazer"; return; } move(c, BACK[c.stage][0]); closeSheet(); }
+      else if (m === "del") { if (!b.dataset.sure) { b.dataset.sure = 1; b.lastChild.textContent = "Toque de novo para remover"; return; } removeCompany(c); closeSheet(); toast("Removida."); }
+    };
+  });
+}
+$("#setBtn").onclick = function () {
+  sheet("<h3>Ajustes</h3>" +
+    '<button class="mi" data-s="dl"><i>📎</i>Baixar arquivo do prompt</button>' +
+    '<button class="mi" data-s="msgs"><i>💬</i>Mensagens do WhatsApp</button>' +
+    '<button class="mi" data-s="goal"><i>🎯</i>Meta de chamadas por dia</button>' +
+    '<button class="mi" data-s="csv"><i>📤</i>Exportar backup (CSV)</button>' +
+    '<button class="mi" data-s="link"><i>🔗</i>Abrir em outro aparelho</button>' +
+    '<button class="mi" data-s="niche"><i>' + N().icon + "</i>Trocar nicho</button>" +
+    '<a class="mi" href="' + AI_URL + '" target="_blank" rel="noopener"><i>✨</i>Abrir AI Studio</a>', function (s) {
+    s.onclick = function (e) {
+      var b = e.target.closest("[data-s]"); if (!b) return;
+      if (b.dataset.s === "dl") downloadPrompt();
+      else if (b.dataset.s === "msgs") msgSheet();
+      else if (b.dataset.s === "goal") goalSheet();
+      else if (b.dataset.s === "csv") exportCsv();
+      else if (b.dataset.s === "link") { var u = location.origin + "/#k=" + window.NITRO_KEY; copyText(u); closeSheet(); toast("Link pessoal copiado. Abra ele no outro aparelho. Não compartilhe: quem tiver esse link vê seus dados.", 8000); }
+      else { closeSheet(); $("#nicheBtn").click(); }
+    };
+  });
+};
+function goalSheet() {
+  sheet('<h3>Meta de chamadas por dia</h3><p>Quantas empresas você quer chamar por dia?</p><div class="chips">' + [20, 30, 50, 80, 100, 150].map(function (v) { return '<button class="num" data-v="' + v + '">' + v + "</button>"; }).join("") + "</div>", function (s) {
+    $(".chips", s).onclick = function (e) { var b = e.target.closest("[data-v]"); if (!b) return; saveSettings({ goal: +b.dataset.v }); closeSheet(); toast("Meta: " + b.dataset.v + " chamadas por dia."); };
+  });
+}
+function csvCell(v) { v = String(v == null ? "" : v); return /[";\n]/.test(v) ? '"' + v.split('"').join('""') + '"' : v; }
+async function exportCsv() {
+  var cols = [["name", "Empresa"], ["phone", "Telefone"], ["wa", "WhatsApp"], ["city", "Cidade"], ["state", "Estado"], ["address", "Endereço"], ["rating", "Nota"], ["reviews_count", "Avaliações"], ["nicho", "Nicho"], ["stage", "Etapa"], ["link", "Site"], ["value", "Valor"]];
+  var rows = [cols.map(function (c) { return c[1]; }).join(";")];
+  ST.companies.forEach(function (c) { rows.push(cols.map(function (k) { return csvCell(c[k[0]]); }).join(";")); });
+  try {
+    var dl = await claude.use("downloads");
+    if (!dl) { toast("Download indisponível aqui."); return; }
+    await dl.save({ filename: "nitro-vendas-" + new Date().toISOString().slice(0, 10) + ".csv", data: "\ufeff" + rows.join("\n") });
+    closeSheet(); toast(ST.companies.length + " empresas exportadas.");
+  } catch (e) { toast("Download cancelado."); }
+}
+async function downloadPrompt() {
+  try {
+    var dl = await claude.use("downloads");
+    if (!dl) { toast("Download indisponível aqui."); return; }
+    await dl.save({ filename: "prompt_site_limpteck.txt", data: genericPrompt() });
+    saveSettings({ dl: 1 }); if ($("#sheet").hidden) render();
+    toast("Arquivo salvo em Downloads.");
+  } catch (e) { toast("Download cancelado."); }
+}
+function msgSheet() {
+  var n = N(), key = function (k) { return ST.niche + "_" + k; };
+  var F = [["wa_site", "Avisar que o site ficou pronto"], ["wa_follow", "Insistir depois do site pronto"]];
+  sheet("<h3>Mensagens</h3><p>{{nome}} = nome da empresa · {{link_site}} = link do site · {{saud}} = bom dia/boa tarde/boa noite</p>" +
+    '<span class="lbl">Saudações (uma por linha · cada empresa recebe uma diferente)</span><textarea class="msg" data-g="greets" style="min-height:190px">' + esc(greetList("greets", GREETS).join("\n")) + "</textarea>" +
+    '<span class="lbl">Insistir</span><textarea class="msg" data-g="regreets">' + esc(greetList("regreets", REGREETS).join("\n")) + "</textarea>" +
+    F.map(function (f) { return '<span class="lbl">' + f[1] + '</span><textarea class="msg" data-k="' + f[0] + '">' + esc((ST.settings[key(f[0])] || "").trim() || n[f[0]]) + "</textarea>"; }).join("") +
+    '<div class="row2"><button class="btn" id="mReset">Restaurar padrão</button><button class="btn pri" id="mSave">Salvar</button></div>', function (s) {
+    $("#mSave", s).onclick = function () {
+      var p = {};
+      $$("[data-g]", s).forEach(function (t) { var d = t.dataset.g === "greets" ? GREETS : REGREETS, v = t.value.trim(); p[key(t.dataset.g)] = v === d.join("\n") ? "" : v; });
+      $$("[data-k]", s).forEach(function (t) { var v = t.value.trim(); p[key(t.dataset.k)] = v === n[t.dataset.k] ? "" : v; });
+      saveSettings(p); closeSheet(); toast("Mensagens salvas.");
+    };
+    $("#mReset", s).onclick = function () { $("[data-g=greets]", s).value = GREETS.join("\n"); $("[data-g=regreets]", s).value = REGREETS.join("\n"); $$("[data-k]", s).forEach(function (t) { t.value = n[t.dataset.k]; }); };
+  });
+}
+}
+</script>
+</body>
+</html>
