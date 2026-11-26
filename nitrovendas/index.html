@@ -780,7 +780,16 @@ function vProspect(o) {
   h += '<div class="next">' + o.queue.length + " na fila" + (nx ? " · próxima: " + esc(dn(nx)) : "") + "</div>";
   return h;
 }
-function vReplies(o) {
+function extBar() {
+  var e = ST.settings.ext, t = Date.now() / 1000;
+  if (!e || !e.alive) return '<div class="day" style="color:#d93025">Extensão ainda não conectou</div>';
+  if (t - e.alive > 180) return '<div class="day" style="color:#d93025">Extensão desligada desde ' + esc(dateBR(e.alive)) + " " + esc(hhmm(e.alive)) + " · dados podem estar atrasados</div>";
+  if (!e.wa) return '<div class="day" style="color:#d93025">WhatsApp desconectado' + (e.down ? " desde " + esc(dateBR(e.down)) + " " + esc(hhmm(e.down)) : "") + " · abra o WhatsApp Web</div>";
+  if (e.scan) return '<div class="day" style="color:#b26a00">Sincronizando conversas… faltam ' + e.scan + "</div>";
+  return '<div class="day" style="color:var(--g)">Extensão ok · conferido ' + esc(ago(e.check || e.alive)) + (e.pend ? " · " + e.pend + " a salvar" : "") + "</div>";
+}
+function vReplies(o) { return extBar() + vReplies0(o); }
+function vReplies0(o) {
   var h = "", all = o.replies.filter(function (c) { return !c.replied && !c.replied2; }), nr = o.replies.length - all.length;
   if (!all.length) return '<div class="empty"><h3>Funil P1 vazio</h3><p>Saudação enviada · aguardando resposta. Quem receber a saudação aparece aqui.' + (nr ? "<br>" + nr + " já respondeu: veja Funil P2 e P3." : "") + (o.snoozed.length ? "<br>" + o.snoozed.length + " agendado(s) para depois." : "") + "</p></div>";
   h += '<div class="day">Saudação enviada · aguardando resposta: <b>' + all.length + "</b></div>";
@@ -801,7 +810,8 @@ function vReplies(o) {
   if (o.snoozed.length) h += '<div class="next" style="padding-top:12px">' + o.snoozed.length + " agendado(s) para depois</div>";
   return h + "</div>";
 }
-function vResp(o) {
+function vResp(o) { return extBar() + vResp0(o); }
+function vResp0(o) {
   var all = o.replies.filter(function (c) { return c.replied && !c.replied2; }).sort(function (a, b) { return b.replied - a.replied; });
   if (!all.length) return '<div class="empty"><h3>Funil P2 vazio</h3><p>Responderam à saudação · o funil será enviado. Quem responder a saudação aparece aqui.</p></div>';
   var fin = all.filter(function (c) { return c.funnel === "concluido"; }), go = all.filter(function (c) { return c.funnel !== "concluido"; });
@@ -811,7 +821,7 @@ function vResp(o) {
   var f = function (l) { return q ? l.filter(function (c) { return normKey(c.name + " " + c.city).indexOf(q) >= 0; }) : l; };
   fin = f(fin); go = f(go);
   var row = function (c) {
-    var st = c.funnel === "concluido" ? "Funil enviado" : c.funnel === "parado" ? "Funil parado" : c.funnel ? "Funil em andamento" : "Sem funil";
+    var st = c.funnel === "concluido" ? "Funil enviado" : c.funnel === "parado" ? "Funil parado" : c.funnel === "atrasado" ? "Funil atrasado · mandar pelo painel" : c.funnel ? "Funil em andamento" : "Sem funil";
     return chatRow(c, '<span class="g">Respondeu ' + ago(c.replied) + " · " + st + "</span>", hhmm(c.replied), "g", "!");
   };
   h += '<div class="list">';
@@ -819,7 +829,8 @@ function vResp(o) {
   if (fin.length) h += sec("Funil enviado · aguardando resposta · " + fin.length) + fin.map(row).join("");
   return h + "</div>";
 }
-function vP3(o) {
+function vP3(o) { return extBar() + vP30(o); }
+function vP30(o) {
   var all = o.replies.filter(function (c) { return c.replied2; }).sort(function (a, b) { return b.replied2 - a.replied2; });
   if (!all.length) return '<div class="empty"><h3>Funil P3 vazio</h3><p>Responderam à mensagem do funil · conversar e fechar. Quem responder o funil aparece aqui.</p></div>';
   var h = '<div class="day">Responderam à mensagem do funil · conversar e fechar<br>Total: <b>' + all.length + "</b></div>";
