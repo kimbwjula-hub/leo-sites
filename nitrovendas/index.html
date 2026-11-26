@@ -1117,6 +1117,15 @@ function xStatus() {
   var b = $("#xeRun"); if (b && e && !(XS.pend && !(e.ack >= XS.pend))) { var ron = e.run && e.run.on; b.textContent = ron ? "Pausar disparo" : "Iniciar disparo"; b.dataset.op = ron ? "stop" : "start"; b.className = ron ? "stop" : "go"; }
   var m = $("#xeMsg");
   if (m) m.innerHTML = XS.pend ? (e && e.ack >= XS.pend ? '<span class="ok">✓✓ Aplicado na extensão</span>' : '<span class="warn">✓ Enviado · aplicando…</span>') : "";
+  var q = $("#xQ");
+  if (q && e) {
+    var L = e.p2 || [], tn = Date.now() / 1000; $("#xQn").textContent = L.length;
+    var outH = e.cfg && e.cfg.funnel && e.cfg.funnel.respectHours !== false && !xInHours(e.cfg);
+    q.innerHTML = L.length ? (outH ? '<div class="xline"><span class="warn">Fora do horário do disparo: começa quando o horário abrir.</span></div>' : "") + L.map(function (x) {
+      var w = x.next - tn, quando = w <= 5 ? "agora" : w < 3600 ? "em " + (w < 60 ? Math.round(w) + " s" : Math.round(w / 60) + " min") : "às " + hhmm(x.next);
+      return '<div class="xr"><span class="ic">🕒</span><div class="tx"><b>' + esc(x.name) + "</b><small>" + esc(quando) + " · " + esc(new Date(x.next * 1000).toLocaleTimeString("pt-BR", { hour: "2-digit", minute: "2-digit" })) + '</small></div><button class="btn" style="color:var(--red);border-radius:16px;padding:6px 12px" data-qc="' + esc(x.id) + '">Cancelar</button></div>';
+    }).join("") + '<div class="xacts"><button id="xQre">Reprogramar com o intervalo acima</button><button class="stop" id="xQall">Cancelar todos</button></div>' : '<div class="xr"><div class="tx"><small>Nada agendado.</small></div></div>';
+  }
   var lg = $("#xeLog");
   if (lg && e) lg.innerHTML = (e.log || []).map(function (x) { return '<div class="xr"><span class="tm">' + esc(hhmm(x.t)) + '</span><div class="tx"><b>' + esc(x.x) + "</b></div></div>"; }).join("") || '<div class="xr"><div class="tx"><small>Sem registros.</small></div></div>';
 }
@@ -1183,6 +1192,10 @@ function xPendList() {
   return ST.companies.filter(function (c) { return c.stage === "contato" && mine(c) && c.funnel !== "andamento" && c.funnel !== "concluido"; })
     .sort(function (a, b) { return (b.replied ? 1 : 0) - (a.replied ? 1 : 0) || (b.replied || 0) - (a.replied || 0); });
 }
+function xInHours(c) {
+  var d = new Date(), m = d.getHours() * 60 + d.getMinutes(), p = function (x) { var a = String(x || "0:0").split(":"); return +a[0] * 60 + +a[1]; };
+  return (c.days || [1, 2, 3, 4, 5, 6]).indexOf(d.getDay()) >= 0 && m >= p(c.startH || "08:00") && m < p(c.endH || "18:00");
+}
 function xRow(ic, title, sub, right) { return '<div class="xr"><span class="ic">' + ic + '</span><div class="tx"><b>' + title + "</b>" + (sub ? "<small>" + sub + "</small>" : "") + "</div>" + (right || "") + "</div>"; }
 function xSw(id, on) { return '<label class="sw"><input type="checkbox" id="' + id + '"' + (on ? " checked" : "") + "><i></i></label>"; }
 function xNum(id, v, min) { return '<input type="number" id="' + id + '" min="' + (min || 0) + '" value="' + esc(v) + '">'; }
@@ -1216,8 +1229,9 @@ function extSheet() {
     var lab = x.funnel === "parado" ? '<span style="color:var(--red)">disse que não quer</span>' : x.funnel === "atrasado" ? '<span style="color:var(--amb)">respondeu · funil atrasado</span>' : x.replied ? '<span style="color:var(--g)">respondeu ' + esc(ago(x.replied)) + "</span>" : "não respondeu";
     var on = x.replied && x.funnel !== "parado";
     return '<div class="xr" data-p2="' + esc(x.id) + '"' + (on ? ' data-on="1"' : "") + ">" + av(x) + '<div class="tx"><b>' + esc(cleanName(x.name)) + "</b><small>" + lab + '</small></div><span class="xck' + (on ? " on" : "") + '">' + (on ? "✓" : "") + "</span></div>";
-  }).join("") + '<div class="xacts"><button class="go" id="xP2">Enviar parte 2 para as marcadas</button></div>' : '<div class="xr"><div class="tx"><small>Ninguém pendente.</small></div></div>';
-  h += '</div><div class="xc xlog"><div class="cap">Registro</div><div id="xeLog"></div></div></div>';
+  }).join("") + xRow("⏳", "Intervalo entre contatos", "segundos, sorteado entre os dois", xNum("xP2a", (c.p2GapMin || 60), 5) + '<span class="to">a</span>' + xNum("xP2b", (c.p2GapMax || 120), 5)) +
+    '<div class="xacts"><button class="go" id="xP2">Enviar parte 2 para as marcadas</button></div>' : '<div class="xr"><div class="tx"><small>Ninguém pendente.</small></div></div>';
+  h += '</div><div class="xc"><div class="cap">Parte 2 agendada · <span id="xQn">0</span></div><div id="xQ"></div></div><div class="xc xlog"><div class="cap">Registro</div><div id="xeLog"></div></div></div>';
   h += '<div class="xsave"><div class="m" id="xeMsg"></div>' + (has ? '<button id="xSave">Salvar</button>' : "") + "</div>";
   var pg = document.createElement("div"); pg.id = "xpage"; pg.className = "xp"; pg.innerHTML = h; document.body.appendChild(pg); document.body.style.overflow = "hidden";
   var s = pg;
@@ -1283,11 +1297,18 @@ function extSheet() {
     if (!c2.days.length) { toast("Escolha pelo menos um dia."); return; }
     xCmd("cfg", c2).then(function () { toast("Salvo. Enviando para a extensão…"); }).catch(function (e) { toast("Erro: " + e.message); });
   };
+  s.addEventListener("click", function (e) {
+    var b = e.target.closest("[data-qc],#xQall,#xQre"); if (!b) return;
+    if (b.id === "xQre") { xCmd("p2resched", { gapMin: +($("#xP2a", s) || {}).value || 60, gapMax: +($("#xP2b", s) || {}).value || 120 }).then(function () { toast("Reprogramando a fila…"); }); return; }
+    if (b.id === "xQall") { if (!b.dataset.sure) { b.dataset.sure = 1; b.textContent = "Toque de novo para cancelar todos"; return; } xCmd("p2cancel", { ids: null }).then(function () { toast("Cancelando toda a parte 2…"); }); return; }
+    b.textContent = "Cancelando…"; b.disabled = true;
+    xCmd("p2cancel", { ids: [b.dataset.qc] }).then(function () { toast("Cancelado."); });
+  });
   var p2 = $("#xP2", s); if (p2) p2.onclick = function () {
     var ids = [].map.call(s.querySelectorAll("[data-p2][data-on]"), function (x) { return x.dataset.p2; });
     if (!ids.length) { toast("Marque pelo menos uma empresa."); return; }
     if (!p2.dataset.sure) { p2.dataset.sure = 1; p2.textContent = "Toque de novo: enviar para " + ids.length; return; }
-    xCmd("part2", { ids: ids }).then(function () { toast("Parte 2 agendada para " + ids.length + ". Vai uma por vez."); p2.textContent = "Agendado ✓"; }).catch(function (e) { toast("Erro: " + e.message); });
+    xCmd("part2", { ids: ids, gapMin: +($("#xP2a", s) || {}).value || 60, gapMax: +($("#xP2b", s) || {}).value || 120 }).then(function () { toast("Parte 2 agendada para " + ids.length + ". Vai uma por vez."); p2.textContent = "Agendado ✓"; }).catch(function (e) { toast("Erro: " + e.message); });
   };
 }
 
