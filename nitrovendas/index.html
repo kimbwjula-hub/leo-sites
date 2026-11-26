@@ -106,11 +106,14 @@ main{max-width:640px;margin:0 auto;padding-bottom:calc(30px + env(safe-area-inse
 .sb-lk a{font-weight:700;color:var(--gd);word-break:break-all}
 .sb-lk small{grid-column:1;font-size:12px;color:var(--mut)}
 .sb-lk .btn{grid-row:1/3;grid-column:2;height:34px}
-.sb-row{display:flex;align-items:center;gap:10px;padding:12px 16px;border-bottom:1px solid var(--line)}
+.sb-row{padding:12px 16px;border-bottom:1px solid var(--line)}
+.sb-ac{display:flex;flex-wrap:wrap;gap:8px;margin-top:10px}
+.sb-ac .btn{height:34px;font-size:13px;padding:0 12px}
+.sb-del{color:var(--red);border-color:#f0c9c6}.sb-del.on{background:var(--red);border-color:var(--red);color:#fff}
+.sb-ren{margin-top:10px}.sb-ren .sb-name{margin-bottom:6px}
 .sb-rt{flex:1;min-width:0;display:flex;flex-direction:column;gap:2px}
 .sb-rt b{font-size:15px}
 .sb-rt a{font-size:13px;color:var(--g);word-break:break-all}
-.sb-row .btn{height:34px;flex:none}
 .sb-out{display:block;margin:18px auto 0;font-size:13px;color:var(--mut);text-decoration:underline}
 
 .empty h3{margin:0 0 6px;font-size:16px;color:var(--ink);font-weight:600}
@@ -999,7 +1002,7 @@ function vSubir() {
       '<label class="sb-lb" for="sbNome">Nome do link</label>' +
       '<div class="sb-name"><input id="sbNome" class="sb-in" inputmode="url" autocapitalize="off" autocomplete="off" spellcheck="false" placeholder="ex: freshclean"><span>.pages.dev</span></div>' +
       '<p class="sb-m" id="sbPrev">Use letras minúsculas, números e hífen.</p>' +
-      '<label class="sb-ck"><input type="checkbox" id="sbSub" checked><span>Criar também <b id="sbSubT">nome.agencianitro.com.br</b></span></label>' +
+      '<label class="sb-ck"><input type="checkbox" id="sbSub"><span>Criar também <b id="sbSubT">nome.agencianitro.com.br</b></span></label>' +
       '<button class="btn pri big" id="sbGo" data-sb="publicar" disabled>Publicar</button>' +
       '<div class="sb-prog" id="sbProg" hidden><i id="sbBar"></i></div><p class="sb-m" id="sbMsg"></p><p class="sb-err" id="sbErr"></p>' +
       '<div id="sbRes"></div>' +
@@ -1024,9 +1027,21 @@ function sbLista() {
   if (!SB.sites) return;
   if (!SB.sites.length) { el.innerHTML = '<div class="empty"><p>Nenhum site publicado por aqui ainda.</p></div>'; return; }
   el.innerHTML = SB.sites.map(function (s) {
-    var subs = (s.dominios || []).filter(function (d) { return !/\.pages\.dev$/.test(d); });
-    return '<div class="sb-row"><div class="sb-rt"><b>' + esc(s.nome) + "</b>" + sbLink("https://" + s.pages) + subs.map(function (d) { return sbLink("https://" + d); }).join("") + '</div>' +
-      '<button class="btn" data-sb="usar" data-n="' + esc(s.nome) + '">Atualizar</button></div>';
+    var nn = esc(s.nome), sufx = ".agencianitro.com.br";
+    var mine = (s.dominios || []).filter(function (d) { return d.slice(-sufx.length) === sufx; });
+    var outros = (s.dominios || []).filter(function (d) { return !/\.pages\.dev$/.test(d) && d.slice(-sufx.length) !== sufx; });
+    var h = '<div class="sb-row"><div class="sb-rt"><b>' + nn + "</b>" + sbLink("https://" + s.pages) + (s.dominios || []).filter(function (d) { return !/\.pages\.dev$/.test(d); }).map(function (d) { return sbLink("https://" + d); }).join("") + "</div>";
+    if (SB.ren === s.nome) {
+      var cur = mine[0] ? mine[0].slice(0, -sufx.length) : s.nome;
+      h += '<div class="sb-ren"><div class="sb-name"><input class="sb-in" id="sbRenIn" value="' + esc(cur) + '" autocapitalize="off" autocomplete="off" spellcheck="false"><span>' + sufx + '</span></div>' +
+        '<p class="sb-m">Troca o endereço no agencianitro.com.br. O endereço .pages.dev não muda (limite do Cloudflare); para mudar ele, publique o zip com outro nome e exclua este.</p>' +
+        '<div class="sb-ac"><button class="btn pri" data-sb="renok" data-n="' + nn + '">Salvar</button><button class="btn" data-sb="rencancel">Cancelar</button></div></div>';
+    } else {
+      h += '<div class="sb-ac"><button class="btn" data-sb="usar" data-n="' + nn + '">Atualizar</button><button class="btn" data-sb="ren" data-n="' + nn + '">Renomear</button>' +
+        (mine.length ? '<button class="btn" data-sb="dom" data-a="desligar" data-n="' + nn + '">Tirar do agencianitro.com.br</button>' : '<button class="btn" data-sb="dom" data-a="ligar" data-n="' + nn + '">Ligar no agencianitro.com.br</button>') +
+        '<button class="btn sb-del" data-sb="del" data-n="' + nn + '" data-o="' + esc(outros.join(", ")) + '">Excluir</button></div>';
+    }
+    return h + "</div>";
   }).join("");
 }
 function sbCarregar() {
@@ -1132,6 +1147,39 @@ function sbClick(b) {
   } else if (a === "sair") { sbSetSenha(""); SB.sites = null; $("#view").dataset.t = ""; render(); }
   else if (a === "publicar") sbPublicar();
   else if (a === "copiar") { copyText(b.dataset.u); toast("Link copiado.", 2000); }
+  else if (a === "ren") { SB.ren = b.dataset.n; sbLista(); var ri = $("#sbRenIn"); if (ri) { ri.focus(); ri.select(); } }
+  else if (a === "rencancel") { SB.ren = null; sbLista(); }
+  else if (a === "renok") {
+    var nv = sbSlug(($("#sbRenIn") || {}).value || ""); if (!nv) return;
+    b.disabled = true; b.textContent = "Salvando…";
+    sbApi("renomear", { nome: b.dataset.n, novo: nv }).then(function (d) {
+      if (!d.ok) { b.disabled = false; b.textContent = "Salvar"; toast(d.erro || "Não consegui renomear.", 5000); return; }
+      SB.ren = null; toast("Agora é " + d.host + (d.igual ? "" : " (ativa em 1 a 5 min)"), 5000); sbCarregar();
+    }).catch(function () { b.disabled = false; b.textContent = "Salvar"; toast("Sem conexão.", 3000); });
+  }
+  else if (a === "dom") {
+    var lig = b.dataset.a === "ligar"; b.disabled = true; b.textContent = lig ? "Ligando…" : "Tirando…";
+    sbApi("dominio", { nome: b.dataset.n, acao: b.dataset.a }).then(function (d) {
+      if (!d.ok) { toast(d.erro || "Não consegui.", 5000); sbCarregar(); return; }
+      toast(lig ? d.host + " ligado (ativa em 1 a 5 min)." : "Tirado do agencianitro.com.br.", 4000); sbCarregar();
+    }).catch(function () { toast("Sem conexão.", 3000); sbCarregar(); });
+  }
+  else if (a === "del") {
+    if (!b.dataset.sure) {
+      b.dataset.sure = 1; b.textContent = "Toque de novo para excluir"; b.classList.add("on");
+      if (b.dataset.o) toast("Atenção: este site também tem o domínio " + b.dataset.o + ". Ele sai junto.", 6000);
+      setTimeout(function () { if (b.isConnected) { delete b.dataset.sure; b.textContent = "Excluir"; b.classList.remove("on"); } }, 5000); return;
+    }
+    b.disabled = true; b.textContent = "Excluindo…";
+    var tent = 0, nm = b.dataset.n;
+    (function vai() {
+      sbApi("excluir", { nome: nm, confirmar: nm }).then(function (d) {
+        if (d.ok) { toast("Site " + nm + " excluído.", 3000); sbCarregar(); return; }
+        if (d.parcial && ++tent < 6) { setTimeout(vai, 800); return; }
+        toast(d.erro || "Não consegui excluir.", 5000); sbCarregar();
+      }).catch(function () { toast("Sem conexão.", 3000); sbCarregar(); });
+    })();
+  }
   else if (a === "usar") { var i = $("#sbNome"); if (i) { i.value = b.dataset.n; sbUpd(); window.scrollTo(0, 0); toast(SB.files ? "Toque em Publicar para atualizar." : "Escolha o .zip novo e publique.", 3000); } }
 }
 document.addEventListener("click", function (e) { var b = e.target.closest("[data-sb]"); if (b && b.tagName !== "LABEL") sbClick(b); });
