@@ -189,7 +189,7 @@ body:has(#xpage) .toast{bottom:calc(80px + env(safe-area-inset-bottom))}
 <div id="app" hidden>
   <header class="top">
     <div class="tb"><button class="pill" id="nicheBtn"></button><button class="icb" id="setBtn" aria-label="Ajustes">⋮</button></div>
-    <nav class="nav" id="nav"><button data-tab="prospect">Fila<span class="bd" hidden></span></button><button data-tab="replies">Funil P1<span class="bd" hidden></span></button><button data-tab="resp">Funil P2<span class="bd" hidden></span></button><button data-tab="p3">Funil P3<span class="bd" hidden></span></button><button data-tab="sites">Interessados<span class="bd" hidden></span></button><button data-tab="sales">Vendas</button></nav>
+    <nav class="nav" id="nav"><button data-tab="prospect">Fila<span class="bd" hidden></span></button><button data-tab="replies">Funil P1<span class="bd" hidden></span></button><button data-tab="resp">Funil P2<span class="bd" hidden></span></button><button data-tab="p3">Funil P3<span class="bd" hidden></span></button><button data-tab="sites">Interessados<span class="bd" hidden></span></button><button data-tab="sales">Vendas</button><button data-tab="lost">Não quis</button></nav>
   </header>
   <span id="saving" class="saving"></span>
   <main id="view"></main>
@@ -628,7 +628,7 @@ function okLink(v) { return /^https?:\/\/[^\s.\/]+\.[^\s]+/i.test(v); }
 
 // ---------- listas ----------
 function L() {
-  var o = { leads: [], queue: [], noWa: 0, replies: [], snoozed: [], making: [], sent: [], sales: [], today: 0, intToday: 0, saleToday: 0, saleTodayV: 0, total: 0, chamadas: 0, ints: 0, burnedQ: 0 };
+  var o = { lost: [], leads: [], queue: [], noWa: 0, replies: [], snoozed: [], making: [], sent: [], sales: [], today: 0, intToday: 0, saleToday: 0, saleTodayV: 0, total: 0, chamadas: 0, ints: 0, burnedQ: 0 };
   var t = now();
   ST.companies.forEach(function (c) {
     if (c.stage === "pagos") { o.total += +c.value || 0; o.sales.push(c); if (isToday(c.paid || c.updated)) { o.saleToday++; o.saleTodayV += +c.value || 0; } }
@@ -641,7 +641,9 @@ function L() {
     else if (c.stage === "contato") { if (c.snooze && c.snooze > t && !c.replied) o.snoozed.push(c); else o.replies.push(c); }
     else if (c.stage === "feito") o.making.push(c);
     else if (c.stage === "pagamento") o.sent.push(c);
+    else if (c.stage === "perdido") o.lost.push(c);
   });
+  o.lost.sort(function (a, b) { return (b.updated || 0) - (a.updated || 0); });
   var score = function (c) { return (c.site_current ? -500 : 0) + Math.min(+c.reviews_count || 0, 300) + (parseFloat(String(c.rating).replace(",", ".")) || 0) * 20; };
   o.queue.sort(function (a, b) { return score(b) - score(a); });
   var fresh = o.queue.filter(function (c) { return !ST.skip[c.id]; });
@@ -704,7 +706,7 @@ $("#nicheBtn").onclick = function () { $$(".niche").forEach(function (b) { b.cla
 // ---------- render ----------
 function render() {
   var o = L(), n = N();
-  if (["replies", "resp", "p3"].indexOf(ST.tab) < 0) ST.q = "";
+  if (["replies", "resp", "p3", "lost"].indexOf(ST.tab) < 0) ST.q = "";
   $("#nicheBtn").textContent = n.short;
   var nResp = o.replies.filter(function (c) { return c.replied && !c.replied2; }).length, nP3 = o.replies.filter(function (c) { return c.replied2; }).length;
   var bd = { prospect: o.queue.length, replies: o.replies.length - nResp - nP3, resp: nResp, p3: nP3, sites: o.making.length + o.sent.length };
@@ -718,10 +720,11 @@ function render() {
   else if (ST.tab === "replies") v.innerHTML = vReplies(o);
   else if (ST.tab === "resp") v.innerHTML = vResp(o);
   else if (ST.tab === "p3") v.innerHTML = vP3(o);
+  else if (ST.tab === "lost") v.innerHTML = vLost(o);
   else if (ST.tab === "sites") v.innerHTML = vSites(o);
   else v.innerHTML = vSales(o);
 }
-document.addEventListener("input", function (e) { if (e.target.id === "q") { ST.q = e.target.value; var el = $("#view"), sc = el.querySelector(".list"); if (sc) { var o = L(); el.innerHTML = ST.tab === "resp" ? vResp(o) : ST.tab === "p3" ? vP3(o) : vReplies(o); var i = $("#q"); if (i) { i.focus(); i.setSelectionRange(i.value.length, i.value.length); } } } });
+document.addEventListener("input", function (e) { if (e.target.id === "q") { ST.q = e.target.value; var el = $("#view"), sc = el.querySelector(".list"); if (sc) { var o = L(); el.innerHTML = ST.tab === "resp" ? vResp(o) : ST.tab === "p3" ? vP3(o) : ST.tab === "lost" ? vLost(o) : vReplies(o); var i = $("#q"); if (i) { i.focus(); i.setSelectionRange(i.value.length, i.value.length); } } } });
 $("#nav").onclick = function (e) { var b = e.target.closest("[data-tab]"); if (!b) return; ST.tab = b.dataset.tab; render(); window.scrollTo(0, 0); };
 
 function head() { return ""; }
@@ -898,6 +901,23 @@ function vResp0(o) {
   if (fin.length) h += sec("Funil enviado · aguardando resposta · " + fin.length) + fin.map(row).join("");
   return h + "</div>";
 }
+function vLost(o) {
+  var all = o.lost;
+  if (!all.length) return '<div class="empty"><h3>Ninguém aqui</h3><p>Quem você marcar como "Não quis" aparece aqui. Dá para voltar a empresa para o funil.</p></div>';
+  var h = '<div class="day">Não quis: <b>' + all.filter(function (c) { return !c.wa_invalid; }).length + "</b> · Sem WhatsApp: <b>" + all.filter(function (c) { return c.wa_invalid; }).length + "</b></div>";
+  if (all.length > 8) h += '<input class="srch" id="q" type="search" placeholder="Pesquisar" value="' + esc(ST.q || "") + '">';
+  var q = normKey(ST.q || "");
+  if (q) all = all.filter(function (c) { return normKey(c.name + " " + c.city).indexOf(q) >= 0; });
+  var no = all.filter(function (c) { return !c.wa_invalid; }), inv = all.filter(function (c) { return c.wa_invalid; });
+  var row = function (c) {
+    var l2 = c.wa_invalid ? '<span class="r">Número sem WhatsApp</span>' : "<span>" + (c.replied ? "Respondeu · " : "") + "arquivada " + esc(ago(c.updated)) + (city(c) ? " · " + esc(city(c)) : "") + "</span>";
+    return chatRow(c, l2, hhmm(c.updated), "", "");
+  };
+  h += '<div class="list">';
+  if (no.length) h += sec("Não quis · " + no.length, "r") + no.map(row).join("");
+  if (inv.length) h += sec("Sem WhatsApp · " + inv.length) + inv.map(row).join("");
+  return h + "</div>";
+}
 function vP3(o) { return extBar() + vP30(o); }
 function vP30(o) {
   var all = o.replies.filter(function (c) { return c.replied2; }).sort(function (a, b) { return b.replied2 - a.replied2; });
@@ -963,6 +983,7 @@ function openCompany(c) {
     h += chat;
   }
   if (c.stage === "contato") h += B("", "↩", "Voltar etapa", "Funil P2, Funil P1 ou Fila", 'data-a="more" data-id="' + id + '"');
+  if (c.stage === "perdido") { h += chat; h += B("main", "↩", "Voltar para o funil", c.replied ? "Volta para o Funil P2/P3" : "Volta para o Funil P1", 'data-a="unlost" data-id="' + id + '"'); h += B("", "↺", "Voltar para a Fila", "Recebe a saudação de novo", 'data-a="unlostq" data-id="' + id + '"'); }
   h += B("", "⋯", "Mais opções", "", 'data-a="more" data-id="' + id + '"');
   $("#toast").hidden = true; $("#sh").innerHTML = h; $("#sheet").hidden = false;
 }
@@ -1060,6 +1081,10 @@ document.addEventListener("click", function (e) {
     copyText(aiText(c)); c.made = 1; c.wanted = now(); move(c, "feito");
     toast("Interessado. Texto copiado: no AI Studio anexe o arquivo do prompt e a logo, cole e envie.", 6500);
     if (inSh) setTimeout(closeSheet, 300); else setTimeout(render, 350);
+  } else if (a === "unlost" || a === "unlostq") {
+    if (a === "unlost") { c.stage = "contato"; delete c.wa_invalid; }
+    else { c.stage = "novos"; c.tries = 0; delete c.wa_invalid; ["replied", "replied2", "funnel", "contacted", "sent_auto"].forEach(function (k) { delete c[k]; }); c.reset = Math.floor(Date.now() / 1000); }
+    touch(c); if (inSh) closeSheet(); else render(); toast(a === "unlost" ? "Voltou para o funil." : "Voltou para a Fila.");
   } else if (a === "no") {
     if (!b.dataset.sure) { b.dataset.sure = 1; if (inSh) b.querySelector("span").textContent = "Toque de novo para arquivar"; else { b.classList.remove("ic"); b.textContent = "Não quis?"; } return; }
     var bn = snap(c); move(c, "perdido"); if (inSh) closeSheet(); else render(); toast("Arquivada.", 0, undoer(bn, "De volta nos chamados."));
@@ -1462,7 +1487,7 @@ function paySheet(c) {
     $("#val", s).onkeydown = function (e) { if (e.key === "Enter") done(parseMoney(this.value)); };
   });
 }
-var BACK = { contato: ["novos", "Voltar para a fila"], feito: ["contato", "Voltar para o funil"], pagamento: ["feito", "Voltar para fazer o site"], pagos: ["pagamento", "Desfazer venda"] };
+var BACK = { perdido: ["contato", "Voltar para o funil"], contato: ["novos", "Voltar para a fila"], feito: ["contato", "Voltar para o funil"], pagamento: ["feito", "Voltar para fazer o site"], pagos: ["pagamento", "Desfazer venda"] };
 function telLink(c) { var t = telNum(c); return t ? '<a class="mi" href="tel:' + t + '"><i>📞</i>Ligar</a>' : ""; }
 function moreSheet(c) {
   var w = waInfo(c), h = "<h3>" + esc(dn(c)) + '</h3><p class="sub">' + esc(meta(c) || "Sem contato") + "</p>";
