@@ -1,0 +1,8 @@
+name = "nitrovendas"
+pages_build_output_dir = "."
+compatibility_date = "2025-01-01"
+
+[[d1_databases]]
+binding = "DB"
+database_name = "nitrovendas"
+database_id = "a99519d8-ff4e-4d8d-97f0-1119e1d96aba"
