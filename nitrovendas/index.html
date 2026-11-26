@@ -696,7 +696,7 @@ function dayBar(o) {
   return '<button class="day" data-a="goal">Hoje: <b class="num' + (o.today >= goal ? " hit" : "") + '">' + o.today + "/" + goal + "</b> chamadas · <b>" + o.intToday + "</b> " + (o.intToday === 1 ? "interessado" : "interessados") + " · <b>" + o.saleToday + "</b> " + (o.saleToday === 1 ? "venda" : "vendas") + "</button>";
 }
 function vProspect(o) {
-  if (!o.leads.length) return '<div class="empty"><h3>Lista vazia</h3><p>Cole as empresas para começar. Repetidas são ignoradas.</p>' + importBox() + "</div>";
+  if (!o.leads.length) return '<div class="empty"><h3>Lista vazia</h3><p>Cole as empresas para começar. Não tem lista? <button class="link" style="color:var(--g)" data-a="xp">Pegar lista com IA</button></p>' + importBox() + "</div>";
   var h = dayBar(o);
   if (!o.queue.length) return h + '<div class="empty"><h3>Fila zerada</h3><p>' + (o.noWa ? o.noWa + " empresa(s) sem WhatsApp ficaram de fora." : "Adicione mais empresas.") + '</p><button class="btn go" data-a="add">Adicionar empresas</button></div>';
   var c = o.queue[0], nx = o.queue[1];
@@ -857,6 +857,7 @@ document.addEventListener("click", function (e) {
   if (a === "add") { addSheet(); return; }
   if (a === "dl") { downloadPrompt(); return; }
   if (a === "goal") { goalSheet(); return; }
+  if (a === "xp") { xpSheet(); return; }
   if (!c) return;
   if (a === "open") { openCompany(c); return; }
   if (a === "laterMenu") { sheet("<h3>Chamar depois</h3><p>" + esc(dn(c)) + " sai dos chamados e volta sozinha na data.</p>" + [1, 3, 7].map(function (d) { return '<button class="mi" data-a="later" data-d="' + d + '" data-id="' + esc(c.id) + '">' + (d === 1 ? "Amanhã" : "Em " + d + " dias") + "</button>"; }).join("")); return; }
@@ -914,8 +915,57 @@ document.addEventListener("visibilitychange", function () { if (document.visibil
 function sheet(html, init) { $("#toast").hidden = true; $("#sh").innerHTML = '<div class="grab"></div>' + html; $("#sheet").hidden = false; if (init) init($("#sh")); }
 function closeSheet() { $("#sheet").hidden = true; $("#sh").innerHTML = ""; render(); }
 $("#sheet").addEventListener("click", function (e) { if (e.target.id === "sheet" || e.target.closest("[data-close]")) closeSheet(); });
+
+// ---------- prompt de extração (IA busca as empresas) ----------
+var XP_HEAD = "Empresa;Categoria;WhatsApp;Telefone;Endereço;Cidade;UF;Nota;Qtd avaliações;Horário;Site;Descrição;Avaliações";
+function extractPrompt(cities, qty) {
+  var n = N();
+  return [
+    "Você é um pesquisador de leads. Pesquise no Google Maps (e no site, Instagram e Facebook de cada empresa, quando precisar achar o WhatsApp) empresas de " + n.name.toUpperCase() + " nestas cidades:",
+    cities,
+    "",
+    "Quero até " + qty + " empresas. Priorize, nesta ordem: 1) quem NÃO tem site próprio; 2) quem tem mais avaliações no Google; 3) quem tem nota maior. Ignore empresas fechadas permanentemente, franquias grandes e anúncios repetidos.",
+    "",
+    "ENTREGA: responda SÓ com um bloco de código, sem texto antes ou depois. A primeira linha é exatamente este cabeçalho:",
+    XP_HEAD,
+    "Depois, uma empresa por linha, com os campos separados por ponto e vírgula (;), na mesma ordem do cabeçalho.",
+    "",
+    "REGRAS DE CADA CAMPO:",
+    "- Empresa: nome como aparece no Google Maps.",
+    "- Categoria: a categoria do Google Maps (ex.: Serviço de limpeza de estofados).",
+    "- WhatsApp: só número de CELULAR, no formato +55 DD 9XXXX-XXXX. Procure no perfil do Google, no site, na bio do Instagram e em links wa.me. Se só existir telefone fixo, deixe vazio.",
+    "- Telefone: o telefone do Google Maps, no formato (DD) XXXX-XXXX ou (DD) 9XXXX-XXXX.",
+    "- Endereço: rua, número e bairro.",
+    "- Cidade: nome da cidade. UF: sigla com 2 letras.",
+    "- Nota: com vírgula (ex.: 4,8). Qtd avaliações: só o número inteiro (ex.: 132).",
+    "- Horário: resumido (ex.: Seg a Sex 8h–18h, Sáb 8h–12h).",
+    "- Site: endereço do site próprio. Se não tiver, deixe vazio (Instagram e Facebook não contam como site).",
+    "- Descrição: 1 frase com os serviços que a empresa oferece, tirada do perfil ou das fotos.",
+    "- Avaliações: até 3 trechos curtos de avaliações reais de clientes, separados por \" | \".",
+    "",
+    "PROIBIDO: inventar dado. Se não achar, deixe o campo vazio, mas mantenha o ; no lugar. Não use ; dentro dos campos (troque por vírgula). Não repita empresa nem número. Não numere as linhas.",
+    "",
+    "Se a lista for longa e você precisar parar, termine a linha atual e escreva fora do bloco: CONTINUA. Quando eu disser \"continue\", siga do ponto onde parou, sem repetir o cabeçalho."
+  ].join("\n");
+}
+function xpSheet() {
+  var last = ST.settings.xp_cities || "", q = ST.settings.xp_qty || 50;
+  sheet("<h3>Prompt de extração</h3><p>Cole numa IA que pesquisa na internet (ChatGPT, Gemini, Perplexity). Ela devolve a lista pronta e você cola em <b>+ Empresas</b>.</p>" +
+    '<span class="lbl">Cidades</span><textarea class="msg" id="xpC" placeholder="Ex.: Salvador, Feira de Santana, Vitória da Conquista - BA" style="min-height:70px">' + esc(last) + "</textarea>" +
+    '<span class="lbl">Quantas empresas</span><div class="chips">' + [30, 50, 100].map(function (v) { return '<button data-q="' + v + '"' + (v === +q ? ' style="background:var(--g);color:#fff;border-color:var(--g)"' : "") + ">" + v + "</button>"; }).join("") + "</div>" +
+    '<div class="row2"><button class="btn go" id="xpCopy">Copiar prompt</button></div><div class="err" id="xpE"></div>', function (s) {
+    $(".chips", s).onclick = function (e) { var b = e.target.closest("[data-q]"); if (!b) return; q = +b.dataset.q; $$(".chips button", s).forEach(function (x) { var on = x === b; x.style.background = on ? "var(--g)" : ""; x.style.color = on ? "#fff" : ""; x.style.borderColor = on ? "var(--g)" : ""; }); };
+    $("#xpCopy", s).onclick = function () {
+      var c = $("#xpC", s).value.trim();
+      if (!c) { $("#xpE", s).textContent = "Escreva pelo menos uma cidade."; $("#xpC", s).focus(); return; }
+      saveSettings({ xp_cities: c, xp_qty: q });
+      copyText(extractPrompt(c, q)); closeSheet();
+      toast("Prompt copiado. Cole na IA e depois cole a resposta em + Empresas.", 6000);
+    };
+  });
+}
 function addSheet() {
-  sheet("<h3>Adicionar empresas</h3><p>Entram na fila de " + esc(N().short) + ". Repetidas são ignoradas.</p>" + importBox(), function (s) {
+  sheet("<h3>Adicionar empresas</h3><p>Entram na fila de " + esc(N().short) + '. Repetidas e queimadas são ignoradas. <button class="link" style="color:var(--g)" data-a="xp">Pegar lista com IA</button></p>' + importBox(), function (s) {
     readClip(function (t) { if (t && t.split("\n").length > 1 && /\d{4}/.test(t) && !$("#paste", s).value) $("#paste", s).value = t; });
   });
 }
@@ -956,6 +1006,7 @@ $("#setBtn").onclick = function () {
     '<button class="mi" data-s="dl"><i>📎</i>Baixar arquivo do prompt</button>' +
     '<button class="mi" data-s="msgs"><i>💬</i>Mensagens do WhatsApp</button>' +
     '<button class="mi" data-s="goal"><i>🎯</i>Meta de chamadas por dia</button>' +
+    '<button class="mi" data-s="xp"><i>🔎</i>Prompt de extração (IA)</button>' +
     '<button class="mi" data-s="burn"><i>🔥</i>Números queimados (' + burnCount() + ')</button>' +
     '<button class="mi" data-s="csv"><i>📤</i>Exportar backup (CSV)</button>' +
     '<button class="mi" data-s="link"><i>🔗</i>Abrir em outro aparelho</button>' +
@@ -969,6 +1020,7 @@ $("#setBtn").onclick = function () {
       else if (b.dataset.s === "csv") exportCsv();
       else if (b.dataset.s === "link") { var u = location.origin + "/#k=" + window.NITRO_KEY; copyText(u); closeSheet(); toast("Link pessoal copiado. Abra ele no outro aparelho. Não compartilhe: quem tiver esse link vê seus dados.", 8000); }
       else if (b.dataset.s === "burn") burnSheet();
+      else if (b.dataset.s === "xp") xpSheet();
       else { closeSheet(); $("#nicheBtn").click(); }
     };
   });
