@@ -1520,6 +1520,21 @@ function moreSheet(c) {
     };
   });
 }
+// Exclui todas as empresas dos Funis P1, P2 e P3 (nicho atual). A Fila não é tocada. Pede 5 confirmações.
+function wipeFunil(b) {
+  var alvo = ST.companies.filter(function (c) { return c.stage === "contato" && mine(c); });
+  if (!alvo.length) { toast("Não tem nenhuma empresa nos Funis P1, P2 e P3."); return; }
+  var n = (+b.dataset.n || 0) + 1; b.dataset.n = n;
+  if (n < 5) { b.lastChild.textContent = "Excluir " + alvo.length + " empresa(s) do P1, P2 e P3? Toque mais " + (5 - n) + " vez(es) para confirmar"; return; }
+  var ids = {}; alvo.forEach(function (c) { ids[c.id] = 1; });
+  Object.keys(CHUNKS).forEach(function (cid) {
+    var before = CHUNKS[cid].items.length;
+    CHUNKS[cid].items = CHUNKS[cid].items.filter(function (x) { if (ids[x.id]) { (DELS[cid] = DELS[cid] || []).push(x.id); return false; } return true; });
+    if (CHUNKS[cid].items.length !== before) saveChunk(cid);
+  });
+  rebuild(); closeSheet(); render();
+  toast(alvo.length + " empresa(s) excluída(s) do Funil P1, P2 e P3. A Fila continua igual.", 6000);
+}
 $("#setBtn").onclick = function () {
   sheet("<h3>Ajustes</h3>" +
     '<button class="mi" data-s="ext"><i>📱</i>Painel da extensão do WhatsApp</button>' +
@@ -1531,9 +1546,11 @@ $("#setBtn").onclick = function () {
     '<button class="mi" data-s="csv"><i>📤</i>Exportar backup (CSV)</button>' +
     '<button class="mi" data-s="link"><i>🔗</i>Copiar link do site</button>' +
     '<button class="mi" data-s="niche"><i>' + N().icon + "</i>Trocar nicho</button>" +
+    '<button class="mi" data-s="wipe" style="color:var(--red)"><i>🗑️</i>Excluir todas do Funil P1, P2 e P3</button>' +
     '<a class="mi" href="' + AI_URL + '" target="_blank" rel="noopener"><i>✨</i>Abrir AI Studio</a>', function (s) {
     s.onclick = function (e) {
       var b = e.target.closest("[data-s]"); if (!b) return;
+      if (b.dataset.s === "wipe") { wipeFunil(b); return; }
       if (b.dataset.s === "ext") extSheet();
       else if (b.dataset.s === "dl") downloadPrompt();
       else if (b.dataset.s === "msgs") msgSheet();
