@@ -79,6 +79,40 @@ main{max-width:640px;margin:0 auto;padding-bottom:calc(30px + env(safe-area-inse
 .link{color:#fff;font-weight:600}
 /* vazio e importar */
 .empty{padding:28px 20px;text-align:center;color:var(--mut)}
+.sb{padding:12px 0 40px}
+.sb-card{margin:0 12px 8px;padding:16px;border:1px solid var(--line);border-radius:16px;background:#fff}
+.sb-card h3{font-size:18px;margin-bottom:6px}
+.sb-m{font-size:13px;color:var(--mut);margin:6px 0 12px;word-break:break-word}
+.sb-err{font-size:13.5px;color:var(--red);margin-top:8px;word-break:break-word}
+.sb-err:empty,.sb-m:empty{display:none}
+.sb-in{width:100%;height:46px;border:1px solid var(--line);border-radius:12px;padding:0 12px;font-size:16px;margin-bottom:10px;background:#fff;color:var(--ink)}
+.sb-in:focus{outline:2px solid var(--g);border-color:transparent}
+.sb-drop{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:4px;min-height:120px;border:2px dashed #c8d3d0;border-radius:14px;background:#f6faf9;text-align:center;padding:16px;cursor:pointer;margin-bottom:14px}
+.sb-drop b{font-size:15px;color:var(--gd);word-break:break-all}
+.sb-drop span{font-size:13px;color:var(--mut)}
+.sb-drop.on{border-color:var(--g);background:#e7f6f2}
+.sb-lb{display:block;font-size:13px;font-weight:700;color:var(--ink);margin-bottom:6px}
+.sb-name{display:flex;align-items:center;gap:6px}
+.sb-name .sb-in{margin:0;flex:1;min-width:0}
+.sb-name span{font-size:14px;color:var(--mut);font-weight:600}
+.sb-ck{display:flex;align-items:center;gap:8px;font-size:13.5px;margin:4px 0 14px}
+.sb-ck span{min-width:0}.sb-ck b{word-break:break-all}
+.sb-ck input{width:18px;height:18px;accent-color:var(--g);flex:none}
+.sb-prog{height:6px;border-radius:3px;background:var(--line);overflow:hidden;margin-top:14px}
+.sb-prog i{display:block;height:100%;width:0;background:var(--g2);transition:width .3s}
+.sb-ok{margin-top:14px;padding:14px;border-radius:12px;background:#e7f6f2}
+.sb-ok>b{display:block;color:var(--gd);font-size:15px;margin-bottom:8px}
+.sb-lk{display:grid;grid-template-columns:1fr auto;align-items:center;gap:2px 10px;padding:8px 0;border-top:1px solid rgba(0,0,0,.06)}
+.sb-lk a{font-weight:700;color:var(--gd);word-break:break-all}
+.sb-lk small{grid-column:1;font-size:12px;color:var(--mut)}
+.sb-lk .btn{grid-row:1/3;grid-column:2;height:34px}
+.sb-row{display:flex;align-items:center;gap:10px;padding:12px 16px;border-bottom:1px solid var(--line)}
+.sb-rt{flex:1;min-width:0;display:flex;flex-direction:column;gap:2px}
+.sb-rt b{font-size:15px}
+.sb-rt a{font-size:13px;color:var(--g);word-break:break-all}
+.sb-row .btn{height:34px;flex:none}
+.sb-out{display:block;margin:18px auto 0;font-size:13px;color:var(--mut);text-decoration:underline}
+
 .empty h3{margin:0 0 6px;font-size:16px;color:var(--ink);font-weight:600}
 .empty p{margin:0 0 14px}
 textarea.paste{width:100%;min-height:150px;padding:12px;border:1px solid var(--line);border-radius:10px;outline:none;font-size:14px;resize:vertical;text-align:left}
@@ -189,7 +223,7 @@ body:has(#xpage) .toast{bottom:calc(80px + env(safe-area-inset-bottom))}
 <div id="app" hidden>
   <header class="top">
     <div class="tb"><button class="pill" id="nicheBtn"></button><button class="icb" id="setBtn" aria-label="Ajustes">⋮</button></div>
-    <nav class="nav" id="nav"><button data-tab="prospect">Fila<span class="bd" hidden></span></button><button data-tab="replies">Funil P1<span class="bd" hidden></span></button><button data-tab="resp">Funil P2<span class="bd" hidden></span></button><button data-tab="p3">Funil P3<span class="bd" hidden></span></button><button data-tab="sites">Interessados<span class="bd" hidden></span></button><button data-tab="sales">Vendas</button><button data-tab="lost">Não quis</button></nav>
+    <nav class="nav" id="nav"><button data-tab="prospect">Fila<span class="bd" hidden></span></button><button data-tab="replies">Funil P1<span class="bd" hidden></span></button><button data-tab="resp">Funil P2<span class="bd" hidden></span></button><button data-tab="p3">Funil P3<span class="bd" hidden></span></button><button data-tab="sites">Interessados<span class="bd" hidden></span></button><button data-tab="sales">Vendas</button><button data-tab="lost">Não quis</button><button data-tab="subir">Subir site</button></nav>
   </header>
   <span id="saving" class="saving"></span>
   <main id="view"></main>
@@ -716,6 +750,8 @@ function render() {
     var v = bd[b.dataset.tab]; s.hidden = !v; s.textContent = v > 99 ? "99+" : v;
   });
   var v = $("#view");
+  if (ST.tab === "subir") { if (v.dataset.t !== "subir") { v.dataset.t = "subir"; v.innerHTML = vSubir(); sbInit(); } return; }
+  v.dataset.t = ST.tab;
   if (ST.tab === "prospect") v.innerHTML = vProspect(o);
   else if (ST.tab === "replies") v.innerHTML = vReplies(o);
   else if (ST.tab === "resp") v.innerHTML = vResp(o);
@@ -901,6 +937,205 @@ function vResp0(o) {
   if (fin.length) h += sec("Funil enviado · aguardando resposta · " + fin.length) + fin.map(row).join("");
   return h + "</div>";
 }
+
+/* ===== Aba Subir site (Cloudflare Pages, upload direto) ===== */
+var SB = { files: null, zipName: "", busy: false, sites: null, res: null, err: "" };
+function sbSenha() { try { return localStorage.getItem("nitro_subir_senha") || ""; } catch (e) { return SB._s || ""; } }
+function sbSetSenha(v) { SB._s = v; try { if (v) localStorage.setItem("nitro_subir_senha", v); else localStorage.removeItem("nitro_subir_senha"); } catch (e) {} }
+function sbApi(rota, body) {
+  var o = { method: body ? "POST" : "GET", headers: { "x-senha": sbSenha() } };
+  if (body) { o.headers["content-type"] = "application/json"; o.body = JSON.stringify(body); }
+  return fetch("/api/subir/" + rota, o).then(function (r) {
+    return r.json().catch(function () { return { ok: false, erro: "HTTP " + r.status }; }).then(function (d) { d._st = r.status; return d; });
+  });
+}
+function sbSlug(s) {
+  return String(s || "").toLowerCase().normalize("NFD").replace(/[̀-ͯ]/g, "").replace(/\.zip$/, "").replace(/[^a-z0-9]+/g, "-").replace(/^-+|-+$/g, "").replace(/-?site$/, "").slice(0, 58).replace(/-+$/, "");
+}
+/* Descompacta zip no navegador (sem biblioteca) */
+async function sbUnzip(buf) {
+  var dv = new DataView(buf), i = buf.byteLength - 22, td = new TextDecoder();
+  while (i >= 0 && dv.getUint32(i, true) !== 0x06054b50) i--;
+  if (i < 0) throw new Error("Esse arquivo não é um .zip válido.");
+  var n = dv.getUint16(i + 10, true), p = dv.getUint32(i + 16, true), out = [];
+  for (var k = 0; k < n; k++) {
+    if (dv.getUint32(p, true) !== 0x02014b50) throw new Error("Zip corrompido.");
+    var met = dv.getUint16(p + 10, true), cs = dv.getUint32(p + 20, true), nl = dv.getUint16(p + 28, true), el = dv.getUint16(p + 30, true), cl = dv.getUint16(p + 32, true), lo = dv.getUint32(p + 42, true);
+    var nome = td.decode(new Uint8Array(buf, p + 46, nl)).replace(/\\/g, "/");
+    p += 46 + nl + el + cl;
+    if (/\/$/.test(nome) || /(^|\/)(__MACOSX|\.DS_Store|Thumbs\.db)(\/|$)/.test(nome)) continue;
+    var ini = lo + 30 + dv.getUint16(lo + 26, true) + dv.getUint16(lo + 28, true), raw = new Uint8Array(buf, ini, cs), dados;
+    if (met === 0) dados = raw.slice();
+    else if (met === 8) dados = new Uint8Array(await new Response(new Blob([raw]).stream().pipeThrough(new DecompressionStream("deflate-raw"))).arrayBuffer());
+    else throw new Error("Formato de compressão não suportado em " + nome + ".");
+    out.push({ path: nome, data: dados });
+  }
+  var idx = out.filter(function (f) { return /(^|\/)index\.html$/i.test(f.path); }).sort(function (a, b) { return a.path.length - b.path.length; })[0];
+  if (!idx) throw new Error("O zip não tem index.html.");
+  var pre = idx.path.slice(0, idx.path.length - "index.html".length);
+  return out.filter(function (f) { return f.path.indexOf(pre) === 0; }).map(function (f) { return { path: f.path.slice(pre.length), data: f.data }; });
+}
+var SB_TIPOS = { html: "text/html", htm: "text/html", css: "text/css", js: "application/javascript", mjs: "application/javascript", json: "application/json", txt: "text/plain", xml: "application/xml", svg: "image/svg+xml", png: "image/png", jpg: "image/jpeg", jpeg: "image/jpeg", gif: "image/gif", webp: "image/webp", avif: "image/avif", ico: "image/x-icon", woff: "font/woff", woff2: "font/woff2", ttf: "font/ttf", otf: "font/otf", mp4: "video/mp4", webm: "video/webm", mp3: "audio/mpeg", ogg: "audio/ogg", pdf: "application/pdf", webmanifest: "application/manifest+json" };
+function sbExt(p) { var m = /\.([a-z0-9]+)$/i.exec(p); return m ? m[1].toLowerCase() : ""; }
+async function sbHash(f) {
+  var e = new TextEncoder().encode(sbExt(f.path)), u = new Uint8Array(f.data.length + e.length);
+  u.set(f.data); u.set(e, f.data.length);
+  var h = new Uint8Array(await crypto.subtle.digest("SHA-256", u));
+  return Array.from(h).map(function (x) { return x.toString(16).padStart(2, "0"); }).join("").slice(0, 32);
+}
+function sbB64(u8) { return new Promise(function (ok) { var fr = new FileReader(); fr.onload = function () { ok(String(fr.result).split(",")[1] || ""); }; fr.readAsDataURL(new Blob([u8])); }); }
+function sbKb(n) { return n > 1048576 ? (n / 1048576).toFixed(1) + " MB" : Math.max(1, Math.round(n / 1024)) + " KB"; }
+
+function vSubir() {
+  if (!sbSenha()) {
+    return '<div class="sb"><div class="sb-card"><h3>Subir site</h3><p class="sb-m">Digite a senha da área de publicação. Ela fica salva neste aparelho.</p>' +
+      '<input id="sbSenha" class="sb-in" type="password" autocomplete="current-password" placeholder="Senha">' +
+      '<button class="btn pri big" data-sb="entrar">Entrar</button><p class="sb-err" id="sbErr"></p></div></div>';
+  }
+  return '<div class="sb">' +
+    '<div class="sb-card">' +
+      '<label class="sb-drop" id="sbDrop"><input type="file" id="sbFile" accept=".zip,application/zip" hidden>' +
+        '<b id="sbDropT">Toque para escolher o .zip do site</b><span id="sbDropS">ou arraste o arquivo aqui</span></label>' +
+      '<label class="sb-lb" for="sbNome">Nome do link</label>' +
+      '<div class="sb-name"><input id="sbNome" class="sb-in" inputmode="url" autocapitalize="off" autocomplete="off" spellcheck="false" placeholder="ex: freshclean"><span>.pages.dev</span></div>' +
+      '<p class="sb-m" id="sbPrev">Use letras minúsculas, números e hífen.</p>' +
+      '<label class="sb-ck"><input type="checkbox" id="sbSub" checked><span>Criar também <b id="sbSubT">nome.agencianitro.com.br</b></span></label>' +
+      '<button class="btn pri big" id="sbGo" data-sb="publicar" disabled>Publicar</button>' +
+      '<div class="sb-prog" id="sbProg" hidden><i id="sbBar"></i></div><p class="sb-m" id="sbMsg"></p><p class="sb-err" id="sbErr"></p>' +
+      '<div id="sbRes"></div>' +
+    '</div>' +
+    '<div class="sec">Sites publicados aqui</div><div id="sbList"><div class="empty"><p>Carregando…</p></div></div>' +
+    '<button class="sb-out" data-sb="sair">Sair da área de publicação</button>' +
+  '</div>';
+}
+function sbErr(t) { var e = $("#sbErr"); if (e) e.textContent = t || ""; }
+function sbMsg(t, pct) { var m = $("#sbMsg"); if (m) m.textContent = t || ""; var pg = $("#sbProg"); if (pg) { pg.hidden = pct == null; if (pct != null) $("#sbBar").style.width = Math.round(pct) + "%"; } }
+function sbNomeAtual() { var i = $("#sbNome"); return i ? sbSlug(i.value) : ""; }
+function sbUpd() {
+  var n = sbNomeAtual(), i = $("#sbNome");
+  if (i && i.value !== n && document.activeElement !== i) i.value = n;
+  var pv = $("#sbPrev"); if (pv) pv.innerHTML = n ? "Link: <b>" + esc(n) + ".pages.dev</b>" + (SB.sites && SB.sites.some(function (s) { return s.nome === n; }) ? " · <span style=\"color:var(--amb)\">já existe, vai ser atualizado</span>" : "") : "Use letras minúsculas, números e hífen.";
+  var st = $("#sbSubT"); if (st) st.textContent = (n || "nome") + ".agencianitro.com.br";
+  var g = $("#sbGo"); if (g) g.disabled = SB.busy || !n || !SB.files;
+}
+function sbLink(u) { return '<a href="' + esc(u) + '" target="_blank" rel="noopener">' + esc(u.replace(/^https:\/\//, "")) + "</a>"; }
+function sbLista() {
+  var el = $("#sbList"); if (!el) return;
+  if (!SB.sites) return;
+  if (!SB.sites.length) { el.innerHTML = '<div class="empty"><p>Nenhum site publicado por aqui ainda.</p></div>'; return; }
+  el.innerHTML = SB.sites.map(function (s) {
+    var subs = (s.dominios || []).filter(function (d) { return !/\.pages\.dev$/.test(d); });
+    return '<div class="sb-row"><div class="sb-rt"><b>' + esc(s.nome) + "</b>" + sbLink("https://" + s.pages) + subs.map(function (d) { return sbLink("https://" + d); }).join("") + '</div>' +
+      '<button class="btn" data-sb="usar" data-n="' + esc(s.nome) + '">Atualizar</button></div>';
+  }).join("");
+}
+function sbCarregar() {
+  sbApi("sites").then(function (d) {
+    if (d._st === 401) { sbSetSenha(""); SB.sites = null; if (ST.tab === "subir") { $("#view").dataset.t = ""; render(); } toast("Senha errada.", 3000); return; }
+    if (d.erro === "config") { var el = $("#sbList"); if (el) el.innerHTML = '<div class="empty"><h3>Falta configurar</h3><p>Cadastre no Cloudflare (projeto nitrovendas → Configurações → Variáveis): ' + esc((d.falta || []).join(" e ")) + ".</p></div>"; return; }
+    if (!d.ok) { var e2 = $("#sbList"); if (e2) e2.innerHTML = '<div class="empty"><p>' + esc(d.erro || "Erro ao listar") + "</p></div>"; return; }
+    SB.sites = d.sites; sbLista(); sbUpd();
+  }).catch(function () { var el = $("#sbList"); if (el) el.innerHTML = '<div class="empty"><p>Sem conexão.</p></div>'; });
+}
+async function sbArquivo(f) {
+  if (!f) return;
+  sbErr(""); SB.files = null; sbUpd();
+  if (!/\.zip$/i.test(f.name)) { sbErr("Escolha um arquivo .zip."); return; }
+  $("#sbDropT").textContent = f.name; $("#sbDropS").textContent = "Lendo…";
+  try {
+    var fs = await sbUnzip(await f.arrayBuffer());
+    SB.files = fs; SB.zipName = f.name;
+    var tot = fs.reduce(function (a, x) { return a + x.data.length; }, 0);
+    $("#sbDropS").textContent = fs.length + " arquivos · " + sbKb(tot) + " · toque para trocar";
+    var i = $("#sbNome"); if (i && !i.value) i.value = sbSlug(f.name);
+  } catch (e) { $("#sbDropS").textContent = "toque para escolher outro"; sbErr(e.message || String(e)); }
+  sbUpd();
+}
+async function sbPublicar() {
+  var nome = sbNomeAtual(); if (!nome || !SB.files || SB.busy) return;
+  SB.busy = true; sbErr(""); $("#sbRes").innerHTML = ""; sbUpd();
+  try {
+    sbMsg("Preparando " + nome + ".pages.dev…", 3);
+    var pr = await sbApi("preparar", { nome: nome });
+    if (!pr.ok) throw new Error(pr.erro || "Erro ao preparar");
+    var jwt = pr.jwt, manifest = {}, por = {}, headers = "", redirects = "";
+    var fs = SB.files.filter(function (f) {
+      if (f.path === "_headers") { headers = new TextDecoder().decode(f.data); return false; }
+      if (f.path === "_redirects") { redirects = new TextDecoder().decode(f.data); return false; }
+      return !/^functions\//.test(f.path);
+    });
+    sbMsg("Conferindo arquivos…", 8);
+    for (var k = 0; k < fs.length; k++) { var h = await sbHash(fs[k]); fs[k].hash = h; manifest["/" + fs[k].path] = h; por[h] = fs[k]; }
+    var hashes = Object.keys(por);
+    var fl = await sbApi("faltando", { jwt: jwt, hashes: hashes });
+    if (!fl.ok) throw new Error(fl.erro || "Erro ao conferir arquivos");
+    var falta = fl.faltando.map(function (h) { return por[h]; }).filter(Boolean);
+    var total = falta.reduce(function (a, f) { return a + f.data.length; }, 0) || 1, feito = 0, lote = [], tam = 0;
+    async function manda() {
+      if (!lote.length) return;
+      var r = await sbApi("enviar", { jwt: jwt, itens: lote });
+      if (!r.ok) throw new Error(r.erro || "Erro ao enviar arquivos");
+      lote = []; tam = 0;
+    }
+    for (var x = 0; x < falta.length; x++) {
+      var f = falta[x], b = await sbB64(f.data);
+      if (tam + b.length > 18000000 && lote.length) await manda();
+      lote.push({ key: f.hash, value: b, metadata: { contentType: SB_TIPOS[sbExt(f.path)] || "application/octet-stream" }, base64: true });
+      tam += b.length; feito += f.data.length;
+      sbMsg("Enviando arquivos… " + (x + 1) + "/" + falta.length, 10 + 70 * feito / total);
+    }
+    await manda();
+    sbMsg("Publicando…", 85);
+    var sub = !!($("#sbSub") && $("#sbSub").checked);
+    var pb = await sbApi("publicar", { nome: nome, jwt: jwt, hashes: hashes, manifest: manifest, headers: headers, redirects: redirects, sub: sub });
+    if (!pb.ok) throw new Error(pb.erro || "Erro ao publicar");
+    for (var t = 0; t < 30; t++) {
+      var s = await sbApi("status?nome=" + nome + "&id=" + pb.id);
+      if (s.ok && s.etapa === "deploy" && s.estado === "success") break;
+      if (s.ok && s.estado === "failure") throw new Error("O Cloudflare recusou a publicação (" + s.etapa + ").");
+      sbMsg("Colocando no ar…", 88 + t / 3);
+      await new Promise(function (ok) { setTimeout(ok, 2000); });
+    }
+    sbMsg("", null);
+    var h2 = '<div class="sb-ok"><b>No ar ✓</b>' + sbRow(pb.pages, "pronto agora");
+    if (pb.sub && pb.sub.ok) h2 += sbRow("https://" + pb.sub.host, "fica ativo em 1 a 5 min");
+    else if (pb.sub && pb.sub.aviso) h2 += '<p class="sb-err">' + esc(pb.sub.aviso) + "</p>";
+    if (pr.novo) h2 += '<p class="sb-m">Site novo: o primeiro acesso pode levar até 1 minuto.</p>';
+    $("#sbRes").innerHTML = h2 + "</div>";
+    toast("Site publicado.", 3000);
+    sbCarregar();
+  } catch (e) { sbMsg("", null); sbErr(e.message || String(e)); }
+  SB.busy = false; sbUpd();
+}
+function sbRow(u, nota) { return '<div class="sb-lk">' + sbLink(u) + '<small>' + esc(nota) + '</small><button class="btn" data-sb="copiar" data-u="' + esc(u) + '">Copiar</button></div>'; }
+function sbInit() {
+  if (!sbSenha()) { var s = $("#sbSenha"); if (s) { s.focus(); s.onkeydown = function (e) { if (e.key === "Enter") sbClick({ dataset: { sb: "entrar" } }); }; } return; }
+  var fi = $("#sbFile"); if (fi) fi.onchange = function () { sbArquivo(fi.files[0]); fi.value = ""; };
+  var d = $("#sbDrop");
+  if (d) {
+    d.ondragover = function (e) { e.preventDefault(); d.classList.add("on"); };
+    d.ondragleave = function () { d.classList.remove("on"); };
+    d.ondrop = function (e) { e.preventDefault(); d.classList.remove("on"); sbArquivo(e.dataTransfer.files[0]); };
+  }
+  var n = $("#sbNome"); if (n) { n.oninput = sbUpd; n.onblur = function () { n.value = sbSlug(n.value); sbUpd(); }; }
+  sbCarregar(); sbUpd();
+}
+function sbClick(b) {
+  var a = b.dataset.sb;
+  if (a === "entrar") {
+    var v = ($("#sbSenha") || {}).value || ""; if (!v) return;
+    sbSetSenha(v);
+    sbApi("sites").then(function (d) {
+      if (d._st === 401) { sbSetSenha(""); sbErr("Senha errada."); return; }
+      SB.sites = d.ok ? d.sites : null; $("#view").dataset.t = ""; render();
+    }).catch(function () { sbSetSenha(""); sbErr("Sem conexão."); });
+  } else if (a === "sair") { sbSetSenha(""); SB.sites = null; $("#view").dataset.t = ""; render(); }
+  else if (a === "publicar") sbPublicar();
+  else if (a === "copiar") { copyText(b.dataset.u); toast("Link copiado.", 2000); }
+  else if (a === "usar") { var i = $("#sbNome"); if (i) { i.value = b.dataset.n; sbUpd(); window.scrollTo(0, 0); toast(SB.files ? "Toque em Publicar para atualizar." : "Escolha o .zip novo e publique.", 3000); } }
+}
+document.addEventListener("click", function (e) { var b = e.target.closest("[data-sb]"); if (b && b.tagName !== "LABEL") sbClick(b); });
+
 function vLost(o) {
   var all = o.lost;
   if (!all.length) return '<div class="empty"><h3>Ninguém aqui</h3><p>Quem você marcar como "Não quis" aparece aqui. Dá para voltar a empresa para o funil.</p></div>';
