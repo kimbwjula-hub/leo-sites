@@ -6,6 +6,8 @@ const ACC = "f9a358d0b14d705a0247ce97a870e3fb";
 const ZONA = "agencianitro.com.br";
 const API = "https://api.cloudflare.com/client/v4";
 const RESERVADOS = new Set(["subir", "www", "sitegratis", "api", "mail", "admin", "painel"]);
+const OFF = "nitro:offline";
+const PAG_OFF = `<!doctype html><html lang="pt-BR"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="robots" content="noindex"><title>Fora do ar</title><style>html,body{height:100%;margin:0}body{display:grid;place-items:center;background:#f6f6f6;color:#333;font-family:system-ui,sans-serif;text-align:center;padding:24px}h1{font-size:22px;margin:0 0 8px}p{margin:0;color:#777}</style></head><body><div><h1>Este site está temporariamente fora do ar</h1><p>Volte em breve.</p></div></body></html>`;
 const NOME_OK = /^[a-z0-9](?:[a-z0-9-]{0,56}[a-z0-9])?$/;
 
 const j = (d, s = 200) =>
@@ -84,7 +86,8 @@ export async function onRequest({ request, env, params }) {
         if (!d.success) return j({ ok: false, erro: erroDe(d) }, 502);
         for (const x of d.result || []) {
           if (x.source && x.source.type === "github") continue; // os do GitHub ficam de fora
-          out.push({ nome: x.name, pages: x.subdomain, dominios: x.domains || [], quando: (x.latest_deployment && x.latest_deployment.created_on) || x.created_on });
+          const cd = x.canonical_deployment || x.latest_deployment, msg = (cd && cd.deployment_trigger && cd.deployment_trigger.metadata && cd.deployment_trigger.metadata.commit_message) || "";
+          out.push({ nome: x.name, ativo: msg !== OFF, pages: x.subdomain, dominios: x.domains || [], quando: (x.latest_deployment && x.latest_deployment.created_on) || x.created_on });
         }
         const ri = d.result_info || {};
         if (!ri.total_pages || p >= ri.total_pages) break;
@@ -140,6 +143,7 @@ export async function onRequest({ request, env, params }) {
       const fd = new FormData();
       fd.append("manifest", JSON.stringify(b.manifest || {}));
       fd.append("branch", "main");
+      fd.append("commit_message", "nitro:site");
       if (b.headers) fd.append("_headers", new Blob([b.headers]), "_headers");
       if (b.redirects) fd.append("_redirects", new Blob([b.redirects]), "_redirects");
       const dp = await cf(env, `/accounts/${ACC}/pages/projects/${nome}/deployments`, { method: "POST", body: fd });
@@ -147,6 +151,47 @@ export async function onRequest({ request, env, params }) {
       let sub = null;
       if (b.sub) { try { sub = await ligarSubdominio(env, nome); } catch (e) { sub = { ok: false, aviso: String(e.message || e) }; } }
       return j({ ok: true, id: dp.result.id, pages: "https://" + nome + ".pages.dev", sub });
+    }
+
+    // Tira o site do ar (publica uma página "fora do ar") ou volta ele (restaura a versão anterior)
+    if (rota === "ar") {
+      const nome = String(b.nome || "").toLowerCase();
+      const g = await pegarProjeto(env, nome); if (g.erro) return j({ ok: false, erro: g.erro }, g.st);
+      if (b.acao === "desligar") {
+        const t = await cf(env, `/accounts/${ACC}/pages/projects/${nome}/upload-token`);
+        if (!t.success) return j({ ok: false, erro: "Token de upload: " + erroDe(t) }, 502);
+        const jwt = t.result.jwt, dados = new TextEncoder().encode(PAG_OFF);
+        const ext = new TextEncoder().encode("html"), u8 = new Uint8Array(dados.length + ext.length);
+        u8.set(dados); u8.set(ext, dados.length);
+        const hash = Array.from(new Uint8Array(await crypto.subtle.digest("SHA-256", u8))).map((x) => x.toString(16).padStart(2, "0")).join("").slice(0, 32);
+        const miss = await jwtFetch(jwt, "/pages/assets/check-missing", { hashes: [hash] });
+        if (!miss.success) return j({ ok: false, erro: erroDe(miss) }, 502);
+        if ((miss.result || []).length) {
+          let bin = ""; for (const c of dados) bin += String.fromCharCode(c);
+          const up = await jwtFetch(jwt, "/pages/assets/upload", [{ key: hash, value: btoa(bin), metadata: { contentType: "text/html" }, base64: true }]);
+          if (!up.success) return j({ ok: false, erro: erroDe(up) }, 502);
+        }
+        const uh = await jwtFetch(jwt, "/pages/assets/upsert-hashes", { hashes: [hash] });
+        if (!uh.success) return j({ ok: false, erro: erroDe(uh) }, 502);
+        const fd = new FormData();
+        fd.append("manifest", JSON.stringify({ "/index.html": hash }));
+        fd.append("branch", "main");
+        fd.append("commit_message", OFF);
+        const dp = await cf(env, `/accounts/${ACC}/pages/projects/${nome}/deployments`, { method: "POST", body: fd });
+        if (!dp.success) return j({ ok: false, erro: "Não consegui tirar do ar: " + erroDe(dp) }, 502);
+        return j({ ok: true, id: dp.result.id });
+      }
+      // ligar: acha a última versão de verdade e restaura
+      const ls = await cf(env, `/accounts/${ACC}/pages/projects/${nome}/deployments?env=production&per_page=25`);
+      if (!ls.success) return j({ ok: false, erro: erroDe(ls) }, 502);
+      const alvo = (ls.result || []).find((d) => {
+        const m = (d.deployment_trigger && d.deployment_trigger.metadata && d.deployment_trigger.metadata.commit_message) || "";
+        return m !== OFF && d.latest_stage && d.latest_stage.name === "deploy" && d.latest_stage.status === "success";
+      });
+      if (!alvo) return j({ ok: false, erro: "Não achei a versão anterior. Publique o zip de novo." }, 404);
+      const rb = await cf(env, `/accounts/${ACC}/pages/projects/${nome}/deployments/${alvo.id}/rollback`, { method: "POST" });
+      if (!rb.success) return j({ ok: false, erro: "Não consegui voltar ao ar: " + erroDe(rb) }, 502);
+      return j({ ok: true, id: rb.result && rb.result.id });
     }
 
     // Liga ou desliga o endereço nome.agencianitro.com.br

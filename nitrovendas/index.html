@@ -107,6 +107,15 @@ main{max-width:640px;margin:0 auto;padding-bottom:calc(30px + env(safe-area-inse
 .sb-lk small{grid-column:1;font-size:12px;color:var(--mut)}
 .sb-lk .btn{grid-row:1/3;grid-column:2;height:34px}
 .sb-row{padding:12px 16px;border-bottom:1px solid var(--line)}
+.sb-top{display:flex;align-items:flex-start;gap:12px}
+.sb-top .sb-rt{cursor:pointer}
+.sb-more{font-size:12px;color:var(--mut);margin-top:2px}
+.sb-tag{font-size:11px;font-weight:700;color:var(--red);background:#fdecea;border-radius:8px;padding:2px 7px;margin-left:6px;vertical-align:middle}
+.sb-row.off .sb-rt b{color:var(--mut)}
+.sb-sw{flex:none;position:relative;width:52px;height:30px;border-radius:15px;background:#c5cdd0;transition:background .2s;margin-top:2px}
+.sb-sw i{position:absolute;top:3px;left:3px;width:24px;height:24px;border-radius:50%;background:#fff;box-shadow:0 1px 3px rgba(0,0,0,.3);transition:transform .2s}
+.sb-sw.on{background:var(--g2)}.sb-sw.on i{transform:translateX(22px)}
+.sb-sw.wait{opacity:.6}
 .sb-ac{display:flex;flex-wrap:wrap;gap:8px;margin-top:10px}
 .sb-ac .btn{height:34px;font-size:13px;padding:0 12px}
 .sb-del{color:var(--red);border-color:#f0c9c6}.sb-del.on{background:var(--red);border-color:var(--red);color:#fff}
@@ -942,7 +951,7 @@ function vResp0(o) {
 }
 
 /* ===== Aba Subir site (Cloudflare Pages, upload direto) ===== */
-var SB = { files: null, zipName: "", busy: false, sites: null, res: null, err: "" };
+var SB = { open: null, ren: null, files: null, zipName: "", busy: false, sites: null, res: null, err: "" };
 function sbSenha() { try { return localStorage.getItem("nitro_subir_senha") || ""; } catch (e) { return SB._s || ""; } }
 function sbSetSenha(v) { SB._s = v; try { if (v) localStorage.setItem("nitro_subir_senha", v); else localStorage.removeItem("nitro_subir_senha"); } catch (e) {} }
 function sbApi(rota, body) {
@@ -1030,7 +1039,10 @@ function sbLista() {
     var nn = esc(s.nome), sufx = ".agencianitro.com.br";
     var mine = (s.dominios || []).filter(function (d) { return d.slice(-sufx.length) === sufx; });
     var outros = (s.dominios || []).filter(function (d) { return !/\.pages\.dev$/.test(d) && d.slice(-sufx.length) !== sufx; });
-    var h = '<div class="sb-row"><div class="sb-rt"><b>' + nn + "</b>" + sbLink("https://" + s.pages) + (s.dominios || []).filter(function (d) { return !/\.pages\.dev$/.test(d); }).map(function (d) { return sbLink("https://" + d); }).join("") + "</div>";
+    var ab = SB.open === s.nome, on = s.ativo !== false;
+    var h = '<div class="sb-row' + (on ? "" : " off") + '"><div class="sb-top"><div class="sb-rt" data-sb="abrir" data-n="' + nn + '"><b>' + nn + (on ? "" : ' <small class="sb-tag">fora do ar</small>') + "</b>" + sbLink("https://" + s.pages) + (s.dominios || []).filter(function (d) { return !/\.pages\.dev$/.test(d); }).map(function (d) { return sbLink("https://" + d); }).join("") + '<span class="sb-more">' + (ab ? "Fechar opções ▴" : "Opções ▾") + '</span></div>' +
+      '<button class="sb-sw' + (on ? " on" : "") + '" data-sb="ar" data-n="' + nn + '" data-on="' + (on ? 1 : 0) + '" role="switch" aria-checked="' + on + '" aria-label="Site no ar"><i></i></button></div>';
+    if (!ab && SB.ren !== s.nome) return h + "</div>";
     if (SB.ren === s.nome) {
       var cur = mine[0] ? mine[0].slice(0, -sufx.length) : s.nome;
       h += '<div class="sb-ren"><div class="sb-name"><input class="sb-in" id="sbRenIn" value="' + esc(cur) + '" autocapitalize="off" autocomplete="off" spellcheck="false"><span>' + sufx + '</span></div>' +
@@ -1147,6 +1159,17 @@ function sbClick(b) {
   } else if (a === "sair") { sbSetSenha(""); SB.sites = null; $("#view").dataset.t = ""; render(); }
   else if (a === "publicar") sbPublicar();
   else if (a === "copiar") { copyText(b.dataset.u); toast("Link copiado.", 2000); }
+  else if (a === "abrir") { SB.open = SB.open === b.dataset.n ? null : b.dataset.n; if (SB.ren && SB.ren !== SB.open) SB.ren = null; sbLista(); }
+  else if (a === "ar") {
+    var ligado = b.dataset.on === "1", nm2 = b.dataset.n;
+    b.disabled = true; b.classList.toggle("on", !ligado); b.classList.add("wait");
+    sbApi("ar", { nome: nm2, acao: ligado ? "desligar" : "ligar" }).then(function (d) {
+      if (!d.ok) { toast(d.erro || "Não consegui.", 5000); sbCarregar(); return; }
+      var x = (SB.sites || []).filter(function (q) { return q.nome === nm2; })[0]; if (x) x.ativo = !ligado;
+      sbLista();
+      toast(ligado ? nm2 + " saiu do ar." : nm2 + " voltou ao ar (pode levar até 1 minuto).", 4000);
+    }).catch(function () { toast("Sem conexão.", 3000); sbCarregar(); });
+  }
   else if (a === "ren") { SB.ren = b.dataset.n; sbLista(); var ri = $("#sbRenIn"); if (ri) { ri.focus(); ri.select(); } }
   else if (a === "rencancel") { SB.ren = null; sbLista(); }
   else if (a === "renok") {
@@ -1182,7 +1205,7 @@ function sbClick(b) {
   }
   else if (a === "usar") { var i = $("#sbNome"); if (i) { i.value = b.dataset.n; sbUpd(); window.scrollTo(0, 0); toast(SB.files ? "Toque em Publicar para atualizar." : "Escolha o .zip novo e publique.", 3000); } }
 }
-document.addEventListener("click", function (e) { var b = e.target.closest("[data-sb]"); if (b && b.tagName !== "LABEL") sbClick(b); });
+document.addEventListener("click", function (e) { if (e.target.closest(".sb-rt a")) return; var b = e.target.closest("[data-sb]"); if (b && b.tagName !== "LABEL") sbClick(b); });
 
 function vLost(o) {
   var all = o.lost;
