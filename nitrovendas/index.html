@@ -219,13 +219,19 @@ body:has(#xpage) .toast{bottom:calc(80px + env(safe-area-inset-bottom))}
     var docs = Object.keys(state.chunks).map(function (id) { return { id: id, data: function () { return clone(state.chunks[id]); } }; });
     var snap = { docs: docs, metadata: { fromCache: !!fromCache } }; colSubs.forEach(function (f) { f(snap); });
   }
-  var pend = 0;
+  var pend = 0, wv = 0, lastVer = "";
   function pull() {
     if (pend) return Promise.resolve();
-    return api("GET", "state").then(function (s) { if (pend) return; state = { main: s.main || {}, chunks: s.chunks || {} }; loaded = true; cache(); emitDoc(false); emitCol(false); });
+    var w0 = wv;
+    return api("GET", "state").then(function (s) { if (pend || wv !== w0) return; state = { main: s.main || {}, chunks: s.chunks || {} }; loaded = true; cache(); emitDoc(false); emitCol(false); });
+  }
+  // tempo real: pergunta a cada 3 s se algo mudou; só baixa tudo quando mudou
+  function check() {
+    if (pend || document.visibilityState !== "visible") return;
+    api("GET", "ver").then(function (r) { if (r.v && r.v !== lastVer) { lastVer = r.v; return pull(); } }).catch(function () {});
   }
   function retry(fn) { var n = 0; return (function go() { return fn().catch(function (e) { if (++n < 3 && e.code !== "quota_exceeded") return new Promise(function (r) { setTimeout(r, 800 * n); }).then(go); throw e; }); })(); }
-  function track(p) { pend++; return p.then(function (x) { pend--; return x; }, function (e) { pend--; throw e; }); }
+  function track(p) { pend++; wv++; return p.then(function (x) { pend--; return x; }, function (e) { pend--; throw e; }); }
   var chunksCol = {
     doc: function (id) {
       return {
@@ -255,7 +261,7 @@ body:has(#xpage) .toast{bottom:calc(80px + env(safe-area-inset-bottom))}
     }
   };
   window.claude = { use: function (n) { return Promise.resolve(n === "db" ? db : n === "user" ? user : n === "downloads" ? downloads : null); } };
-  setInterval(function () { if (document.visibilityState === "visible") pull().catch(function () {}); }, 30000);
+  setInterval(check, 3000);
   document.addEventListener("visibilitychange", function () { if (document.visibilityState === "visible") pull().catch(function () {}); });
 })();
 </script>
@@ -632,7 +638,7 @@ function L() {
     if (isToday(c.contacted)) o.today++;
     if (isToday(c.wanted)) o.intToday++;
     if (c.stage === "novos") { if (isBurned(c)) { o.burnedQ++; return; } o.leads.push(c); if (waInfo(c).ok) o.queue.push(c); else o.noWa++; }
-    else if (c.stage === "contato") { if (c.snooze && c.snooze > t) o.snoozed.push(c); else o.replies.push(c); }
+    else if (c.stage === "contato") { if (c.snooze && c.snooze > t && !c.replied) o.snoozed.push(c); else o.replies.push(c); }
     else if (c.stage === "feito") o.making.push(c);
     else if (c.stage === "pagamento") o.sent.push(c);
   });
@@ -834,7 +840,15 @@ function vProspect(o) {
   h += '<div class="next">' + o.queue.length + " na fila" + (nx ? " · próxima: " + esc(dn(nx)) : "") + "</div>";
   return h;
 }
-function extBar() { return '<div data-a="ext" style="cursor:pointer">' + extBar0() + "</div>"; }
+function extBar() { return '<div data-a="ext" class="extbar" style="cursor:pointer">' + extBar0() + "</div>"; }
+// status da extensão no topo dos funis: atualiza sozinho a cada 5 s
+setInterval(function () {
+  if (document.visibilityState !== "visible" || !window.NITRO_KEY || $("#xpage")) return;
+  if (["replies", "resp", "p3"].indexOf(ST.tab) < 0) return;
+  fetch("/api/main", { headers: { "x-key": window.NITRO_KEY }, cache: "no-store" }).then(function (r) { return r.json(); }).then(function (m) {
+    ST.settings.ext = m.ext; var el = document.querySelector(".extbar"); if (el) el.innerHTML = extBar0();
+  }).catch(function () {});
+}, 5000);
 function extBar0() {
   var e = ST.settings.ext, t = Date.now() / 1000;
   if (!e || !e.alive) return '<div class="day" style="color:#d93025">Extensão ainda não conectou</div>';

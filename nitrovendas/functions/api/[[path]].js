@@ -6,6 +6,11 @@ async function init(db) {
   await db.prepare("CREATE TABLE IF NOT EXISTS docs (ws TEXT NOT NULL, k TEXT NOT NULL, v TEXT NOT NULL, updated INTEGER NOT NULL, PRIMARY KEY (ws, k))").run();
   ready = true;
 }
+async function withLive(db, ws, main) {
+  const l = await db.prepare("SELECT v FROM docs WHERE ws = ? AND k = 'live'").bind(ws).first();
+  if (l) Object.assign(main, JSON.parse(l.v));
+  return main;
+}
 // Acesso aberto: quem abre o site usa sempre o mesmo banco (o principal, com mais empresas).
 const PUB = "publico0000000000000000000000000";
 let SHARED = "";
@@ -36,6 +41,7 @@ export async function onRequest({ request, env, params }) {
         if (row.k === "main") out.main = JSON.parse(row.v);
         else if (row.k.startsWith("chunk:")) out.chunks[row.k.slice(6)] = JSON.parse(row.v);
       }
+      await withLive(db, ws, out.main);
       return J(out);
     }
     // Arquivos do funil (áudio/imagem), em partes de até 1,5 MB
@@ -55,13 +61,24 @@ export async function onRequest({ request, env, params }) {
         return J({ ok: true });
       }
     }
+    if (p[0] === "ver" && m === "GET") {
+      const r = await db.prepare("SELECT MAX(updated) AS u, COUNT(*) AS n FROM docs WHERE ws = ? AND (k = 'main' OR k LIKE 'chunk:%')").bind(ws).first();
+      return J({ v: (r && r.u || 0) + ":" + (r && r.n || 0) });
+    }
     if (p[0] === "main" && m === "GET") {
       const cur = await db.prepare("SELECT v FROM docs WHERE ws = ? AND k = 'main'").bind(ws).first();
-      return J(cur ? JSON.parse(cur.v) : {});
+      return J(await withLive(db, ws, cur ? JSON.parse(cur.v) : {}));
     }
     if (p[0] === "main" && m === "PUT") {
       const patch = await request.json();
       if (!patch || typeof patch !== "object" || Array.isArray(patch)) return J({ error: "dados" }, 400);
+      // status da extensão fica separado: muda a cada 3 s e não deve fazer os aparelhos baixarem tudo
+      const live = {};
+      for (const key of ["ext", "extWatch"]) if (key in patch) { live[key] = patch[key]; delete patch[key]; }
+      if (Object.keys(live).length) {
+        await db.prepare("INSERT INTO docs (ws, k, v, updated) VALUES (?, 'live', ?, ?) ON CONFLICT(ws, k) DO UPDATE SET v = json_patch(docs.v, excluded.v), updated = excluded.updated").bind(ws, JSON.stringify(live), t).run();
+        if (!Object.keys(patch).length) return J({ ok: true });
+      }
       const s = JSON.stringify(patch);
       if (s.length > 500000) return J({ error: "tamanho" }, 413);
       // atômico: dois aparelhos (ou a extensão) salvando ao mesmo tempo não se apagam
