@@ -449,6 +449,7 @@ function dbErr(e) {
   else if (code === "invalid_argument") toast("Não foi possível salvar: você só pode ver esta página, não editar.");
   else toast("Não foi possível salvar agora. Tente de novo.");
 }
+var DELS = {};
 function saveChunk(cid) {
   var w = WQ[cid] || (WQ[cid] = { run: false, dirty: false });
   w.dirty = true; PENDING[cid] = 1; setSaving();
@@ -458,7 +459,8 @@ function saveChunk(cid) {
     if (!w.dirty) { w.run = false; delete PENDING[cid]; setSaving(); return; }
     w.dirty = false;
     var ch = CHUNKS[cid];
-    var p = (!ch || !ch.items.length) ? chunkRef(cid).delete().then(function () { delete CHUNKS[cid]; }) : chunkRef(cid).set({ items: ch.items });
+    var dl = (DELS[cid] || []).slice();
+    var p = (!ch || !ch.items.length) ? chunkRef(cid).delete().then(function () { delete CHUNKS[cid]; }) : chunkRef(cid).set({ items: ch.items, del: dl }).then(function () { DELS[cid] = (DELS[cid] || []).filter(function (x) { return dl.indexOf(x) < 0; }); });
     p.catch(function (e) {
       if (e && e.code === "unavailable") return new Promise(function (r) { setTimeout(r, 800 + Math.random() * 800); }).then(function () { w.dirty = true; });
       dbErr(e);
@@ -480,6 +482,7 @@ function addCompanies(list) {
 function removeCompany(c) {
   var cid = OWNER[c.id]; if (!cid) return;
   CHUNKS[cid].items = CHUNKS[cid].items.filter(function (x) { return x.id !== c.id; });
+  (DELS[cid] = DELS[cid] || []).push(c.id);
   rebuild(); saveChunk(cid);
 }
 function keyOf(c) {

@@ -62,11 +62,10 @@ export async function onRequest({ request, env, params }) {
     if (p[0] === "main" && m === "PUT") {
       const patch = await request.json();
       if (!patch || typeof patch !== "object" || Array.isArray(patch)) return J({ error: "dados" }, 400);
-      const cur = await db.prepare("SELECT v FROM docs WHERE ws = ? AND k = 'main'").bind(ws).first();
-      const next = Object.assign(cur ? JSON.parse(cur.v) : {}, patch);
-      const s = JSON.stringify(next);
+      const s = JSON.stringify(patch);
       if (s.length > 500000) return J({ error: "tamanho" }, 413);
-      await db.prepare("INSERT OR REPLACE INTO docs (ws, k, v, updated) VALUES (?, 'main', ?, ?)").bind(ws, s, t).run();
+      // atômico: dois aparelhos (ou a extensão) salvando ao mesmo tempo não se apagam
+      await db.prepare("INSERT INTO docs (ws, k, v, updated) VALUES (?, 'main', ?, ?) ON CONFLICT(ws, k) DO UPDATE SET v = json_patch(docs.v, excluded.v), updated = excluded.updated").bind(ws, s, t).run();
       return J({ ok: true });
     }
     if (p[0] === "chunk" && /^[A-Za-z0-9_-]{1,64}$/.test(p[1] || "")) {
@@ -76,7 +75,30 @@ export async function onRequest({ request, env, params }) {
         if (body.length > 900000) return J({ error: "tamanho" }, 413);
         const d = JSON.parse(body);
         if (!d || !Array.isArray(d.items)) return J({ error: "dados" }, 400);
-        await db.prepare("INSERT OR REPLACE INTO docs (ws, k, v, updated) VALUES (?, ?, ?, ?)").bind(ws, k, body, t).run();
+        // Junta com o que já está salvo, empresa por empresa, para um aparelho não apagar
+        // o que a extensão (ou outro aparelho) acabou de marcar.
+        const cur = await db.prepare("SELECT v FROM docs WHERE ws = ? AND k = ?").bind(ws, k).first();
+        const old = cur ? (JSON.parse(cur.v).items || []) : [];
+        const del = new Set(Array.isArray(d.del) ? d.del.map(String) : []);
+        const byOld = new Map(old.map(x => [x.id, x]));
+        const seen = new Set();
+        const EXT = ["replied", "replied2", "funnel"];
+        const items = d.items.map(n => {
+          seen.add(n.id);
+          const o = byOld.get(n.id);
+          if (!o) return n;
+          if ((o.updated || 0) > (n.updated || 0)) return o;                 // o salvo é mais novo
+          if (o.markAt && !(n.reset && n.reset >= o.markAt)) {               // não apaga o que a extensão marcou
+            for (const f of EXT) if (o[f] && !n[f]) n[f] = o[f];
+            if ((o.tries || 0) > (n.tries || 0)) n.tries = o.tries;
+            if (o.markAt > (n.markAt || 0)) n.markAt = o.markAt;
+          }
+          return n;
+        });
+        for (const o of old) if (!seen.has(o.id) && !del.has(o.id)) items.push(o);
+        const out = JSON.stringify({ items });
+        if (!items.length) { await db.prepare("DELETE FROM docs WHERE ws = ? AND k = ?").bind(ws, k).run(); return J({ ok: true }); }
+        await db.prepare("INSERT OR REPLACE INTO docs (ws, k, v, updated) VALUES (?, ?, ?, ?)").bind(ws, k, out, t).run();
         return J({ ok: true });
       }
       if (m === "DELETE") {
@@ -104,7 +126,7 @@ export async function onRequest({ request, env, params }) {
         const d = JSON.parse(row.v), it = (d.items || []).find(x => x.id === id);
         if (!it) continue;
         if (patch.__inc) { it.tries = (it.tries || 0) + 1; delete patch.__inc; }
-        Object.assign(it, patch); it.updated = Math.floor(t / 1000);
+        Object.assign(it, patch); it.updated = Math.floor(t / 1000); it.markAt = it.updated;
         await db.prepare("INSERT OR REPLACE INTO docs (ws, k, v, updated) VALUES (?, ?, ?, ?)").bind(ws, row.k, JSON.stringify(d), t).run();
         return J({ ok: true, item: { id: it.id, stage: it.stage, tries: it.tries } });
       }
