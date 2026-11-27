@@ -37,6 +37,7 @@ a{color:inherit;text-decoration:none}
 .nav .bd{min-width:18px;height:18px;padding:0 5px;border-radius:9px;background:#fff;color:var(--g);font-size:11px;font-weight:700;display:inline-grid;place-items:center;letter-spacing:0}
 main{max-width:640px;margin:0 auto;padding-bottom:calc(30px + env(safe-area-inset-bottom))}
 /* faixa do dia / avisos */
+.hj{display:flex;gap:8px;padding:10px 12px 6px;background:#fff}.hj button{height:32px;padding:0 14px;border-radius:16px;background:#f0f2f5;color:var(--ink);font-size:13.5px;font-weight:600}.hj button b{font-weight:700;color:var(--mut);margin-left:3px}.hj button.on{background:var(--g);color:#fff}.hj button.on b{color:#fff;opacity:.85}
 .day{display:block;width:100%;text-align:left;padding:10px 16px;font-size:13px;color:var(--mut);background:#f7f8fa;border-bottom:1px solid var(--line)}
 .day b{color:var(--ink)}.day .hit{color:var(--g)}
 .note{display:flex;align-items:center;gap:10px;padding:10px 16px;background:#fff8e6;border-bottom:1px solid var(--line);font-size:13.5px}
@@ -695,6 +696,11 @@ function undoer(before, msg) {
   return function () { var c = byId(before.id); if (!c) return; SNAPF.forEach(function (k) { c[k] = before[k]; }); touch(c); render(); toast(msg || "Desfeito."); };
 }
 function now() { return Math.floor(Date.now() / 1000); }
+function extHoje(all0, tf, msg) { return hojeBar(all0.length, all0.filter(function (c) { return isToday(tf(c)); }).length) + '<div class="empty"><p>' + msg + '</p></div>'; }
+function hojeOn() { if (ST.hoje == null) { try { ST.hoje = localStorage.getItem("nitro_hoje") === "1"; } catch (e) { ST.hoje = false; } } return ST.hoje; }
+function hojeF(list, tf) { return hojeOn() ? list.filter(function (c) { return isToday(tf(c)); }) : list; }
+function hojeBar(total, hoje) { var on = hojeOn(); return '<div class="hj"><button data-hj="0" class="' + (on ? "" : "on") + '">Todos <b>' + total + '</b></button><button data-hj="1" class="' + (on ? "on" : "") + '">Só hoje <b>' + hoje + "</b></button></div>"; }
+document.addEventListener("click", function (e) { var b = e.target.closest("[data-hj]"); if (!b) return; ST.hoje = b.dataset.hj === "1"; try { localStorage.setItem("nitro_hoje", ST.hoje ? "1" : "0"); } catch (x) {} render(); window.scrollTo(0, 0); });
 function isToday(t) { if (!t) return false; var d = new Date(t * 1000), n = new Date(); return d.toDateString() === n.toDateString(); }
 function dateBR(t) { return t ? new Date(t * 1000).toLocaleDateString("pt-BR", { day: "2-digit", month: "short" }) : ""; }
 function meta(c) {
@@ -948,9 +954,12 @@ function extBar0() {
 }
 function vReplies(o) { return extBar() + vReplies0(o); }
 function vReplies0(o) {
-  var h = "", all = o.replies.filter(function (c) { return !c.replied && !c.replied2; }), nr = o.replies.length - all.length;
+  var tP1 = function (c) { return c.contacted || c.updated; };
+  var h = "", all0 = o.replies.filter(function (c) { return !c.replied && !c.replied2; }).sort(function (a, b) { return (tP1(b) || 0) - (tP1(a) || 0); }), nr = o.replies.length - all0.length;
+  var all = hojeF(all0, tP1);
+  if (all0.length && !all.length) return extHoje(all0, tP1, "Ninguém recebeu a saudação hoje.");
   if (!all.length) return '<div class="empty"><h3>Funil P1 vazio</h3><p>Saudação enviada · aguardando resposta. Quem receber a saudação aparece aqui.' + (nr ? "<br>" + nr + " já respondeu: veja Funil P2 e P3." : "") + (o.snoozed.length ? "<br>" + o.snoozed.length + " agendado(s) para depois." : "") + "</p></div>";
-  h += '<div class="day">Saudação enviada · aguardando resposta: <b>' + all.length + "</b></div>";
+  h += hojeBar(all0.length, all0.filter(function (c) { return isToday(tP1(c)); }).length) + '<div class="day">Saudação enviada · aguardando resposta: <b>' + all.length + "</b></div>";
   if (all.length > 8) h += '<input class="srch" id="q" type="search" placeholder="Pesquisar" value="' + esc(ST.q || "") + '">';
   var q = normKey(ST.q || ""), list = all, t = now();
   if (q) list = list.filter(function (c) { return normKey(c.name + " " + c.city).indexOf(q) >= 0; });
@@ -970,10 +979,13 @@ function vReplies0(o) {
 }
 function vResp(o) { return extBar() + vResp0(o); }
 function vResp0(o) {
-  var all = o.replies.filter(function (c) { return c.replied && !c.replied2; }).sort(function (a, b) { return b.replied - a.replied; });
+  var tP2 = function (c) { return c.replied; };
+  var all0 = o.replies.filter(function (c) { return c.replied && !c.replied2; }).sort(function (a, b) { return Math.max(b.replied || 0, b.updated || 0) - Math.max(a.replied || 0, a.updated || 0); });
+  var all = hojeF(all0, tP2);
+  if (all0.length && !all.length) return extHoje(all0, tP2, "Ninguém respondeu a saudação hoje.");
   if (!all.length) return '<div class="empty"><h3>Funil P2 vazio</h3><p>Responderam à saudação · o funil será enviado. Quem responder a saudação aparece aqui.</p></div>';
   var fin = all.filter(function (c) { return c.funnel === "concluido"; }), go = all.filter(function (c) { return c.funnel !== "concluido"; });
-  var h = '<div class="day">Responderam à saudação · o funil será enviado<br>Total: <b>' + all.length + "</b> · Funil enviado: <b>" + fin.length + "</b></div>";
+  var h = hojeBar(all0.length, all0.filter(function (c) { return isToday(tP2(c)); }).length) + '<div class="day">Responderam à saudação · o funil será enviado<br>Total: <b>' + all.length + "</b> · Funil enviado: <b>" + fin.length + "</b></div>";
   if (all.length > 8) h += '<input class="srch" id="q" type="search" placeholder="Pesquisar" value="' + esc(ST.q || "") + '">';
   var q = normKey(ST.q || "");
   var f = function (l) { return q ? l.filter(function (c) { return normKey(c.name + " " + c.city).indexOf(q) >= 0; }) : l; };
@@ -1347,9 +1359,10 @@ function sbClick(b) {
 document.addEventListener("click", function (e) { if (e.target.closest("#sbList a, #sbRes a")) return; var b = e.target.closest("[data-sb]"); if (b && b.tagName !== "LABEL") sbClick(b); });
 
 function vLost(o) {
-  var all = o.lost;
+  var tL = function (c) { return c.updated; }, all0 = o.lost, all = hojeF(all0, tL);
+  if (all0.length && !all.length) return extHoje(all0, tL, "Ninguém foi arquivado hoje.");
   if (!all.length) return '<div class="empty"><h3>Ninguém aqui</h3><p>Quem você marcar como "Não quis" aparece aqui. Dá para voltar a empresa para o funil.</p></div>';
-  var h = '<div class="day">Não quis: <b>' + all.filter(function (c) { return !c.wa_invalid; }).length + "</b> · Sem WhatsApp: <b>" + all.filter(function (c) { return c.wa_invalid; }).length + "</b></div>";
+  var h = hojeBar(all0.length, all0.filter(function (c) { return isToday(tL(c)); }).length) + '<div class="day">Não quis: <b>' + all.filter(function (c) { return !c.wa_invalid; }).length + "</b> · Sem WhatsApp: <b>" + all.filter(function (c) { return c.wa_invalid; }).length + "</b></div>";
   if (all.length > 8) h += '<input class="srch" id="q" type="search" placeholder="Pesquisar" value="' + esc(ST.q || "") + '">';
   var q = normKey(ST.q || "");
   if (q) all = all.filter(function (c) { return normKey(c.name + " " + c.city).indexOf(q) >= 0; });
@@ -1365,9 +1378,12 @@ function vLost(o) {
 }
 function vP3(o) { return extBar() + vP30(o); }
 function vP30(o) {
-  var all = o.replies.filter(function (c) { return c.replied2; }).sort(function (a, b) { return b.replied2 - a.replied2; });
+  var tP3 = function (c) { return c.replied2; };
+  var all0 = o.replies.filter(function (c) { return c.replied2; }).sort(function (a, b) { return b.replied2 - a.replied2; });
+  var all = hojeF(all0, tP3);
+  if (all0.length && !all.length) return extHoje(all0, tP3, "Ninguém respondeu o funil hoje.");
   if (!all.length) return '<div class="empty"><h3>Funil P3 vazio</h3><p>Responderam à mensagem do funil · conversar e fechar. Quem responder o funil aparece aqui.</p></div>';
-  var h = '<div class="day">Responderam à mensagem do funil · conversar e fechar<br>Total: <b>' + all.length + "</b></div>";
+  var h = hojeBar(all0.length, all0.filter(function (c) { return isToday(tP3(c)); }).length) + '<div class="day">Responderam à mensagem do funil · conversar e fechar<br>Total: <b>' + all.length + "</b></div>";
   if (all.length > 8) h += '<input class="srch" id="q" type="search" placeholder="Pesquisar" value="' + esc(ST.q || "") + '">';
   var q = normKey(ST.q || "");
   if (q) all = all.filter(function (c) { return normKey(c.name + " " + c.city).indexOf(q) >= 0; });
@@ -1376,7 +1392,12 @@ function vP30(o) {
   }).join("") + "</div>";
 }
 function vSites(o) {
-  var h = "", t = now();
+  var h = "", t = now(), tS = function (c) { return c.sent || c.wanted || c.updated; };
+  var tot = o.making.length + o.sent.length, hj = o.making.concat(o.sent).filter(function (c) { return isToday(tS(c)); }).length;
+  var srt = function (l) { return l.slice().sort(function (a, b) { return (tS(b) || 0) - (tS(a) || 0); }); };
+  o = Object.assign({}, o, { making: srt(hojeF(o.making, tS)), sent: srt(hojeF(o.sent, tS)) });
+  if (tot) h += hojeBar(tot, hj);
+  if (tot && !o.making.length && !o.sent.length) return h + '<div class="empty"><p>Nenhum interessado novo hoje.</p></div>';
   if (!ST.settings.dl) h += '<div class="note">Baixe o arquivo do prompt uma vez.<button class="btn" data-a="dl">Baixar</button></div>';
   if (!o.making.length && !o.sent.length) return h + '<div class="empty"><h3>Nenhum interessado</h3><p>Quando a empresa topar, abra ela no Funil P3 e toque em Quer site.</p></div>';
   h += '<div class="list">';
