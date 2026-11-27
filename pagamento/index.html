@@ -1,54 +1,86 @@
 <!doctype html>
 <html lang="pt-BR"><head><meta charset="utf-8">
-<meta name="viewport" content="width=device-width,initial-scale=1">
-<meta name="robots" content="noindex">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="robots" content="noindex"><meta name="theme-color" content="#1b0f11">
 <title>Pagamento · Agência Nitro</title>
 <link rel="icon" href="/favicon.ico"><link rel="apple-touch-icon" href="/apple-touch-icon.png">
 <link rel="stylesheet" href="/base.css">
 <style>
-.val{margin-top:22px;background:#fff;border:1.5px solid var(--l);border-radius:18px;padding:22px 20px}
-.val small{color:var(--m);font-size:15px}
-.val .v{font-size:44px;font-weight:800;letter-spacing:-.02em;line-height:1.1;margin-top:2px}
-.val .d{margin-top:10px;font-size:17px;line-height:1.35}
-.cod{margin-top:18px;background:#fff;border:1.5px dashed #cdbab7;border-radius:14px;padding:14px;font:14px/1.45 ui-monospace,Menlo,Consolas,monospace;word-break:break-all;color:#3b2c2e;max-height:110px;overflow:auto;user-select:all}
-.cp{margin-top:14px}
-ol{margin:26px 0 0;padding-left:22px;color:var(--m);font-size:16px;line-height:1.55}
-ol b{color:var(--d)}
-.erro{margin-top:30px;background:#fff1ef;border:1.5px solid #ffd2cc;border-radius:14px;padding:18px;line-height:1.4}
-.rod{margin-top:34px;text-align:center;color:var(--m);font-size:14px}
+.prod{display:flex;gap:14px;align-items:center;padding:18px}
+.ph{width:64px;height:64px;border-radius:12px;flex:none;object-fit:cover;background:#f1f2f5;box-shadow:0 0 0 1px rgba(20,22,26,.06)}
+.ph.v{display:flex;align-items:center;justify-content:center;color:#b3b8c2}
+.ph.v svg{width:26px;height:26px}
+.pn{font-size:17px;font-weight:650;line-height:1.25;letter-spacing:-.01em;word-break:break-word}
+.pv{font-size:14px;color:var(--m);margin-top:4px}
+.tot{display:flex;justify-content:space-between;align-items:baseline;padding:14px 18px;border-top:1px solid var(--l);font-size:14.5px;color:var(--m)}
+.tot b{color:var(--d);font-size:17px;font-weight:700}
+.pix{margin-top:12px;padding:20px 18px 18px}
+.ph2{display:flex;align-items:center;gap:10px}
+.ph2 .ic{width:34px;height:34px;border-radius:9px;background:#e8f6ee;color:var(--g);display:flex;align-items:center;justify-content:center;flex:none}
+.ph2 .ic svg{width:18px;height:18px}
+.ph2 h1{font-size:16px;font-weight:650}
+.ph2 p{font-size:13px;color:var(--m);margin-top:1px}
+.code{margin:16px 0 12px;background:#f6f7f9;border:1px dashed #cfd4dc;border-radius:10px;padding:12px 13px;font:12.5px/1.4 ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;color:#4b5260;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;user-select:all}
+.btn.ok{background:#0b7a43}
+.steps{margin-top:18px;display:grid;gap:10px}
+.steps div{display:flex;gap:11px;align-items:flex-start;font-size:13.5px;color:#4b5260;line-height:1.4}
+.steps span{flex:none;width:20px;height:20px;border-radius:50%;background:#f1f2f5;color:var(--d);font-size:11.5px;font-weight:700;display:flex;align-items:center;justify-content:center}
+.trust{margin-top:12px;padding:14px 18px;display:grid;gap:10px}
+.trust div{display:flex;gap:10px;align-items:center;font-size:13px;color:#4b5260}
+.trust svg{width:16px;height:16px;color:var(--g);flex:none}
+.trust b{color:var(--d);font-weight:600}
+.foot{margin-top:22px;text-align:center;font-size:12px;color:#9aa0aa}
+.erro{padding:22px 18px;font-size:15px;line-height:1.45;color:#4b5260}
+.toast{position:fixed;left:50%;bottom:22px;transform:translate(-50%,20px);opacity:0;background:var(--d);color:#fff;font-size:14px;padding:11px 16px;border-radius:10px;transition:.2s;pointer-events:none}
+.toast.on{opacity:1;transform:translate(-50%,0)}
 </style></head><body>
-<header><img src="/img/nitro-branco.png" alt="Agência Nitro"></header>
-<main id="m"></main>
+<div class="top"><img src="/img/nitro-branco.png" alt="Agência Nitro"><div class="seg"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><rect x="4" y="11" width="16" height="10" rx="2"/><path d="M8 11V7a4 4 0 0 1 8 0v4"/></svg>Pagamento seguro</div></div>
+<div class="wrap" id="m"></div>
+<div class="toast" id="t">Código copiado. Agora cole no app do banco.</div>
 <script src="/pix.js"></script>
 <script>
 (function(){
-  var q=new URLSearchParams(location.search), m=document.getElementById("m");
-  function el(t,c,x){var e=document.createElement(t);if(c)e.className=c;if(x!=null)e.textContent=x;return e}
-  var chave=q.get("k");
-  if(!chave){
-    var e=el("div","erro","Este link de pagamento está incompleto. Peça um novo link para a Agência Nitro.");
-    m.appendChild(e);return;
-  }
-  var valor=pixValor(q.get("v")), desc=q.get("d")||"";
-  var cod=pixCodigo({chave:chave,nome:q.get("n"),cidade:q.get("c"),valor:valor,desc:desc});
-  m.appendChild(el("h1",0,"Pagamento via Pix"));
-  m.appendChild(el("p","sub","Copie o código abaixo e pague no app do seu banco."));
-  var b=el("div","val");
-  b.appendChild(el("small",0,valor?"Valor a pagar":"Valor"));
-  b.appendChild(el("div","v",valor?"R$ "+Number(valor).toLocaleString("pt-BR",{minimumFractionDigits:2}):"Informe no banco"));
-  if(desc)b.appendChild(el("div","d",desc));
-  m.appendChild(b);
-  var c=el("div","cod",cod);m.appendChild(c);
-  var bt=el("button","btn cp","Copiar código Pix");bt.type="button";m.appendChild(bt);
-  bt.onclick=function(){
-    function ok(){bt.textContent="Código copiado";bt.classList.add("ok");setTimeout(function(){bt.textContent="Copiar código Pix";bt.classList.remove("ok")},2500)}
+  var m=document.getElementById("m");
+  var I={lock:'<rect x="4" y="11" width="16" height="10" rx="2"/><path d="M8 11V7a4 4 0 0 1 8 0v4"/>',
+    copy:'<rect x="9" y="9" width="12" height="12" rx="2"/><path d="M5 15V5a2 2 0 0 1 2-2h10"/>',
+    ok:'<path d="M20 6 9 17l-5-5"/>',bolt:'<path d="M13 2 4 14h7l-1 8 9-12h-7z"/>',
+    shield:'<path d="M12 3 4 6v6c0 5 3.5 8 8 9 4.5-1 8-4 8-9V6z"/><path d="m9 12 2 2 4-4"/>',
+    user:'<circle cx="12" cy="8" r="4"/><path d="M4 21c1.5-4 4.5-6 8-6s6.5 2 8 6"/>',
+    box:'<path d="M21 8 12 3 3 8v8l9 5 9-5z"/><path d="m3 8 9 5 9-5M12 13v8"/>'};
+  function svg(k){return '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">'+I[k]+'</svg>'}
+  function esc(s){return String(s).replace(/[&<>"]/g,function(c){return{"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]})}
+  function b64d(s){s=s.replace(/-/g,"+").replace(/_/g,"/");while(s.length%4)s+="=";return s}
+  // dados: novo formato no #, antigo na ?query
+  var d={}, img="";
+  try{
+    var h=new URLSearchParams(location.hash.slice(1));
+    if(h.get("p")){d=JSON.parse(decodeURIComponent(escape(atob(b64d(h.get("p"))))));if(h.get("i"))img="data:image/jpeg;base64,"+b64d(h.get("i"))}
+  }catch(e){d={}}
+  if(!d.k){var q=new URLSearchParams(location.search);d={k:q.get("k"),n:q.get("n"),c:q.get("c"),v:q.get("v"),d:q.get("d")}}
+  if(!d.k){m.innerHTML='<div class="card erro">Este link de pagamento está incompleto. Peça um novo link a quem te enviou.</div>';return}
+  var valor=pixValor(d.v), nome=d.d||"Pagamento";
+  var cod=pixCodigo({chave:d.k,nome:d.n,cidade:d.c,valor:valor,desc:d.d});
+  var vt=valor?"R$ "+Number(valor).toLocaleString("pt-BR",{minimumFractionDigits:2,maximumFractionDigits:2}):"Valor definido no banco";
+  document.title=nome+" · Pagamento";
+  m.innerHTML=
+   '<div class="card"><div class="prod">'+(img?'<img class="ph" alt="" src="'+img+'">':'<div class="ph v">'+svg("box")+'</div>')+
+   '<div><div class="pn">'+esc(nome)+'</div><div class="pv">'+esc(vt)+'</div></div></div>'+
+   (valor?'<div class="tot">Total<b>'+esc(vt)+'</b></div>':'')+'</div>'+
+   '<div class="card pix"><div class="ph2"><div class="ic">'+svg("bolt")+'</div><div><h1>Pague com Pix</h1><p>Aprovação na hora, a qualquer horário</p></div></div>'+
+   '<div class="code" id="c"></div>'+
+   '<button class="btn" id="b" type="button">'+svg("copy")+'<span>Copiar código Pix</span></button>'+
+   '<div class="steps"><div><span>1</span>Toque em Copiar código Pix</div><div><span>2</span>No app do seu banco, entre em Pix e escolha Pix Copia e Cola</div><div><span>3</span>Cole o código, confira o valor e confirme</div></div></div>'+
+   '<div class="card trust">'+(d.n?'<div>'+svg("user")+'<span>Recebedor: <b>'+esc(d.n)+'</b></span></div>':'')+
+   '<div>'+svg("shield")+'<span>O pagamento vai direto do seu banco para o recebedor</span></div>'+
+   '<div>'+svg("lock")+'<span>Conexão protegida. Seus dados bancários não passam por aqui</span></div></div>'+
+   '<div class="foot">Agência Nitro</div>';
+  var c=document.getElementById("c"),b=document.getElementById("b"),t=document.getElementById("t");c.textContent=cod;
+  b.onclick=function(){
+    function ok(){b.classList.add("ok");b.innerHTML=svg("ok")+"<span>Código copiado</span>";t.classList.add("on");
+      setTimeout(function(){t.classList.remove("on")},2600);
+      setTimeout(function(){b.classList.remove("ok");b.innerHTML=svg("copy")+"<span>Copiar código Pix</span>"},3200)}
     function fb(){var r=document.createRange();r.selectNodeContents(c);var s=getSelection();s.removeAllRanges();s.addRange(r);try{document.execCommand("copy");ok()}catch(x){}}
     if(navigator.clipboard&&window.isSecureContext)navigator.clipboard.writeText(cod).then(ok,fb);else fb();
   };
-  var ol=el("ol");
-  [["Abra o app do seu banco e entre em ","Pix"],["Escolha ","Pix Copia e Cola"],["Cole o código e ","confirme o pagamento"]].forEach(function(p){
-    var li=el("li",0,p[0]);li.appendChild(el("b",0,p[1]));ol.appendChild(li)});
-  m.appendChild(ol);
-  m.appendChild(el("div","rod","Agência Nitro"));
 })();
 </script></body></html>

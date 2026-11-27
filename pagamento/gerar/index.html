@@ -1,63 +1,81 @@
 <!doctype html>
 <html lang="pt-BR"><head><meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
-<meta name="robots" content="noindex">
-<title>Gerar link · Agência Nitro</title>
+<meta name="robots" content="noindex"><meta name="theme-color" content="#1b0f11">
+<title>Gerar link de pagamento · Agência Nitro</title>
 <link rel="icon" href="/favicon.ico">
 <link rel="stylesheet" href="/base.css">
 <style>
-label{display:block;margin-top:16px;font-weight:600;font-size:15px}
-input{width:100%;margin-top:6px;font:inherit;font-size:17px;padding:14px;border:1.5px solid var(--l);border-radius:12px;background:#fff;color:var(--d)}
-input:focus{border-color:var(--r);outline:none}
-.row{display:grid;grid-template-columns:1fr 1fr;gap:12px}
-.out{margin-top:26px;display:none}
-.lk{background:#fff;border:1.5px dashed #cdbab7;border-radius:14px;padding:14px;font:14px/1.45 ui-monospace,Menlo,Consolas,monospace;word-break:break-all}
-.out .btn{margin-top:10px}
-.dica{color:var(--m);font-size:14px;margin-top:6px}
+h1{font-size:20px;font-weight:700;letter-spacing:-.01em;padding:4px 4px 0}
+.sub{font-size:14px;color:var(--m);margin:4px 4px 14px}
+.card{padding:6px 16px 16px;margin-bottom:12px}
+.card h2{font-size:13px;font-weight:600;color:var(--m);margin:12px 0 2px}
+label{display:block;margin-top:12px;font-size:13.5px;font-weight:600}
+input[type=text],input:not([type]){width:100%;margin-top:6px;font:inherit;font-size:16px;height:46px;padding:0 13px;border:1.5px solid var(--l);border-radius:10px;background:#fff;color:var(--d)}
+input:focus{border-color:var(--g);outline:none}
+.row{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.foto{display:flex;align-items:center;gap:12px;margin-top:12px}
+.foto .ph{width:64px;height:64px;border-radius:12px;background:#f1f2f5 center/cover;box-shadow:0 0 0 1px rgba(20,22,26,.06);flex:none;display:flex;align-items:center;justify-content:center;color:#b3b8c2;font-size:24px}
+.foto .bt{font-size:14px;font-weight:600;color:var(--g);padding:8px 0}
+.foto .rm{font-size:13px;color:var(--m);margin-left:6px}
+.out{display:none;margin-top:4px}
+.lk{background:#f6f7f9;border:1px dashed #cfd4dc;border-radius:10px;padding:11px 12px;font:12.5px/1.4 ui-monospace,Menlo,Consolas,monospace;color:#4b5260;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;margin:12px 0}
+.g2{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:8px}
+.g2 .btn{height:46px;font-size:15px}
+.dica{font-size:12.5px;color:var(--m);margin-top:10px}
 </style></head><body>
-<header><img src="/img/nitro-branco.png" alt="Agência Nitro"></header>
-<main>
-<h1>Gerar link de pagamento</h1>
-<p class="sub">Preencha, copie o link e mande para o cliente.</p>
-<label>Chave Pix<input id="k" autocomplete="off" placeholder="CPF, CNPJ, e-mail, telefone ou chave aleatória"></label>
-<div class="row">
-<label>Nome do recebedor<input id="n" autocomplete="off" placeholder="Agência Nitro"></label>
-<label>Cidade<input id="c" autocomplete="off" placeholder="Salvador"></label>
+<div class="top"><img src="/img/nitro-branco.png" alt="Agência Nitro"><div class="seg">Gerar link</div></div>
+<div class="wrap">
+<h1>Novo link de pagamento</h1>
+<p class="sub">Preencha, gere e mande para o cliente.</p>
+<div class="card">
+<h2>Produto</h2>
+<div class="foto"><div class="ph" id="ph">+</div><div><button class="bt" id="fb" type="button">Anexar imagem</button><button class="rm" id="fr" type="button" hidden>Remover</button></div><input type="file" id="ff" accept="image/*" hidden></div>
+<label>Nome do produto<input id="d" maxlength="60" autocomplete="off" placeholder="Site profissional para sua empresa"></label>
+<label>Valor (R$)<input id="v" inputmode="decimal" autocomplete="off" placeholder="497,00"></label>
 </div>
-<p class="dica">Chave, nome e cidade ficam salvos neste aparelho.</p>
-<div class="row">
-<label>Valor (R$)<input id="v" inputmode="decimal" autocomplete="off" placeholder="150,00"></label>
-<label>Descrição<input id="d" autocomplete="off" maxlength="40" placeholder="Site mobile"></label>
+<div class="card">
+<h2>Recebedor</h2>
+<label>Chave Pix<input id="k" autocomplete="off" placeholder="CPF, CNPJ, e-mail, telefone ou aleatória"></label>
+<div class="row"><label>Nome<input id="n" autocomplete="off" placeholder="Agência Nitro"></label><label>Cidade<input id="c" autocomplete="off" placeholder="Salvador"></label></div>
+<p class="dica">Os dados do recebedor ficam salvos neste aparelho.</p>
 </div>
-<div class="out" id="o">
+<button class="btn" id="g" type="button">Gerar link</button>
+<div class="card out" id="o">
 <div class="lk" id="lk"></div>
 <button class="btn" id="cl" type="button">Copiar link</button>
-<button class="btn sec" id="ab" type="button">Abrir página</button>
-<button class="btn sec" id="wa" type="button">Enviar no WhatsApp</button>
+<div class="g2"><button class="btn alt" id="wa" type="button">WhatsApp</button><button class="btn alt" id="ab" type="button">Ver página</button></div>
 </div>
-<button class="btn" id="g" type="button" style="margin-top:24px">Gerar link</button>
-</main>
+</div>
 <script>
 (function(){
-  var $=function(i){return document.getElementById(i)}, S="nitro_pix";
+  var $=function(i){return document.getElementById(i)},S="nitro_pix",img="",url="";
   try{var s=JSON.parse(localStorage.getItem(S)||"{}");["k","n","c"].forEach(function(i){if(s[i])$(i).value=s[i]})}catch(e){}
-  var url="";
+  function b64u(s){return s.replace(/\+/g,"-").replace(/\//g,"_").replace(/=+$/,"")}
+  function mostra(){var p=$("ph");if(img){p.style.backgroundImage="url(data:image/jpeg;base64,"+img+")";p.textContent="";$("fr").hidden=false;$("fb").textContent="Trocar imagem"}else{p.style.backgroundImage="";p.textContent="+";$("fr").hidden=true;$("fb").textContent="Anexar imagem"}esconde()}
+  function esconde(){$("o").style.display="none"}
+  $("fb").onclick=$("ph").onclick=function(){$("ff").click()};
+  $("fr").onclick=function(){img="";mostra()};
+  $("ff").onchange=function(){
+    var f=this.files[0];if(!f)return;var r=new FileReader();
+    r.onload=function(){var im=new Image();im.onload=function(){
+      var S2=144,cv=document.createElement("canvas");cv.width=cv.height=S2;var x=cv.getContext("2d");
+      x.fillStyle="#fff";x.fillRect(0,0,S2,S2);
+      var sc=Math.max(S2/im.width,S2/im.height),w=im.width*sc,h=im.height*sc;x.drawImage(im,(S2-w)/2,(S2-h)/2,w,h);
+      img=cv.toDataURL("image/jpeg",.78).split(",")[1];mostra()};im.src=r.result};
+    r.readAsDataURL(f);this.value="";
+  };
+  ["d","v","k","n","c"].forEach(function(i){$(i).oninput=esconde});
   $("g").onclick=function(){
-    var k=$("k").value.trim();
-    if(!k){$("k").focus();return}
+    var k=$("k").value.trim();if(!k){$("k").focus();return}
+    if(!$("d").value.trim()){$("d").focus();return}
     try{localStorage.setItem(S,JSON.stringify({k:k,n:$("n").value,c:$("c").value}))}catch(e){}
-    var p=new URLSearchParams();p.set("k",k);
-    if($("n").value.trim())p.set("n",$("n").value.trim());
-    if($("c").value.trim())p.set("c",$("c").value.trim());
-    var v=$("v").value.trim();if(v)p.set("v",v);
-    var d=$("d").value.trim();if(d)p.set("d",d);
-    url=location.origin+"/?"+p.toString();
+    var o={k:k,d:$("d").value.trim()};
+    ["n","c","v"].forEach(function(i){var v=$(i).value.trim();if(v)o[i]=v});
+    url=location.origin+"/#p="+b64u(btoa(unescape(encodeURIComponent(JSON.stringify(o)))))+(img?"&i="+b64u(img):"");
     $("lk").textContent=url;$("o").style.display="block";$("o").scrollIntoView({behavior:"smooth",block:"nearest"});
   };
-  $("cl").onclick=function(){
-    var b=$("cl");function ok(){b.textContent="Link copiado";setTimeout(function(){b.textContent="Copiar link"},2200)}
-    if(navigator.clipboard)navigator.clipboard.writeText(url).then(ok);
-  };
+  $("cl").onclick=function(){var b=$("cl");navigator.clipboard.writeText(url).then(function(){b.textContent="Link copiado";setTimeout(function(){b.textContent="Copiar link"},2200)})};
   $("ab").onclick=function(){window.open(url,"_blank")};
   $("wa").onclick=function(){window.open("https://wa.me/?text="+encodeURIComponent(url),"_blank")};
 })();
