@@ -79,51 +79,6 @@ main{max-width:640px;margin:0 auto;padding-bottom:calc(30px + env(safe-area-inse
 .link{color:#fff;font-weight:600}
 /* vazio e importar */
 .empty{padding:28px 20px;text-align:center;color:var(--mut)}
-.sb{padding:12px 0 40px}
-.sb-card{margin:0 12px 8px;padding:16px;border:1px solid var(--line);border-radius:16px;background:#fff}
-.sb-card h3{font-size:18px;margin-bottom:6px}
-.sb-m{font-size:13px;color:var(--mut);margin:6px 0 12px;word-break:break-word}
-.sb-err{font-size:13.5px;color:var(--red);margin-top:8px;word-break:break-word}
-.sb-err:empty,.sb-m:empty{display:none}
-.sb-in{width:100%;height:46px;border:1px solid var(--line);border-radius:12px;padding:0 12px;font-size:16px;margin-bottom:10px;background:#fff;color:var(--ink)}
-.sb-in:focus{outline:2px solid var(--g);border-color:transparent}
-.sb-drop{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:4px;min-height:120px;border:2px dashed #c8d3d0;border-radius:14px;background:#f6faf9;text-align:center;padding:16px;cursor:pointer;margin-bottom:14px}
-.sb-drop b{font-size:15px;color:var(--gd);word-break:break-all}
-.sb-drop span{font-size:13px;color:var(--mut)}
-.sb-drop.on{border-color:var(--g);background:#e7f6f2}
-.sb-lb{display:block;font-size:13px;font-weight:700;color:var(--ink);margin-bottom:6px}
-.sb-name{display:flex;align-items:center;gap:6px}
-.sb-name .sb-in{margin:0;flex:1;min-width:0}
-.sb-name span{font-size:14px;color:var(--mut);font-weight:600}
-.sb-ck{display:flex;align-items:center;gap:8px;font-size:13.5px;margin:4px 0 14px}
-.sb-ck span{min-width:0}.sb-ck b{word-break:break-all}
-.sb-ck input{width:18px;height:18px;accent-color:var(--g);flex:none}
-.sb-prog{height:6px;border-radius:3px;background:var(--line);overflow:hidden;margin-top:14px}
-.sb-prog i{display:block;height:100%;width:0;background:var(--g2);transition:width .3s}
-.sb-ok{margin-top:14px;padding:14px;border-radius:12px;background:#e7f6f2}
-.sb-ok>b{display:block;color:var(--gd);font-size:15px;margin-bottom:8px}
-.sb-lk{display:grid;grid-template-columns:1fr auto;align-items:center;gap:2px 10px;padding:8px 0;border-top:1px solid rgba(0,0,0,.06)}
-.sb-lk a{font-weight:700;color:var(--gd);word-break:break-all}
-.sb-lk small{grid-column:1;font-size:12px;color:var(--mut)}
-.sb-lk .btn{grid-row:1/3;grid-column:2;height:34px}
-.sb-row{padding:12px 16px;border-bottom:1px solid var(--line)}
-.sb-top{display:flex;align-items:flex-start;gap:12px}
-.sb-top .sb-rt{cursor:pointer}
-.sb-more{font-size:12px;color:var(--mut);margin-top:2px}
-.sb-tag{font-size:11px;font-weight:700;color:var(--red);background:#fdecea;border-radius:8px;padding:2px 7px;margin-left:6px;vertical-align:middle}
-.sb-row.off .sb-rt b{color:var(--mut)}
-.sb-sw{flex:none;position:relative;width:52px;height:30px;border-radius:15px;background:#c5cdd0;transition:background .2s;margin-top:2px}
-.sb-sw i{position:absolute;top:3px;left:3px;width:24px;height:24px;border-radius:50%;background:#fff;box-shadow:0 1px 3px rgba(0,0,0,.3);transition:transform .2s}
-.sb-sw.on{background:var(--g2)}.sb-sw.on i{transform:translateX(22px)}
-.sb-sw.wait{opacity:.6}
-.sb-ac{display:flex;flex-wrap:wrap;gap:8px;margin-top:10px}
-.sb-ac .btn{height:34px;font-size:13px;padding:0 12px}
-.sb-del{color:var(--red);border-color:#f0c9c6}.sb-del.on{background:var(--red);border-color:var(--red);color:#fff}
-.sb-ren{margin-top:10px}.sb-ren .sb-name{margin-bottom:6px}
-.sb-rt{flex:1;min-width:0;display:flex;flex-direction:column;gap:2px}
-.sb-rt b{font-size:15px}
-.sb-rt a{font-size:13px;color:var(--g);word-break:break-all}
-.sb-out{display:block;margin:18px auto 0;font-size:13px;color:var(--mut);text-decoration:underline}
 
 .empty h3{margin:0 0 6px;font-size:16px;color:var(--ink);font-weight:600}
 .empty p{margin:0 0 14px}
@@ -219,6 +174,89 @@ textarea.paste:focus{border-color:var(--g)}
 .xsave .m{flex:1.3;font-size:13px;color:var(--mut)}.xsave .m .ok{color:var(--g);font-weight:600}.xsave .m .warn{color:var(--amb)}
 body:has(#xpage) .toast{bottom:calc(80px + env(safe-area-inset-bottom))}
 .xtxa{width:100%;border:0;border-bottom:2px solid var(--g);font:inherit;font-size:15px;outline:none;resize:none;background:none;min-height:40px}
+
+.sb{padding:10px 0 48px}
+.sb [hidden]{display:none!important}
+.sb-card{margin:0 12px 6px;padding:18px 16px;border:1px solid var(--line);border-radius:18px;background:#fff;box-shadow:0 1px 2px rgba(11,20,26,.05);transition:border-color .2s,background .2s}
+.sb-card.drag{border-color:var(--g);background:#f3fbf8}
+.sb-h h3{font-size:18px;font-weight:700;color:var(--ink)}
+.sb-m{font-size:13px;color:var(--mut);margin:4px 0 0;line-height:1.45;word-break:break-word}
+.sb-h .sb-m{margin-bottom:14px}
+.sb-login{text-align:center;padding:26px 18px}
+.sb-login .sb-m{margin:6px 0 16px}
+.sb-hi{width:52px;height:52px;border-radius:50%;background:#e7f6f2;color:var(--g);display:grid;place-items:center;margin:0 auto 12px}
+.sb-hi svg{width:26px;height:26px}
+.sb-in{width:100%;height:48px;border:1.5px solid var(--line);border-radius:12px;padding:0 14px;font-size:16px;background:#fff;color:var(--ink);transition:border-color .15s}
+.sb-in:focus{outline:none;border-color:var(--g)}
+.sb-in:disabled{background:#f5f6f6;color:var(--mut)}
+.sb-login .sb-in{margin-bottom:12px}
+.sb-drop{display:flex;flex-direction:column;align-items:center;gap:3px;padding:22px 16px;border:2px dashed #c9d6d2;border-radius:14px;background:#f7fbfa;text-align:center;cursor:pointer;margin-bottom:16px;transition:border-color .2s,background .2s}
+.sb-drop:hover,.sb-card.drag .sb-drop{border-color:var(--g);background:#eef8f5}
+.sb-drop.lendo{opacity:.6;pointer-events:none}
+.sb-di{width:44px;height:44px;border-radius:50%;background:var(--g);color:#fff;display:grid;place-items:center;margin-bottom:8px}
+.sb-di svg{width:22px;height:22px}
+.sb-drop b{font-size:15px;color:var(--ink)}
+.sb-drop>span:last-child{font-size:12.5px;color:var(--mut)}
+.sb-file{display:flex;align-items:center;gap:12px;padding:12px;border:1px solid var(--line);border-radius:14px;background:#f7fbfa;margin-bottom:16px}
+.sb-fi{width:40px;height:40px;border-radius:10px;background:#e7f6f2;color:var(--gd);display:grid;place-items:center;flex:none}
+.sb-fi svg{width:22px;height:22px}
+.sb-ft{flex:1;min-width:0}
+.sb-ft b{display:block;font-size:14px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.sb-ft small{font-size:12px;color:var(--mut)}
+.sb-file .btn{height:34px;font-size:13px;padding:0 12px;flex:none;cursor:pointer}
+.sb-lb{display:block;font-size:13px;font-weight:700;color:var(--ink);margin-bottom:6px}
+.sb-name{display:flex;align-items:stretch;border:1.5px solid var(--line);border-radius:12px;overflow:hidden;transition:border-color .15s}
+.sb-name:focus-within{border-color:var(--g)}
+.sb-name .sb-in{border:0;border-radius:0;flex:1;min-width:0;height:46px}
+.sb-name span{display:flex;align-items:center;padding:0 12px;background:#f5f6f6;color:var(--mut);font-size:14px;font-weight:600;border-left:1px solid var(--line)}
+.sb-hint{font-size:12.5px;color:var(--mut);margin:7px 0 16px;word-break:break-all;min-height:18px}
+.sb-hint b{color:var(--ink)}
+.sb-hint span{color:var(--mut)}
+.sb-hint.warn,.sb-hint.warn b{color:var(--amb)}
+.sb-note{font-size:13px;line-height:1.45;background:#fff7e8;border:1px solid #f3dcb0;color:#6b4a00;border-radius:12px;padding:10px 12px;margin-bottom:14px}
+.sb-lnk{color:var(--g);font-weight:700;text-decoration:underline;margin-left:4px}
+.sb-prog{height:6px;border-radius:3px;background:var(--line);overflow:hidden;margin-top:16px}
+.sb-prog i{display:block;height:100%;width:0;background:var(--g2);transition:width .35s}
+.sb-step{font-size:13px;color:var(--gd);font-weight:600;margin-top:8px}
+.sb-err{font-size:13.5px;color:var(--red);margin-top:10px;word-break:break-word;line-height:1.4}
+.sb-err:empty{display:none}
+.sb-ok{margin-top:16px;padding:16px;border-radius:14px;background:#e7f6f2}
+.sb-okh{display:flex;align-items:center;gap:10px;margin-bottom:8px}
+.sb-okh span{width:28px;height:28px;border-radius:50%;background:var(--g2);color:#fff;display:grid;place-items:center;flex:none}
+.sb-okh svg{width:16px;height:16px}
+.sb-okh b{font-size:16px;color:var(--gd)}
+.sb-big{display:block;font-size:16px;font-weight:700;color:var(--gd);word-break:break-all;margin-bottom:4px}
+.sb-ac{display:flex;flex-wrap:wrap;gap:8px;margin-top:12px}
+.sb-ac .btn{height:36px;font-size:13px;padding:0 13px;gap:6px}
+.sb-ac .btn svg{width:16px;height:16px}
+.sb-ok .sb-m{margin-top:10px}
+.sb-lh{display:flex;align-items:baseline;justify-content:space-between;padding:18px 16px 8px}
+.sb-lh b{font-size:15px}
+.sb-lh span{font-size:12.5px;color:var(--mut)}
+.sb-q{padding:0 12px 8px}
+.sb-q .sb-in{height:42px;font-size:15px}
+#sbList{border-top:1px solid var(--line)}
+.sb-row{padding:12px 16px;border-bottom:1px solid var(--line);background:#fff}
+.sb-row.ab{background:#f7fbfa}
+.sb-top{display:flex;align-items:center;gap:12px}
+.sb-rt{flex:1;min-width:0;display:flex;align-items:center;gap:12px;text-align:left}
+.sb-av{width:42px;height:42px;border-radius:50%;background:#dff3ec;color:var(--gd);font-weight:700;font-size:17px;display:grid;place-items:center;flex:none}
+.sb-row.off .sb-av{background:#eceff0;color:var(--mut)}
+.sb-tx{min-width:0;display:flex;flex-direction:column}
+.sb-tx b{font-size:15.5px;color:var(--ink);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.sb-tx small{font-size:12.5px;color:var(--mut);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.sb-st{font-style:normal;font-size:11.5px;font-weight:700;color:var(--g);margin-top:2px}
+.sb-row.off .sb-st{color:var(--red)}
+.sb-row.off .sb-tx b{color:var(--mut)}
+.sb-sw{flex:none;position:relative;width:50px;height:30px;border-radius:15px;background:#c5cdd0;transition:background .2s}
+.sb-sw i{position:absolute;top:3px;left:3px;width:24px;height:24px;border-radius:50%;background:#fff;box-shadow:0 1px 3px rgba(0,0,0,.3);transition:transform .2s}
+.sb-sw.on{background:var(--g2)}.sb-sw.on i{transform:translateX(20px)}
+.sb-sw.wait{opacity:.55}
+.sb-sw:focus-visible,.sb-rt:focus-visible{outline:2px solid var(--g);outline-offset:2px;border-radius:8px}
+.sb-row .sb-ac{padding-left:54px}
+.sb-del{color:var(--red)!important;border-color:#f0c9c6!important}.sb-del.on{background:var(--red)!important;border-color:var(--red)!important;color:#fff!important}
+.sb-out{display:block;margin:22px auto 0;font-size:13px;color:var(--mut);text-decoration:underline}
+@media (min-width:700px){.sb{max-width:640px;margin:0 auto}}
 </style>
 </head>
 <body>
@@ -950,19 +988,81 @@ function vResp0(o) {
   return h + "</div>";
 }
 
+/* BLAKE3 (hash de 32 bytes), implementação compacta em JS puro */
+var B3 = (function () {
+  var IV = new Uint32Array([0x6A09E667, 0xBB67AE85, 0x3C6EF372, 0xA54FF53A, 0x510E527F, 0x9B05688C, 0x1F83D9AB, 0x5BE0CD19]);
+  var P = [2, 6, 3, 10, 7, 0, 4, 13, 1, 11, 12, 5, 9, 14, 15, 8];
+  var CS = 1, CE = 2, PAR = 4, ROOT = 8;
+  var st = new Uint32Array(16), mm = new Uint32Array(16), tm = new Uint32Array(16);
+  function g(a, b, c, d, x, y) {
+    st[a] = (st[a] + st[b] + x) | 0; st[d] ^= st[a]; st[d] = (st[d] >>> 16) | (st[d] << 16);
+    st[c] = (st[c] + st[d]) | 0; st[b] ^= st[c]; st[b] = (st[b] >>> 12) | (st[b] << 20);
+    st[a] = (st[a] + st[b] + y) | 0; st[d] ^= st[a]; st[d] = (st[d] >>> 8) | (st[d] << 24);
+    st[c] = (st[c] + st[d]) | 0; st[b] ^= st[c]; st[b] = (st[b] >>> 7) | (st[b] << 25);
+  }
+  function compress(cv, m, ctr, len, fl, out) {
+    for (var i = 0; i < 8; i++) st[i] = cv[i];
+    st[8] = IV[0]; st[9] = IV[1]; st[10] = IV[2]; st[11] = IV[3];
+    st[12] = ctr >>> 0; st[13] = Math.floor(ctr / 4294967296) >>> 0; st[14] = len; st[15] = fl;
+    for (i = 0; i < 16; i++) mm[i] = m[i];
+    for (var r = 0; r < 7; r++) {
+      g(0, 4, 8, 12, mm[0], mm[1]); g(1, 5, 9, 13, mm[2], mm[3]); g(2, 6, 10, 14, mm[4], mm[5]); g(3, 7, 11, 15, mm[6], mm[7]);
+      g(0, 5, 10, 15, mm[8], mm[9]); g(1, 6, 11, 12, mm[10], mm[11]); g(2, 7, 8, 13, mm[12], mm[13]); g(3, 4, 9, 14, mm[14], mm[15]);
+      if (r < 6) { for (i = 0; i < 16; i++) tm[i] = mm[P[i]]; mm.set(tm); }
+    }
+    for (i = 0; i < 8; i++) { out[i] = st[i] ^ st[i + 8]; out[i + 8] = st[i + 8] ^ cv[i]; }
+    return out;
+  }
+  function words(bytes, off, len, w) {
+    w.fill(0);
+    for (var i = 0; i < len; i++) w[i >> 2] |= bytes[off + i] << ((i & 3) * 8);
+    return w;
+  }
+  return function (bytes) {
+    var n = bytes.length, stack = [], w = new Uint32Array(16), o = new Uint32Array(16);
+    var nChunks = Math.max(1, Math.ceil(n / 1024));
+    var last = null; // {cv,m,ctr,len,fl} saída pendente
+    for (var c = 0; c < nChunks; c++) {
+      var cs = c * 1024, ce = Math.min(n, cs + 1024), cv = IV.slice(), blocks = Math.max(1, Math.ceil((ce - cs) / 64));
+      for (var b = 0; b < blocks; b++) {
+        var bs = cs + b * 64, bl = Math.min(64, ce - bs), fl = (b === 0 ? CS : 0);
+        words(bytes, bs, bl, w);
+        if (b < blocks - 1) { compress(cv, w, c, 64, fl, o); cv = o.slice(0, 8); }
+        else last = { cv: cv, m: w.slice(), ctr: c, len: bl, fl: fl | CE };
+      }
+      if (c < nChunks - 1) {
+        var ccv = compress(last.cv, last.m, last.ctr, last.len, last.fl, o).slice(0, 8), tot = c + 1;
+        while ((tot & 1) === 0) {
+          var left = stack.pop(), pm = new Uint32Array(16); pm.set(left, 0); pm.set(ccv, 8);
+          ccv = compress(IV, pm, 0, 64, PAR, o).slice(0, 8); tot >>= 1;
+        }
+        stack.push(ccv);
+      }
+    }
+    while (stack.length) {
+      var rcv = compress(last.cv, last.m, last.ctr, last.len, last.fl, o).slice(0, 8), lm = new Uint32Array(16);
+      lm.set(stack.pop(), 0); lm.set(rcv, 8);
+      last = { cv: IV, m: lm, ctr: 0, len: 64, fl: PAR };
+    }
+    var r = compress(last.cv, last.m, last.ctr, last.len, last.fl | ROOT, o), hex = "";
+    for (var k = 0; k < 8; k++) for (var j = 0; j < 4; j++) hex += ((r[k] >>> (j * 8)) & 255).toString(16).padStart(2, "0");
+    return hex;
+  };
+})();
+
 /* ===== Aba Subir site (Cloudflare Pages, upload direto) ===== */
-var SB = { open: null, ren: null, files: null, zipName: "", busy: false, sites: null, res: null, err: "" };
+var SB = { files: null, zipName: "", zipSize: 0, busy: false, sites: null, open: null, troca: null, q: "", ultimo: null };
 function sbSenha() { try { return localStorage.getItem("nitro_subir_senha") || ""; } catch (e) { return SB._s || ""; } }
 function sbSetSenha(v) { SB._s = v; try { if (v) localStorage.setItem("nitro_subir_senha", v); else localStorage.removeItem("nitro_subir_senha"); } catch (e) {} }
 function sbApi(rota, body) {
   var o = { method: body ? "POST" : "GET", headers: { "x-senha": sbSenha() } };
   if (body) { o.headers["content-type"] = "application/json"; o.body = JSON.stringify(body); }
   return fetch("/api/subir/" + rota, o).then(function (r) {
-    return r.json().catch(function () { return { ok: false, erro: "HTTP " + r.status }; }).then(function (d) { d._st = r.status; return d; });
+    return r.json().catch(function () { return { ok: false, erro: "Erro do servidor (" + r.status + ")." }; }).then(function (d) { d._st = r.status; return d; });
   });
 }
 function sbSlug(s) {
-  return String(s || "").toLowerCase().normalize("NFD").replace(/[̀-ͯ]/g, "").replace(/\.zip$/, "").replace(/[^a-z0-9]+/g, "-").replace(/^-+|-+$/g, "").replace(/-?site$/, "").slice(0, 58).replace(/-+$/, "");
+  return String(s || "").toLowerCase().normalize("NFD").replace(/[̀-ͯ]/g, "").replace(/\.zip$/, "").replace(/^[0-9a-f]{8}-/, "").replace(/[^a-z0-9]+/g, "-").replace(/^-+|-+$/g, "").replace(/-?site$/, "").slice(0, 58).replace(/-+$/, "");
 }
 /* Descompacta zip no navegador (sem biblioteca) */
 async function sbUnzip(buf) {
@@ -971,120 +1071,158 @@ async function sbUnzip(buf) {
   if (i < 0) throw new Error("Esse arquivo não é um .zip válido.");
   var n = dv.getUint16(i + 10, true), p = dv.getUint32(i + 16, true), out = [];
   for (var k = 0; k < n; k++) {
-    if (dv.getUint32(p, true) !== 0x02014b50) throw new Error("Zip corrompido.");
+    if (dv.getUint32(p, true) !== 0x02014b50) throw new Error("O .zip está corrompido.");
     var met = dv.getUint16(p + 10, true), cs = dv.getUint32(p + 20, true), nl = dv.getUint16(p + 28, true), el = dv.getUint16(p + 30, true), cl = dv.getUint16(p + 32, true), lo = dv.getUint32(p + 42, true);
     var nome = td.decode(new Uint8Array(buf, p + 46, nl)).replace(/\\/g, "/");
     p += 46 + nl + el + cl;
-    if (/\/$/.test(nome) || /(^|\/)(__MACOSX|\.DS_Store|Thumbs\.db)(\/|$)/.test(nome)) continue;
+    if (/\/$/.test(nome) || /(^|\/)(__MACOSX|\.DS_Store|Thumbs\.db|\.git)(\/|$)/.test(nome)) continue;
     var ini = lo + 30 + dv.getUint16(lo + 26, true) + dv.getUint16(lo + 28, true), raw = new Uint8Array(buf, ini, cs), dados;
     if (met === 0) dados = raw.slice();
     else if (met === 8) dados = new Uint8Array(await new Response(new Blob([raw]).stream().pipeThrough(new DecompressionStream("deflate-raw"))).arrayBuffer());
-    else throw new Error("Formato de compressão não suportado em " + nome + ".");
+    else throw new Error("O .zip usa uma compressão que não reconheço (" + nome + "). Gere o zip de novo.");
     out.push({ path: nome, data: dados });
   }
   var idx = out.filter(function (f) { return /(^|\/)index\.html$/i.test(f.path); }).sort(function (a, b) { return a.path.length - b.path.length; })[0];
-  if (!idx) throw new Error("O zip não tem index.html.");
+  if (!idx) throw new Error("O .zip não tem index.html. Confira se é o arquivo certo do site.");
   var pre = idx.path.slice(0, idx.path.length - "index.html".length);
-  return out.filter(function (f) { return f.path.indexOf(pre) === 0; }).map(function (f) { return { path: f.path.slice(pre.length), data: f.data }; });
+  var fs = out.filter(function (f) { return f.path.indexOf(pre) === 0; }).map(function (f) { return { path: f.path.slice(pre.length), data: f.data }; });
+  var grande = fs.filter(function (f) { return f.data.length > 25 * 1048576; })[0];
+  if (grande) throw new Error(grande.path + " tem mais de 25 MB; o Cloudflare não aceita.");
+  if (fs.length > 20000) throw new Error("O site tem mais de 20.000 arquivos; o Cloudflare não aceita.");
+  return fs;
 }
 var SB_TIPOS = { html: "text/html", htm: "text/html", css: "text/css", js: "application/javascript", mjs: "application/javascript", json: "application/json", txt: "text/plain", xml: "application/xml", svg: "image/svg+xml", png: "image/png", jpg: "image/jpeg", jpeg: "image/jpeg", gif: "image/gif", webp: "image/webp", avif: "image/avif", ico: "image/x-icon", woff: "font/woff", woff2: "font/woff2", ttf: "font/ttf", otf: "font/otf", mp4: "video/mp4", webm: "video/webm", mp3: "audio/mpeg", ogg: "audio/ogg", pdf: "application/pdf", webmanifest: "application/manifest+json" };
 function sbExt(p) { var m = /\.([a-z0-9]+)$/i.exec(p); return m ? m[1].toLowerCase() : ""; }
 async function sbHash(f) {
-  var e = new TextEncoder().encode(sbExt(f.path)), u = new Uint8Array(f.data.length + e.length);
-  u.set(f.data); u.set(e, f.data.length);
-  var h = new Uint8Array(await crypto.subtle.digest("SHA-256", u));
-  return Array.from(h).map(function (x) { return x.toString(16).padStart(2, "0"); }).join("").slice(0, 32);
+  f.b64 = await sbB64(f.data);
+  return B3(new TextEncoder().encode(f.b64 + sbExt(f.path))).slice(0, 32);
 }
 function sbB64(u8) { return new Promise(function (ok) { var fr = new FileReader(); fr.onload = function () { ok(String(fr.result).split(",")[1] || ""); }; fr.readAsDataURL(new Blob([u8])); }); }
-function sbKb(n) { return n > 1048576 ? (n / 1048576).toFixed(1) + " MB" : Math.max(1, Math.round(n / 1024)) + " KB"; }
+function sbKb(n) { return n > 1048576 ? (n / 1048576).toFixed(1).replace(".", ",") + " MB" : Math.max(1, Math.round(n / 1024)) + " KB"; }
+var SB_IC = {
+  up: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 16V4M7 9l5-5 5 5"/><path d="M4 16v3a1 1 0 0 0 1 1h14a1 1 0 0 0 1-1v-3"/></svg>',
+  zip: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 3H6a1 1 0 0 0-1 1v16a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1V8z"/><path d="M14 3v5h5M10 7h1M10 10h1M10 13h1"/></svg>',
+  ok: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg>',
+  wa: '<svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2a10 10 0 0 0-8.6 15.1L2 22l5-1.3A10 10 0 1 0 12 2zm0 18.2a8.2 8.2 0 0 1-4.2-1.2l-.3-.2-3 .8.8-2.9-.2-.3A8.2 8.2 0 1 1 12 20.2zm4.5-6.1c-.2-.1-1.5-.7-1.7-.8-.2-.1-.4-.1-.6.1l-.8 1c-.1.2-.3.2-.5.1a6.7 6.7 0 0 1-3.3-2.9c-.3-.4.2-.4.7-1.3.1-.2 0-.3 0-.4l-.8-1.8c-.2-.5-.4-.4-.6-.4h-.5a1 1 0 0 0-.7.3 3 3 0 0 0-.9 2.2 5.2 5.2 0 0 0 1.1 2.8 11.9 11.9 0 0 0 4.6 4c1.7.7 2.3.8 3.2.6.5-.1 1.5-.6 1.7-1.2.2-.6.2-1.1.2-1.2-.1-.1-.3-.2-.5-.3z"/></svg>'
+};
 
 function vSubir() {
   if (!sbSenha()) {
-    return '<div class="sb"><div class="sb-card"><h3>Subir site</h3><p class="sb-m">Digite a senha da área de publicação. Ela fica salva neste aparelho.</p>' +
+    return '<div class="sb"><div class="sb-card sb-login"><div class="sb-hi">' + SB_IC.up + '</div><h3>Publicar sites</h3><p class="sb-m">Digite a senha da área de publicação. Ela fica salva neste aparelho.</p>' +
       '<input id="sbSenha" class="sb-in" type="password" autocomplete="current-password" placeholder="Senha">' +
       '<button class="btn pri big" data-sb="entrar">Entrar</button><p class="sb-err" id="sbErr"></p></div></div>';
   }
   return '<div class="sb">' +
-    '<div class="sb-card">' +
-      '<label class="sb-drop" id="sbDrop"><input type="file" id="sbFile" accept=".zip,application/zip" hidden>' +
-        '<b id="sbDropT">Toque para escolher o .zip do site</b><span id="sbDropS">ou arraste o arquivo aqui</span></label>' +
+    '<div class="sb-card" id="sbCard">' +
+      '<div class="sb-h"><h3 id="sbTit">Publicar site</h3><p class="sb-m" id="sbSubt">Envie o .zip do site e escolha o nome do link.</p></div>' +
+      '<div id="sbTroca"></div>' +
+      '<label class="sb-drop" id="sbDrop"><input type="file" id="sbFile" accept=".zip,application/zip,application/x-zip-compressed" hidden>' +
+        '<span class="sb-di">' + SB_IC.up + '</span><b>Escolher o .zip do site</b><span>ou arraste o arquivo para cá</span></label>' +
+      '<div class="sb-file" id="sbFileRow" hidden><span class="sb-fi">' + SB_IC.zip + '</span><div class="sb-ft"><b id="sbFn"></b><small id="sbFs"></small></div><label class="btn" for="sbFile">Trocar</label></div>' +
       '<label class="sb-lb" for="sbNome">Nome do link</label>' +
-      '<div class="sb-name"><input id="sbNome" class="sb-in" inputmode="url" autocapitalize="off" autocomplete="off" spellcheck="false" placeholder="ex: freshclean"><span>.pages.dev</span></div>' +
-      '<p class="sb-m" id="sbPrev">Use letras minúsculas, números e hífen.</p>' +
-      '<label class="sb-ck"><input type="checkbox" id="sbSub"><span>Criar também <b id="sbSubT">nome.agencianitro.com.br</b></span></label>' +
+      '<div class="sb-name"><input id="sbNome" class="sb-in" inputmode="url" autocapitalize="off" autocomplete="off" spellcheck="false" placeholder="nome-da-empresa"><span>.pages.dev</span></div>' +
+      '<p class="sb-hint" id="sbPrev">Só letras minúsculas, números e hífen.</p>' +
       '<button class="btn pri big" id="sbGo" data-sb="publicar" disabled>Publicar</button>' +
-      '<div class="sb-prog" id="sbProg" hidden><i id="sbBar"></i></div><p class="sb-m" id="sbMsg"></p><p class="sb-err" id="sbErr"></p>' +
+      '<div id="sbProgW" hidden><div class="sb-prog"><i id="sbBar"></i></div><p class="sb-step" id="sbMsg"></p></div>' +
+      '<p class="sb-err" id="sbErr"></p>' +
       '<div id="sbRes"></div>' +
     '</div>' +
-    '<div class="sec">Sites publicados aqui</div><div id="sbList"><div class="empty"><p>Carregando…</p></div></div>' +
+    '<div class="sb-lh"><b>Seus sites</b><span id="sbCount"></span></div>' +
+    '<div id="sbBusca"></div>' +
+    '<div id="sbList"><div class="empty"><p>Carregando…</p></div></div>' +
     '<button class="sb-out" data-sb="sair">Sair da área de publicação</button>' +
   '</div>';
 }
 function sbErr(t) { var e = $("#sbErr"); if (e) e.textContent = t || ""; }
-function sbMsg(t, pct) { var m = $("#sbMsg"); if (m) m.textContent = t || ""; var pg = $("#sbProg"); if (pg) { pg.hidden = pct == null; if (pct != null) $("#sbBar").style.width = Math.round(pct) + "%"; } }
+function sbMsg(t, pct) { var w = $("#sbProgW"); if (!w) return; w.hidden = pct == null; $("#sbMsg").textContent = t || ""; if (pct != null) $("#sbBar").style.width = Math.max(2, Math.round(pct)) + "%"; }
 function sbNomeAtual() { var i = $("#sbNome"); return i ? sbSlug(i.value) : ""; }
+function sbExiste(n) { return (SB.sites || []).some(function (s) { return s.nome === n; }); }
 function sbUpd() {
-  var n = sbNomeAtual(), i = $("#sbNome");
-  if (i && i.value !== n && document.activeElement !== i) i.value = n;
-  var pv = $("#sbPrev"); if (pv) pv.innerHTML = n ? "Link: <b>" + esc(n) + ".pages.dev</b>" + (SB.sites && SB.sites.some(function (s) { return s.nome === n; }) ? " · <span style=\"color:var(--amb)\">já existe, vai ser atualizado</span>" : "") : "Use letras minúsculas, números e hífen.";
-  var st = $("#sbSubT"); if (st) st.textContent = (n || "nome") + ".agencianitro.com.br";
-  var g = $("#sbGo"); if (g) g.disabled = SB.busy || !n || !SB.files;
+  var n = sbNomeAtual(), pv = $("#sbPrev"), raw = ($("#sbNome") || {}).value || "";
+  if (pv) {
+    pv.className = "sb-hint";
+    if (!n) pv.textContent = raw ? "Use letras e números." : "Só letras minúsculas, números e hífen.";
+    else if (SB.troca && n === SB.troca) { pv.innerHTML = "Escolha um nome diferente de <b>" + esc(SB.troca) + "</b>."; pv.className = "sb-hint warn"; }
+    else if (sbExiste(n) && !SB.troca) { pv.innerHTML = "<b>" + esc(n) + ".pages.dev</b> já é seu: o site atual vai ser substituído."; pv.className = "sb-hint warn"; }
+    else if (sbExiste(n)) { pv.innerHTML = "<b>" + esc(n) + "</b> já é outro site seu. Escolha outro nome."; pv.className = "sb-hint warn"; }
+    else pv.innerHTML = "Link: <b>https://" + esc(n) + ".pages.dev</b>" + (raw && raw !== n ? " <span>(ajustado)</span>" : "");
+  }
+  var bloqueado = SB.troca && (n === SB.troca || sbExiste(n));
+  var g = $("#sbGo");
+  if (g) {
+    g.disabled = SB.busy || !n || !SB.files || bloqueado;
+    g.textContent = SB.busy ? "Publicando…" : SB.troca ? "Publicar com o nome novo" : sbExiste(n) ? "Atualizar site" : "Publicar";
+  }
+  var tr = $("#sbTroca");
+  if (tr) tr.innerHTML = SB.troca ? '<div class="sb-note">Mudando o nome de <b>' + esc(SB.troca) + '</b>. Escolha o .zip e o nome novo. Depois de publicar, o link antigo <b>' + esc(SB.troca) + '.pages.dev</b> é excluído. <button class="sb-lnk" data-sb="trocacancel">Cancelar</button></div>' : "";
+  var t = $("#sbTit"); if (t) t.textContent = SB.troca ? "Mudar nome do site" : "Publicar site";
 }
-function sbLink(u) { return '<a href="' + esc(u) + '" target="_blank" rel="noopener">' + esc(u.replace(/^https:\/\//, "")) + "</a>"; }
+function sbFileUI() {
+  var has = !!SB.files;
+  var d = $("#sbDrop"), r = $("#sbFileRow"); if (!d || !r) return;
+  d.hidden = has; r.hidden = !has;
+  if (has) { $("#sbFn").textContent = SB.zipName; $("#sbFs").textContent = SB.files.length + " arquivos · " + sbKb(SB.zipSize); }
+}
+function sbLink(u, cls) { return '<a class="' + (cls || "") + '" href="' + esc(u) + '" target="_blank" rel="noopener">' + esc(u.replace(/^https:\/\//, "")) + "</a>"; }
 function sbLista() {
-  var el = $("#sbList"); if (!el) return;
-  if (!SB.sites) return;
-  if (!SB.sites.length) { el.innerHTML = '<div class="empty"><p>Nenhum site publicado por aqui ainda.</p></div>'; return; }
-  el.innerHTML = SB.sites.map(function (s) {
-    var nn = esc(s.nome), sufx = ".agencianitro.com.br";
-    var mine = (s.dominios || []).filter(function (d) { return d.slice(-sufx.length) === sufx; });
-    var outros = (s.dominios || []).filter(function (d) { return !/\.pages\.dev$/.test(d) && d.slice(-sufx.length) !== sufx; });
-    var ab = SB.open === s.nome, on = s.ativo !== false;
-    var h = '<div class="sb-row' + (on ? "" : " off") + '"><div class="sb-top"><div class="sb-rt" data-sb="abrir" data-n="' + nn + '"><b>' + nn + (on ? "" : ' <small class="sb-tag">fora do ar</small>') + "</b>" + sbLink("https://" + s.pages) + (s.dominios || []).filter(function (d) { return !/\.pages\.dev$/.test(d); }).map(function (d) { return sbLink("https://" + d); }).join("") + '<span class="sb-more">' + (ab ? "Fechar opções ▴" : "Opções ▾") + '</span></div>' +
-      '<button class="sb-sw' + (on ? " on" : "") + '" data-sb="ar" data-n="' + nn + '" data-on="' + (on ? 1 : 0) + '" role="switch" aria-checked="' + on + '" aria-label="Site no ar"><i></i></button></div>';
-    if (!ab && SB.ren !== s.nome) return h + "</div>";
-    if (SB.ren === s.nome) {
-      var cur = mine[0] ? mine[0].slice(0, -sufx.length) : s.nome;
-      h += '<div class="sb-ren"><div class="sb-name"><input class="sb-in" id="sbRenIn" value="' + esc(cur) + '" autocapitalize="off" autocomplete="off" spellcheck="false"><span>' + sufx + '</span></div>' +
-        '<p class="sb-m">Troca o endereço no agencianitro.com.br. O endereço .pages.dev não muda (limite do Cloudflare); para mudar ele, publique o zip com outro nome e exclua este.</p>' +
-        '<div class="sb-ac"><button class="btn pri" data-sb="renok" data-n="' + nn + '">Salvar</button><button class="btn" data-sb="rencancel">Cancelar</button></div></div>';
-    } else {
-      h += '<div class="sb-ac"><button class="btn" data-sb="usar" data-n="' + nn + '">Atualizar</button><button class="btn" data-sb="ren" data-n="' + nn + '">Renomear</button>' +
-        (mine.length ? '<button class="btn" data-sb="dom" data-a="desligar" data-n="' + nn + '">Tirar do agencianitro.com.br</button>' : '<button class="btn" data-sb="dom" data-a="ligar" data-n="' + nn + '">Ligar no agencianitro.com.br</button>') +
-        '<button class="btn sb-del" data-sb="del" data-n="' + nn + '" data-o="' + esc(outros.join(", ")) + '">Excluir</button></div>';
+  var el = $("#sbList"); if (!el || !SB.sites) return;
+  var c = $("#sbCount"); if (c) c.textContent = SB.sites.length ? SB.sites.length + (SB.sites.length === 1 ? " site" : " sites") : "";
+  var bz = $("#sbBusca");
+  if (bz && SB.sites.length > 5 && !$("#sbQ")) { bz.innerHTML = '<div class="sb-q"><input id="sbQ" class="sb-in" type="search" placeholder="Buscar site" autocomplete="off"></div>'; $("#sbQ").oninput = function () { SB.q = this.value; sbLista(); }; }
+  if (bz && SB.sites.length <= 5) bz.innerHTML = "";
+  if (!SB.sites.length) { el.innerHTML = '<div class="empty"><p>Nenhum site publicado ainda. O primeiro que você enviar aparece aqui.</p></div>'; return; }
+  var q = sbSlug(SB.q), lst = SB.sites.filter(function (s) { return !q || s.nome.indexOf(q) >= 0; });
+  if (!lst.length) { el.innerHTML = '<div class="empty"><p>Nenhum site com esse nome.</p></div>'; return; }
+  el.innerHTML = lst.map(function (s) {
+    var nn = esc(s.nome), ab = SB.open === s.nome, on = s.ativo !== false, url = "https://" + s.pages;
+    var extra = (s.dominios || []).filter(function (d) { return !/\.pages\.dev$/.test(d); });
+    var h = '<div class="sb-row' + (on ? "" : " off") + (ab ? " ab" : "") + '"><div class="sb-top">' +
+      '<button class="sb-rt" data-sb="abrir" data-n="' + nn + '" aria-expanded="' + ab + '"><span class="sb-av">' + esc(s.nome.charAt(0).toUpperCase()) + '</span><span class="sb-tx"><b>' + nn + '</b><small>' + esc(s.pages) + (extra.length ? " · " + esc(extra.join(", ")) : "") + '</small>' +
+      '<em class="sb-st">' + (on ? "No ar" : "Fora do ar") + "</em></span></button>" +
+      '<button class="sb-sw' + (on ? " on" : "") + '" data-sb="ar" data-n="' + nn + '" data-on="' + (on ? 1 : 0) + '" role="switch" aria-checked="' + on + '" aria-label="' + (on ? "Tirar do ar" : "Colocar no ar") + '"><i></i></button></div>';
+    if (ab) {
+      h += '<div class="sb-ac">' +
+        '<a class="btn" href="' + esc(url) + '" target="_blank" rel="noopener">Abrir</a>' +
+        '<button class="btn" data-sb="copiar" data-u="' + esc(url) + '">Copiar link</button>' +
+        '<button class="btn" data-sb="zap" data-u="' + esc(url) + '">' + SB_IC.wa + 'Enviar</button>' +
+        '<button class="btn" data-sb="usar" data-n="' + nn + '">Substituir zip</button>' +
+        '<button class="btn" data-sb="trocar" data-n="' + nn + '">Mudar nome</button>' +
+        '<button class="btn sb-del" data-sb="del" data-n="' + nn + '">Excluir</button></div>';
     }
     return h + "</div>";
   }).join("");
 }
 function sbCarregar() {
-  sbApi("sites").then(function (d) {
-    if (d._st === 401) { sbSetSenha(""); SB.sites = null; if (ST.tab === "subir") { $("#view").dataset.t = ""; render(); } toast("Senha errada.", 3000); return; }
-    if (d.erro === "config") { var el = $("#sbList"); if (el) el.innerHTML = '<div class="empty"><h3>Falta configurar</h3><p>Cadastre no Cloudflare (projeto nitrovendas → Configurações → Variáveis): ' + esc((d.falta || []).join(" e ")) + ".</p></div>"; return; }
-    if (!d.ok) { var e2 = $("#sbList"); if (e2) e2.innerHTML = '<div class="empty"><p>' + esc(d.erro || "Erro ao listar") + "</p></div>"; return; }
+  return sbApi("sites").then(function (d) {
+    if (d._st === 401) { sbSetSenha(""); SB.sites = null; if (ST.tab === "subir") { $("#view").dataset.t = ""; render(); } toast("Senha errada. Digite de novo.", 3000); return; }
+    var el = $("#sbList");
+    if (d.erro === "config") { if (el) el.innerHTML = '<div class="empty"><h3>Falta configurar</h3><p>Cadastre no Cloudflare (projeto nitrovendas, Settings, Variables and secrets): ' + esc((d.falta || []).join(" e ")) + ".</p></div>"; return; }
+    if (!d.ok) { if (el) el.innerHTML = '<div class="empty"><p>' + esc(d.erro || "Não consegui listar os sites.") + '</p><button class="btn" data-sb="recarregar">Tentar de novo</button></div>'; return; }
     SB.sites = d.sites; sbLista(); sbUpd();
-  }).catch(function () { var el = $("#sbList"); if (el) el.innerHTML = '<div class="empty"><p>Sem conexão.</p></div>'; });
+  }).catch(function () { var el = $("#sbList"); if (el) el.innerHTML = '<div class="empty"><p>Sem conexão.</p><button class="btn" data-sb="recarregar">Tentar de novo</button></div>'; });
 }
 async function sbArquivo(f) {
-  if (!f) return;
-  sbErr(""); SB.files = null; sbUpd();
+  if (!f || SB.busy) return;
+  sbErr(""); $("#sbRes").innerHTML = "";
   if (!/\.zip$/i.test(f.name)) { sbErr("Escolha um arquivo .zip."); return; }
-  $("#sbDropT").textContent = f.name; $("#sbDropS").textContent = "Lendo…";
+  var d = $("#sbDrop"); if (d) d.classList.add("lendo");
   try {
     var fs = await sbUnzip(await f.arrayBuffer());
-    SB.files = fs; SB.zipName = f.name;
-    var tot = fs.reduce(function (a, x) { return a + x.data.length; }, 0);
-    $("#sbDropS").textContent = fs.length + " arquivos · " + sbKb(tot) + " · toque para trocar";
-    var i = $("#sbNome"); if (i && !i.value) i.value = sbSlug(f.name);
-  } catch (e) { $("#sbDropS").textContent = "toque para escolher outro"; sbErr(e.message || String(e)); }
-  sbUpd();
+    SB.files = fs; SB.zipName = f.name; SB.zipSize = fs.reduce(function (a, x) { return a + x.data.length; }, 0);
+    var i = $("#sbNome"); if (i && !i.value && !SB.troca) i.value = sbSlug(f.name);
+  } catch (e) { SB.files = null; sbErr(e.message || String(e)); }
+  if (d) d.classList.remove("lendo");
+  sbFileUI(); sbUpd();
 }
 async function sbPublicar() {
   var nome = sbNomeAtual(); if (!nome || !SB.files || SB.busy) return;
+  var troca = SB.troca;
   SB.busy = true; sbErr(""); $("#sbRes").innerHTML = ""; sbUpd();
+  var ni = $("#sbNome"); if (ni) ni.disabled = true;
   try {
-    sbMsg("Preparando " + nome + ".pages.dev…", 3);
+    sbMsg("Preparando o link…", 4);
     var pr = await sbApi("preparar", { nome: nome });
-    if (!pr.ok) throw new Error(pr.erro || "Erro ao preparar");
+    if (!pr.ok) throw new Error(pr.erro || "Não consegui preparar o site.");
     var jwt = pr.jwt, manifest = {}, por = {}, headers = "", redirects = "";
     var fs = SB.files.filter(function (f) {
       if (f.path === "_headers") { headers = new TextDecoder().decode(f.data); return false; }
@@ -1095,57 +1233,63 @@ async function sbPublicar() {
     for (var k = 0; k < fs.length; k++) { var h = await sbHash(fs[k]); fs[k].hash = h; manifest["/" + fs[k].path] = h; por[h] = fs[k]; }
     var hashes = Object.keys(por);
     var fl = await sbApi("faltando", { jwt: jwt, hashes: hashes });
-    if (!fl.ok) throw new Error(fl.erro || "Erro ao conferir arquivos");
+    if (!fl.ok) throw new Error(fl.erro || "Erro ao conferir arquivos.");
     var falta = fl.faltando.map(function (h) { return por[h]; }).filter(Boolean);
     var total = falta.reduce(function (a, f) { return a + f.data.length; }, 0) || 1, feito = 0, lote = [], tam = 0;
     async function manda() {
       if (!lote.length) return;
       var r = await sbApi("enviar", { jwt: jwt, itens: lote });
-      if (!r.ok) throw new Error(r.erro || "Erro ao enviar arquivos");
+      if (!r.ok) throw new Error(r.erro || "Erro ao enviar arquivos.");
       lote = []; tam = 0;
     }
     for (var x = 0; x < falta.length; x++) {
-      var f = falta[x], b = await sbB64(f.data);
+      var f = falta[x], b = f.b64 || await sbB64(f.data);
       if (tam + b.length > 18000000 && lote.length) await manda();
       lote.push({ key: f.hash, value: b, metadata: { contentType: SB_TIPOS[sbExt(f.path)] || "application/octet-stream" }, base64: true });
       tam += b.length; feito += f.data.length;
-      sbMsg("Enviando arquivos… " + (x + 1) + "/" + falta.length, 10 + 70 * feito / total);
+      sbMsg("Enviando arquivos " + (x + 1) + " de " + falta.length + "…", 10 + 70 * feito / total);
     }
     await manda();
-    sbMsg("Publicando…", 85);
-    var sub = !!($("#sbSub") && $("#sbSub").checked);
-    var pb = await sbApi("publicar", { nome: nome, jwt: jwt, hashes: hashes, manifest: manifest, headers: headers, redirects: redirects, sub: sub });
-    if (!pb.ok) throw new Error(pb.erro || "Erro ao publicar");
+    sbMsg("Publicando…", 84);
+    var pb = await sbApi("publicar", { nome: nome, jwt: jwt, hashes: hashes, manifest: manifest, headers: headers, redirects: redirects });
+    if (!pb.ok) throw new Error(pb.erro || "Erro ao publicar.");
+    var pronto = false;
     for (var t = 0; t < 30; t++) {
       var s = await sbApi("status?nome=" + nome + "&id=" + pb.id);
-      if (s.ok && s.etapa === "deploy" && s.estado === "success") break;
-      if (s.ok && s.estado === "failure") throw new Error("O Cloudflare recusou a publicação (" + s.etapa + ").");
-      sbMsg("Colocando no ar…", 88 + t / 3);
+      if (s.ok && s.etapa === "deploy" && s.estado === "success") { pronto = true; break; }
+      if (s.ok && s.estado === "failure") throw new Error("O Cloudflare recusou a publicação (" + s.etapa + "). Tente de novo.");
+      sbMsg("Colocando no ar…", 86 + t / 2);
       await new Promise(function (ok) { setTimeout(ok, 2000); });
     }
+    var aviso = "";
+    if (troca) {
+      var dx = await sbApi("excluir", { nome: troca, confirmar: troca });
+      for (var z = 0; !dx.ok && dx.parcial && z < 5; z++) dx = await sbApi("excluir", { nome: troca, confirmar: troca });
+      aviso = dx.ok ? "O link antigo " + troca + ".pages.dev foi excluído." : "Não consegui excluir o link antigo " + troca + ".pages.dev: " + (dx.erro || "") + " Exclua pela lista.";
+    }
     sbMsg("", null);
-    var h2 = '<div class="sb-ok"><b>No ar ✓</b>' + sbRow(pb.pages, "pronto agora");
-    if (pb.sub && pb.sub.ok) h2 += sbRow("https://" + pb.sub.host, "fica ativo em 1 a 5 min");
-    else if (pb.sub && pb.sub.aviso) h2 += '<p class="sb-err">' + esc(pb.sub.aviso) + "</p>";
-    if (pr.novo) h2 += '<p class="sb-m">Site novo: o primeiro acesso pode levar até 1 minuto.</p>';
-    $("#sbRes").innerHTML = h2 + "</div>";
+    SB.ultimo = pb.pages; SB.files = null; SB.troca = null; if (ni) ni.value = "";
+    $("#sbRes").innerHTML = '<div class="sb-ok"><div class="sb-okh"><span>' + SB_IC.ok + '</span><b>' + (pronto ? "Site no ar" : "Publicado, terminando de ativar") + "</b></div>" +
+      sbLink(pb.pages, "sb-big") +
+      '<div class="sb-ac"><a class="btn pri" href="' + esc(pb.pages) + '" target="_blank" rel="noopener">Abrir</a><button class="btn" data-sb="copiar" data-u="' + esc(pb.pages) + '">Copiar link</button><button class="btn" data-sb="zap" data-u="' + esc(pb.pages) + '">' + SB_IC.wa + "Enviar</button></div>" +
+      (pr.novo ? '<p class="sb-m">Link novo: o primeiro acesso pode levar até 1 minuto.</p>' : "") +
+      (aviso ? '<p class="sb-m">' + esc(aviso) + "</p>" : "") + "</div>";
     toast("Site publicado.", 3000);
     sbCarregar();
   } catch (e) { sbMsg("", null); sbErr(e.message || String(e)); }
-  SB.busy = false; sbUpd();
+  SB.busy = false; if (ni) ni.disabled = false; sbFileUI(); sbUpd();
 }
-function sbRow(u, nota) { return '<div class="sb-lk">' + sbLink(u) + '<small>' + esc(nota) + '</small><button class="btn" data-sb="copiar" data-u="' + esc(u) + '">Copiar</button></div>'; }
 function sbInit() {
   if (!sbSenha()) { var s = $("#sbSenha"); if (s) { s.focus(); s.onkeydown = function (e) { if (e.key === "Enter") sbClick({ dataset: { sb: "entrar" } }); }; } return; }
   var fi = $("#sbFile"); if (fi) fi.onchange = function () { sbArquivo(fi.files[0]); fi.value = ""; };
-  var d = $("#sbDrop");
+  var d = $("#sbCard");
   if (d) {
-    d.ondragover = function (e) { e.preventDefault(); d.classList.add("on"); };
-    d.ondragleave = function () { d.classList.remove("on"); };
-    d.ondrop = function (e) { e.preventDefault(); d.classList.remove("on"); sbArquivo(e.dataTransfer.files[0]); };
+    d.ondragover = function (e) { e.preventDefault(); d.classList.add("drag"); };
+    d.ondragleave = function (e) { if (!d.contains(e.relatedTarget)) d.classList.remove("drag"); };
+    d.ondrop = function (e) { e.preventDefault(); d.classList.remove("drag"); sbArquivo(e.dataTransfer.files[0]); };
   }
-  var n = $("#sbNome"); if (n) { n.oninput = sbUpd; n.onblur = function () { n.value = sbSlug(n.value); sbUpd(); }; }
-  sbCarregar(); sbUpd();
+  var n = $("#sbNome"); if (n) { n.oninput = sbUpd; n.onblur = function () { if (n.value) n.value = sbSlug(n.value); sbUpd(); }; n.onkeydown = function (e) { if (e.key === "Enter") n.blur(); }; }
+  sbFileUI(); sbUpd(); if (SB.sites) sbLista(); sbCarregar();
 }
 function sbClick(b) {
   var a = b.dataset.sb;
@@ -1156,10 +1300,24 @@ function sbClick(b) {
       if (d._st === 401) { sbSetSenha(""); sbErr("Senha errada."); return; }
       SB.sites = d.ok ? d.sites : null; $("#view").dataset.t = ""; render();
     }).catch(function () { sbSetSenha(""); sbErr("Sem conexão."); });
-  } else if (a === "sair") { sbSetSenha(""); SB.sites = null; $("#view").dataset.t = ""; render(); }
+  }
+  else if (a === "sair") { sbSetSenha(""); SB.sites = null; $("#view").dataset.t = ""; render(); }
+  else if (a === "recarregar") sbCarregar();
   else if (a === "publicar") sbPublicar();
   else if (a === "copiar") { copyText(b.dataset.u); toast("Link copiado.", 2000); }
-  else if (a === "abrir") { SB.open = SB.open === b.dataset.n ? null : b.dataset.n; if (SB.ren && SB.ren !== SB.open) SB.ren = null; sbLista(); }
+  else if (a === "zap") { window.open("https://wa.me/?text=" + encodeURIComponent(b.dataset.u), "_blank"); }
+  else if (a === "abrir") { SB.open = SB.open === b.dataset.n ? null : b.dataset.n; sbLista(); }
+  else if (a === "trocacancel") { SB.troca = null; sbUpd(); }
+  else if (a === "usar" || a === "trocar") {
+    if (SB.busy) return;
+    var i = $("#sbNome");
+    SB.troca = a === "trocar" ? b.dataset.n : null;
+    if (i) i.value = a === "usar" ? b.dataset.n : "";
+    $("#sbRes").innerHTML = ""; sbErr(""); sbUpd();
+    window.scrollTo({ top: 0, behavior: "smooth" });
+    if (a === "trocar" && i) setTimeout(function () { i.focus(); }, 300);
+    toast(a === "usar" ? "Escolha o .zip novo e toque em Atualizar site." : "Digite o nome novo e escolha o .zip.", 3500);
+  }
   else if (a === "ar") {
     var ligado = b.dataset.on === "1", nm2 = b.dataset.n;
     b.disabled = true; b.classList.toggle("on", !ligado); b.classList.add("wait");
@@ -1170,42 +1328,23 @@ function sbClick(b) {
       toast(ligado ? nm2 + " saiu do ar." : nm2 + " voltou ao ar (pode levar até 1 minuto).", 4000);
     }).catch(function () { toast("Sem conexão.", 3000); sbCarregar(); });
   }
-  else if (a === "ren") { SB.ren = b.dataset.n; sbLista(); var ri = $("#sbRenIn"); if (ri) { ri.focus(); ri.select(); } }
-  else if (a === "rencancel") { SB.ren = null; sbLista(); }
-  else if (a === "renok") {
-    var nv = sbSlug(($("#sbRenIn") || {}).value || ""); if (!nv) return;
-    b.disabled = true; b.textContent = "Salvando…";
-    sbApi("renomear", { nome: b.dataset.n, novo: nv }).then(function (d) {
-      if (!d.ok) { b.disabled = false; b.textContent = "Salvar"; toast(d.erro || "Não consegui renomear.", 5000); return; }
-      SB.ren = null; toast("Agora é " + d.host + (d.igual ? "" : " (ativa em 1 a 5 min)"), 5000); sbCarregar();
-    }).catch(function () { b.disabled = false; b.textContent = "Salvar"; toast("Sem conexão.", 3000); });
-  }
-  else if (a === "dom") {
-    var lig = b.dataset.a === "ligar"; b.disabled = true; b.textContent = lig ? "Ligando…" : "Tirando…";
-    sbApi("dominio", { nome: b.dataset.n, acao: b.dataset.a }).then(function (d) {
-      if (!d.ok) { toast(d.erro || "Não consegui.", 5000); sbCarregar(); return; }
-      toast(lig ? d.host + " ligado (ativa em 1 a 5 min)." : "Tirado do agencianitro.com.br.", 4000); sbCarregar();
-    }).catch(function () { toast("Sem conexão.", 3000); sbCarregar(); });
-  }
   else if (a === "del") {
     if (!b.dataset.sure) {
       b.dataset.sure = 1; b.textContent = "Toque de novo para excluir"; b.classList.add("on");
-      if (b.dataset.o) toast("Atenção: este site também tem o domínio " + b.dataset.o + ". Ele sai junto.", 6000);
       setTimeout(function () { if (b.isConnected) { delete b.dataset.sure; b.textContent = "Excluir"; b.classList.remove("on"); } }, 5000); return;
     }
     b.disabled = true; b.textContent = "Excluindo…";
     var tent = 0, nm = b.dataset.n;
     (function vai() {
       sbApi("excluir", { nome: nm, confirmar: nm }).then(function (d) {
-        if (d.ok) { toast("Site " + nm + " excluído.", 3000); sbCarregar(); return; }
+        if (d.ok) { if (SB.open === nm) SB.open = null; toast("Site " + nm + " excluído.", 3000); sbCarregar(); return; }
         if (d.parcial && ++tent < 6) { setTimeout(vai, 800); return; }
         toast(d.erro || "Não consegui excluir.", 5000); sbCarregar();
       }).catch(function () { toast("Sem conexão.", 3000); sbCarregar(); });
     })();
   }
-  else if (a === "usar") { var i = $("#sbNome"); if (i) { i.value = b.dataset.n; sbUpd(); window.scrollTo(0, 0); toast(SB.files ? "Toque em Publicar para atualizar." : "Escolha o .zip novo e publique.", 3000); } }
 }
-document.addEventListener("click", function (e) { if (e.target.closest(".sb-rt a")) return; var b = e.target.closest("[data-sb]"); if (b && b.tagName !== "LABEL") sbClick(b); });
+document.addEventListener("click", function (e) { if (e.target.closest("#sbList a, #sbRes a")) return; var b = e.target.closest("[data-sb]"); if (b && b.tagName !== "LABEL") sbClick(b); });
 
 function vLost(o) {
   var all = o.lost;

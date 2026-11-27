@@ -2,6 +2,68 @@
 // Recebe os arquivos do navegador e publica no Cloudflare Pages (Direct Upload).
 // Segredos no projeto: CF_TOKEN (token da API) e SENHA (senha da página).
 
+/* BLAKE3 (hash de 32 bytes), implementação compacta em JS puro */
+var B3 = (function () {
+  var IV = new Uint32Array([0x6A09E667, 0xBB67AE85, 0x3C6EF372, 0xA54FF53A, 0x510E527F, 0x9B05688C, 0x1F83D9AB, 0x5BE0CD19]);
+  var P = [2, 6, 3, 10, 7, 0, 4, 13, 1, 11, 12, 5, 9, 14, 15, 8];
+  var CS = 1, CE = 2, PAR = 4, ROOT = 8;
+  var st = new Uint32Array(16), mm = new Uint32Array(16), tm = new Uint32Array(16);
+  function g(a, b, c, d, x, y) {
+    st[a] = (st[a] + st[b] + x) | 0; st[d] ^= st[a]; st[d] = (st[d] >>> 16) | (st[d] << 16);
+    st[c] = (st[c] + st[d]) | 0; st[b] ^= st[c]; st[b] = (st[b] >>> 12) | (st[b] << 20);
+    st[a] = (st[a] + st[b] + y) | 0; st[d] ^= st[a]; st[d] = (st[d] >>> 8) | (st[d] << 24);
+    st[c] = (st[c] + st[d]) | 0; st[b] ^= st[c]; st[b] = (st[b] >>> 7) | (st[b] << 25);
+  }
+  function compress(cv, m, ctr, len, fl, out) {
+    for (var i = 0; i < 8; i++) st[i] = cv[i];
+    st[8] = IV[0]; st[9] = IV[1]; st[10] = IV[2]; st[11] = IV[3];
+    st[12] = ctr >>> 0; st[13] = Math.floor(ctr / 4294967296) >>> 0; st[14] = len; st[15] = fl;
+    for (i = 0; i < 16; i++) mm[i] = m[i];
+    for (var r = 0; r < 7; r++) {
+      g(0, 4, 8, 12, mm[0], mm[1]); g(1, 5, 9, 13, mm[2], mm[3]); g(2, 6, 10, 14, mm[4], mm[5]); g(3, 7, 11, 15, mm[6], mm[7]);
+      g(0, 5, 10, 15, mm[8], mm[9]); g(1, 6, 11, 12, mm[10], mm[11]); g(2, 7, 8, 13, mm[12], mm[13]); g(3, 4, 9, 14, mm[14], mm[15]);
+      if (r < 6) { for (i = 0; i < 16; i++) tm[i] = mm[P[i]]; mm.set(tm); }
+    }
+    for (i = 0; i < 8; i++) { out[i] = st[i] ^ st[i + 8]; out[i + 8] = st[i + 8] ^ cv[i]; }
+    return out;
+  }
+  function words(bytes, off, len, w) {
+    w.fill(0);
+    for (var i = 0; i < len; i++) w[i >> 2] |= bytes[off + i] << ((i & 3) * 8);
+    return w;
+  }
+  return function (bytes) {
+    var n = bytes.length, stack = [], w = new Uint32Array(16), o = new Uint32Array(16);
+    var nChunks = Math.max(1, Math.ceil(n / 1024));
+    var last = null; // {cv,m,ctr,len,fl} saída pendente
+    for (var c = 0; c < nChunks; c++) {
+      var cs = c * 1024, ce = Math.min(n, cs + 1024), cv = IV.slice(), blocks = Math.max(1, Math.ceil((ce - cs) / 64));
+      for (var b = 0; b < blocks; b++) {
+        var bs = cs + b * 64, bl = Math.min(64, ce - bs), fl = (b === 0 ? CS : 0);
+        words(bytes, bs, bl, w);
+        if (b < blocks - 1) { compress(cv, w, c, 64, fl, o); cv = o.slice(0, 8); }
+        else last = { cv: cv, m: w.slice(), ctr: c, len: bl, fl: fl | CE };
+      }
+      if (c < nChunks - 1) {
+        var ccv = compress(last.cv, last.m, last.ctr, last.len, last.fl, o).slice(0, 8), tot = c + 1;
+        while ((tot & 1) === 0) {
+          var left = stack.pop(), pm = new Uint32Array(16); pm.set(left, 0); pm.set(ccv, 8);
+          ccv = compress(IV, pm, 0, 64, PAR, o).slice(0, 8); tot >>= 1;
+        }
+        stack.push(ccv);
+      }
+    }
+    while (stack.length) {
+      var rcv = compress(last.cv, last.m, last.ctr, last.len, last.fl, o).slice(0, 8), lm = new Uint32Array(16);
+      lm.set(stack.pop(), 0); lm.set(rcv, 8);
+      last = { cv: IV, m: lm, ctr: 0, len: 64, fl: PAR };
+    }
+    var r = compress(last.cv, last.m, last.ctr, last.len, last.fl | ROOT, o), hex = "";
+    for (var k = 0; k < 8; k++) for (var j = 0; j < 4; j++) hex += ((r[k] >>> (j * 8)) & 255).toString(16).padStart(2, "0");
+    return hex;
+  };
+})();
+
 const ACC = "f9a358d0b14d705a0247ce97a870e3fb";
 const ZONA = "agencianitro.com.br";
 const API = "https://api.cloudflare.com/client/v4";
@@ -50,23 +112,6 @@ async function pegarProjeto(env, nome) {
   if (!pr.success) return { erro: pr.status === 404 ? "Esse site não existe." : erroDe(pr), st: pr.status === 404 ? 404 : 502 };
   if (pr.result.source && pr.result.source.type === "github") return { erro: "Esse site é ligado ao GitHub; não mexo nele por aqui.", st: 409 };
   return { pr };
-}
-
-async function ligarSubdominio(env, nome, label = nome) {
-  const host = label + "." + ZONA;
-  const alvo = nome + ".pages.dev";
-  const zid = await pegarZona(env);
-  const ex = await cf(env, "/zones/" + zid + "/dns_records?name=" + host);
-  const rec = ex.success && ex.result && ex.result[0];
-  if (rec) {
-    if (rec.type !== "CNAME" || rec.content !== alvo) return { ok: false, aviso: host + " já está em uso por outro site; não mexi." };
-  } else {
-    const c = await cf(env, "/zones/" + zid + "/dns_records", { method: "POST", json: { type: "CNAME", name: host, content: alvo, proxied: true, ttl: 1 } });
-    if (!c.success) return { ok: false, aviso: "DNS: " + erroDe(c) };
-  }
-  const dm = await cf(env, `/accounts/${ACC}/pages/projects/${nome}/domains`, { method: "POST", json: { name: host } });
-  if (!dm.success && !/already|exist/i.test(erroDe(dm))) return { ok: false, aviso: "Domínio: " + erroDe(dm) };
-  return { ok: true, host };
 }
 
 export async function onRequest({ request, env, params }) {
@@ -148,9 +193,7 @@ export async function onRequest({ request, env, params }) {
       if (b.redirects) fd.append("_redirects", new Blob([b.redirects]), "_redirects");
       const dp = await cf(env, `/accounts/${ACC}/pages/projects/${nome}/deployments`, { method: "POST", body: fd });
       if (!dp.success) return j({ ok: false, erro: "Publicação: " + erroDe(dp) }, 502);
-      let sub = null;
-      if (b.sub) { try { sub = await ligarSubdominio(env, nome); } catch (e) { sub = { ok: false, aviso: String(e.message || e) }; } }
-      return j({ ok: true, id: dp.result.id, pages: "https://" + nome + ".pages.dev", sub });
+      return j({ ok: true, id: dp.result.id, pages: "https://" + nome + ".pages.dev" });
     }
 
     // Tira o site do ar (publica uma página "fora do ar") ou volta ele (restaura a versão anterior)
@@ -161,14 +204,13 @@ export async function onRequest({ request, env, params }) {
         const t = await cf(env, `/accounts/${ACC}/pages/projects/${nome}/upload-token`);
         if (!t.success) return j({ ok: false, erro: "Token de upload: " + erroDe(t) }, 502);
         const jwt = t.result.jwt, dados = new TextEncoder().encode(PAG_OFF);
-        const ext = new TextEncoder().encode("html"), u8 = new Uint8Array(dados.length + ext.length);
-        u8.set(dados); u8.set(ext, dados.length);
-        const hash = Array.from(new Uint8Array(await crypto.subtle.digest("SHA-256", u8))).map((x) => x.toString(16).padStart(2, "0")).join("").slice(0, 32);
+        let bin = ""; for (const c of dados) bin += String.fromCharCode(c);
+        const b64 = btoa(bin);
+        const hash = B3(new TextEncoder().encode(b64 + "html")).slice(0, 32);
         const miss = await jwtFetch(jwt, "/pages/assets/check-missing", { hashes: [hash] });
         if (!miss.success) return j({ ok: false, erro: erroDe(miss) }, 502);
         if ((miss.result || []).length) {
-          let bin = ""; for (const c of dados) bin += String.fromCharCode(c);
-          const up = await jwtFetch(jwt, "/pages/assets/upload", [{ key: hash, value: btoa(bin), metadata: { contentType: "text/html" }, base64: true }]);
+          const up = await jwtFetch(jwt, "/pages/assets/upload", [{ key: hash, value: b64, metadata: { contentType: "text/html" }, base64: true }]);
           if (!up.success) return j({ ok: false, erro: erroDe(up) }, 502);
         }
         const uh = await jwtFetch(jwt, "/pages/assets/upsert-hashes", { hashes: [hash] });
@@ -194,34 +236,7 @@ export async function onRequest({ request, env, params }) {
       return j({ ok: true, id: rb.result && rb.result.id });
     }
 
-    // Liga ou desliga o endereço nome.agencianitro.com.br
-    if (rota === "dominio") {
-      const nome = String(b.nome || "").toLowerCase();
-      const g = await pegarProjeto(env, nome); if (g.erro) return j({ ok: false, erro: g.erro }, g.st);
-      if (b.acao === "desligar") {
-        for (const h of subsDe(g.pr)) await tirarDominio(env, nome, h);
-        return j({ ok: true });
-      }
-      if (RESERVADOS.has(nome)) return j({ ok: false, erro: "Esse nome é reservado." }, 400);
-      const r = await ligarSubdominio(env, nome);
-      return r.ok ? j({ ok: true, host: r.host }) : j({ ok: false, erro: r.aviso }, 409);
-    }
-
-    // Troca o nome do endereço agencianitro.com.br (o .pages.dev não muda)
-    if (rota === "renomear") {
-      const nome = String(b.nome || "").toLowerCase(), novo = String(b.novo || "").toLowerCase();
-      const g = await pegarProjeto(env, nome); if (g.erro) return j({ ok: false, erro: g.erro }, g.st);
-      if (!NOME_OK.test(novo)) return j({ ok: false, erro: "Nome inválido. Use letras minúsculas, números e hífen." }, 400);
-      if (RESERVADOS.has(novo)) return j({ ok: false, erro: "Esse nome é reservado. Escolha outro." }, 400);
-      const antigos = subsDe(g.pr).filter((h) => h !== novo + "." + ZONA);
-      if (antigos.length === 0 && subsDe(g.pr).length) return j({ ok: true, host: novo + "." + ZONA, igual: true });
-      const r = await ligarSubdominio(env, nome, novo);
-      if (!r.ok) return j({ ok: false, erro: r.aviso }, 409);
-      for (const h of antigos) await tirarDominio(env, nome, h);
-      return j({ ok: true, host: r.host });
-    }
-
-    // Exclui o site (e o endereço agencianitro.com.br dele)
+    // Exclui o site (e limpa endereço antigo no agencianitro.com.br, se houver)
     if (rota === "excluir") {
       const nome = String(b.nome || "").toLowerCase();
       if (b.confirmar !== nome) return j({ ok: false, erro: "Confirmação faltando." }, 400);
