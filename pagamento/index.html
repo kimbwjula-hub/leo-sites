@@ -1,0 +1,54 @@
+<!doctype html>
+<html lang="pt-BR"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="robots" content="noindex">
+<title>Pagamento · Agência Nitro</title>
+<link rel="icon" href="/favicon.ico"><link rel="apple-touch-icon" href="/apple-touch-icon.png">
+<link rel="stylesheet" href="/base.css">
+<style>
+.val{margin-top:22px;background:#fff;border:1.5px solid var(--l);border-radius:18px;padding:22px 20px}
+.val small{color:var(--m);font-size:15px}
+.val .v{font-size:44px;font-weight:800;letter-spacing:-.02em;line-height:1.1;margin-top:2px}
+.val .d{margin-top:10px;font-size:17px;line-height:1.35}
+.cod{margin-top:18px;background:#fff;border:1.5px dashed #cdbab7;border-radius:14px;padding:14px;font:14px/1.45 ui-monospace,Menlo,Consolas,monospace;word-break:break-all;color:#3b2c2e;max-height:110px;overflow:auto;user-select:all}
+.cp{margin-top:14px}
+ol{margin:26px 0 0;padding-left:22px;color:var(--m);font-size:16px;line-height:1.55}
+ol b{color:var(--d)}
+.erro{margin-top:30px;background:#fff1ef;border:1.5px solid #ffd2cc;border-radius:14px;padding:18px;line-height:1.4}
+.rod{margin-top:34px;text-align:center;color:var(--m);font-size:14px}
+</style></head><body>
+<header><img src="/img/nitro-branco.png" alt="Agência Nitro"></header>
+<main id="m"></main>
+<script src="/pix.js"></script>
+<script>
+(function(){
+  var q=new URLSearchParams(location.search), m=document.getElementById("m");
+  function el(t,c,x){var e=document.createElement(t);if(c)e.className=c;if(x!=null)e.textContent=x;return e}
+  var chave=q.get("k");
+  if(!chave){
+    var e=el("div","erro","Este link de pagamento está incompleto. Peça um novo link para a Agência Nitro.");
+    m.appendChild(e);return;
+  }
+  var valor=pixValor(q.get("v")), desc=q.get("d")||"";
+  var cod=pixCodigo({chave:chave,nome:q.get("n"),cidade:q.get("c"),valor:valor,desc:desc});
+  m.appendChild(el("h1",0,"Pagamento via Pix"));
+  m.appendChild(el("p","sub","Copie o código abaixo e pague no app do seu banco."));
+  var b=el("div","val");
+  b.appendChild(el("small",0,valor?"Valor a pagar":"Valor"));
+  b.appendChild(el("div","v",valor?"R$ "+Number(valor).toLocaleString("pt-BR",{minimumFractionDigits:2}):"Informe no banco"));
+  if(desc)b.appendChild(el("div","d",desc));
+  m.appendChild(b);
+  var c=el("div","cod",cod);m.appendChild(c);
+  var bt=el("button","btn cp","Copiar código Pix");bt.type="button";m.appendChild(bt);
+  bt.onclick=function(){
+    function ok(){bt.textContent="Código copiado";bt.classList.add("ok");setTimeout(function(){bt.textContent="Copiar código Pix";bt.classList.remove("ok")},2500)}
+    function fb(){var r=document.createRange();r.selectNodeContents(c);var s=getSelection();s.removeAllRanges();s.addRange(r);try{document.execCommand("copy");ok()}catch(x){}}
+    if(navigator.clipboard&&window.isSecureContext)navigator.clipboard.writeText(cod).then(ok,fb);else fb();
+  };
+  var ol=el("ol");
+  [["Abra o app do seu banco e entre em ","Pix"],["Escolha ","Pix Copia e Cola"],["Cole o código e ","confirme o pagamento"]].forEach(function(p){
+    var li=el("li",0,p[0]);li.appendChild(el("b",0,p[1]));ol.appendChild(li)});
+  m.appendChild(ol);
+  m.appendChild(el("div","rod","Agência Nitro"));
+})();
+</script></body></html>

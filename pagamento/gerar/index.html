@@ -1,0 +1,64 @@
+<!doctype html>
+<html lang="pt-BR"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="robots" content="noindex">
+<title>Gerar link · Agência Nitro</title>
+<link rel="icon" href="/favicon.ico">
+<link rel="stylesheet" href="/base.css">
+<style>
+label{display:block;margin-top:16px;font-weight:600;font-size:15px}
+input{width:100%;margin-top:6px;font:inherit;font-size:17px;padding:14px;border:1.5px solid var(--l);border-radius:12px;background:#fff;color:var(--d)}
+input:focus{border-color:var(--r);outline:none}
+.row{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.out{margin-top:26px;display:none}
+.lk{background:#fff;border:1.5px dashed #cdbab7;border-radius:14px;padding:14px;font:14px/1.45 ui-monospace,Menlo,Consolas,monospace;word-break:break-all}
+.out .btn{margin-top:10px}
+.dica{color:var(--m);font-size:14px;margin-top:6px}
+</style></head><body>
+<header><img src="/img/nitro-branco.png" alt="Agência Nitro"></header>
+<main>
+<h1>Gerar link de pagamento</h1>
+<p class="sub">Preencha, copie o link e mande para o cliente.</p>
+<label>Chave Pix<input id="k" autocomplete="off" placeholder="CPF, CNPJ, e-mail, telefone ou chave aleatória"></label>
+<div class="row">
+<label>Nome do recebedor<input id="n" autocomplete="off" placeholder="Agência Nitro"></label>
+<label>Cidade<input id="c" autocomplete="off" placeholder="Salvador"></label>
+</div>
+<p class="dica">Chave, nome e cidade ficam salvos neste aparelho.</p>
+<div class="row">
+<label>Valor (R$)<input id="v" inputmode="decimal" autocomplete="off" placeholder="150,00"></label>
+<label>Descrição<input id="d" autocomplete="off" maxlength="40" placeholder="Site mobile"></label>
+</div>
+<div class="out" id="o">
+<div class="lk" id="lk"></div>
+<button class="btn" id="cl" type="button">Copiar link</button>
+<button class="btn sec" id="ab" type="button">Abrir página</button>
+<button class="btn sec" id="wa" type="button">Enviar no WhatsApp</button>
+</div>
+<button class="btn" id="g" type="button" style="margin-top:24px">Gerar link</button>
+</main>
+<script>
+(function(){
+  var $=function(i){return document.getElementById(i)}, S="nitro_pix";
+  try{var s=JSON.parse(localStorage.getItem(S)||"{}");["k","n","c"].forEach(function(i){if(s[i])$(i).value=s[i]})}catch(e){}
+  var url="";
+  $("g").onclick=function(){
+    var k=$("k").value.trim();
+    if(!k){$("k").focus();return}
+    try{localStorage.setItem(S,JSON.stringify({k:k,n:$("n").value,c:$("c").value}))}catch(e){}
+    var p=new URLSearchParams();p.set("k",k);
+    if($("n").value.trim())p.set("n",$("n").value.trim());
+    if($("c").value.trim())p.set("c",$("c").value.trim());
+    var v=$("v").value.trim();if(v)p.set("v",v);
+    var d=$("d").value.trim();if(d)p.set("d",d);
+    url=location.origin+"/?"+p.toString();
+    $("lk").textContent=url;$("o").style.display="block";$("o").scrollIntoView({behavior:"smooth",block:"nearest"});
+  };
+  $("cl").onclick=function(){
+    var b=$("cl");function ok(){b.textContent="Link copiado";setTimeout(function(){b.textContent="Copiar link"},2200)}
+    if(navigator.clipboard)navigator.clipboard.writeText(url).then(ok);
+  };
+  $("ab").onclick=function(){window.open(url,"_blank")};
+  $("wa").onclick=function(){window.open("https://wa.me/?text="+encodeURIComponent(url),"_blank")};
+})();
+</script></body></html>
